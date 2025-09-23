@@ -52,6 +52,16 @@ export const navData: NavSectionProps['data'] = [
     subheader: 'Overview',
     items: [
       {
+        title: 'User',
+        path: paths.dashboard.user.root,
+        icon: ICONS.user,
+        children: [
+          { title: 'Profile', path: paths.dashboard.user.account },
+          { title: 'List', path: paths.dashboard.user.list },
+          { title: 'Create', path: paths.dashboard.user.new },
+        ],
+      },
+      {
         title: 'One',
         path: paths.dashboard.root,
         icon: ICONS.dashboard,

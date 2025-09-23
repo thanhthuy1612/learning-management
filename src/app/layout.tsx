@@ -16,6 +16,8 @@ import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/component
 
 import { AuthProvider } from 'src/auth/context/jwt';
 
+import StoreProvider from './StoreProvider';
+
 // ----------------------------------------------------------------------
 
 export const viewport: Viewport = {
@@ -59,33 +61,35 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const appConfig = await getAppConfig();
 
   return (
-    <html lang="en" dir={appConfig.dir} suppressHydrationWarning>
-      <body>
-        <InitColorSchemeScript
-          modeStorageKey={themeConfig.modeStorageKey}
-          attribute={themeConfig.cssVariables.colorSchemeSelector}
-          defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
-        />
+    <html lang="vn" dir={appConfig.dir} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <StoreProvider>
+          <InitColorSchemeScript
+            modeStorageKey={themeConfig.modeStorageKey}
+            attribute={themeConfig.cssVariables.colorSchemeSelector}
+            defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
+          />
 
-        <AuthProvider>
-          <SettingsProvider
-            cookieSettings={appConfig.cookieSettings}
-            defaultSettings={defaultSettings}
-          >
-            <AppRouterCacheProvider options={{ key: 'css' }}>
-              <ThemeProvider
-                modeStorageKey={themeConfig.modeStorageKey}
-                defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
-              >
-                <MotionLazy>
-                  <ProgressBar />
-                  <SettingsDrawer defaultSettings={defaultSettings} />
-                  {children}
-                </MotionLazy>
-              </ThemeProvider>
-            </AppRouterCacheProvider>
-          </SettingsProvider>
-        </AuthProvider>
+          <AuthProvider>
+            <SettingsProvider
+              cookieSettings={appConfig.cookieSettings}
+              defaultSettings={defaultSettings}
+            >
+              <AppRouterCacheProvider options={{ key: 'css' }}>
+                <ThemeProvider
+                  modeStorageKey={themeConfig.modeStorageKey}
+                  defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
+                >
+                  <MotionLazy>
+                    <ProgressBar />
+                    <SettingsDrawer defaultSettings={defaultSettings} />
+                    {children}
+                  </MotionLazy>
+                </ThemeProvider>
+              </AppRouterCacheProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </StoreProvider>
       </body>
     </html>
   );
