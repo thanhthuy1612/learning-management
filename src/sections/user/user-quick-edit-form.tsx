@@ -14,7 +14,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -30,17 +30,7 @@ export const UserQuickEditSchema = zod.object({
     .min(1, { message: 'Email is required!' })
     .email({ message: 'Email must be a valid email address!' }),
   phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  country: schemaHelper.nullableInput(zod.string().min(1, { message: 'Country is required!' }), {
-    // message for null value
-    message: 'Country is required!',
-  }),
-  state: zod.string().min(1, { message: 'State is required!' }),
-  city: zod.string().min(1, { message: 'City is required!' }),
-  address: zod.string().min(1, { message: 'Address is required!' }),
-  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
-  company: zod.string().min(1, { message: 'Company is required!' }),
   role: zod.string().min(1, { message: 'Role is required!' }),
-  // Not required
   status: zod.string(),
 });
 
@@ -57,13 +47,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
     name: '',
     email: '',
     phoneNumber: '',
-    address: '',
-    country: '',
-    state: '',
-    city: '',
-    zipCode: '',
     status: '',
-    company: '',
     role: '',
   };
 
@@ -142,20 +126,13 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
             <Field.Text name="name" label="Full name" />
             <Field.Text name="email" label="Email address" />
             <Field.Phone name="phoneNumber" label="Phone number" />
-
-            <Field.CountrySelect
-              fullWidth
-              name="country"
-              label="Country"
-              placeholder="Choose a country"
-            />
-
-            <Field.Text name="state" label="State/region" />
-            <Field.Text name="city" label="City" />
-            <Field.Text name="address" label="Address" />
-            <Field.Text name="zipCode" label="Zip/code" />
-            <Field.Text name="company" label="Company" />
-            <Field.Text name="role" label="Role" />
+            <Field.Select name="role" label="Role">
+              {_roles.map((role) => (
+                <MenuItem key={role} value={role}>
+                  {role}
+                </MenuItem>
+              ))}
+            </Field.Select>
           </Box>
         </DialogContent>
 

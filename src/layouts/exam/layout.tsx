@@ -15,13 +15,11 @@ import { CONFIG } from 'src/global-config';
 
 import { Logo } from 'src/components/logo';
 
-import { AuthCenteredContent } from './content';
 import { MainSection } from '../core/main-section';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 import { SettingsButton } from '../components/settings-button';
 
-import type { AuthCenteredContentProps } from './content';
 import type { MainSectionProps } from '../core/main-section';
 import type { HeaderSectionProps } from '../core/header-section';
 import type { LayoutSectionProps } from '../core/layout-section';
@@ -30,24 +28,23 @@ import type { LayoutSectionProps } from '../core/layout-section';
 
 type LayoutBaseProps = Pick<LayoutSectionProps, 'sx' | 'children' | 'cssVars'>;
 
-export type AuthCenteredLayoutProps = LayoutBaseProps & {
+export type ExamLayoutProps = LayoutBaseProps & {
   layoutQuery?: Breakpoint;
   slotProps?: {
     header?: HeaderSectionProps;
     main?: MainSectionProps;
-    content?: AuthCenteredContentProps;
   };
   showSettings?: boolean;
 };
 
-export function AuthCenteredLayout({
+export function ExamLayout({
   sx,
   cssVars,
   children,
   slotProps,
   layoutQuery = 'md',
   showSettings = true,
-}: AuthCenteredLayoutProps) {
+}: ExamLayoutProps) {
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
 
@@ -105,10 +102,10 @@ export function AuthCenteredLayout({
       {...slotProps?.main}
       sx={[
         (theme) => ({
-          alignItems: 'center',
+          // alignItems: 'center',
           p: theme.spacing(3, 2, 10, 2),
           [theme.breakpoints.up(layoutQuery)]: {
-            justifyContent: 'center',
+            // justifyContent: 'center',
             p: theme.spacing(10, 0, 10, 0),
           },
         }),
@@ -117,7 +114,7 @@ export function AuthCenteredLayout({
           : [slotProps?.main?.sx]),
       ]}
     >
-      <AuthCenteredContent {...slotProps?.content}>{children}</AuthCenteredContent>
+      <Box sx={{ width: '100%', mx: 3 }}>{children}</Box>
     </MainSection>
   );
 
