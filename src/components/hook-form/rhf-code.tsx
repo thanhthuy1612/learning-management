@@ -65,7 +65,7 @@ export function RHFCode({
               error: !!error,
               ...slotProps?.textfield,
             }}
-            {...other}
+            // {...other}
           />
 
           <HelperText

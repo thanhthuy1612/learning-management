@@ -25,7 +25,7 @@ export type UseClientRectReturn = DOMRectValue &
     elementRef: React.RefObject<HTMLDivElement>;
   };
 
-export function useClientRect(inputRef?: React.RefObject<HTMLDivElement>): UseClientRectReturn {
+export function useClientRect(inputRef?: React.RefObject<HTMLDivElement>) {
   const initialRef = useRef<HTMLDivElement>(null);
 
   const elementRef = inputRef || initialRef;
