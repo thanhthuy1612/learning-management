@@ -156,7 +156,12 @@ export function ExamFormView({ handleSend, sx }: Props) {
 
       <Box sx={{ gap: 3, mb: 5, display: 'flex', flexDirection: 'column' }}>
         {fields.map((field, index) => (
-          <ComponentBox title={`Câu ${index + 1}:`} key={`question_${index}`} sx={{ ...sx }}>
+          <ComponentBox
+            id={`question_${index}`}
+            title={`Câu ${index + 1}:`}
+            key={`question_${index}`}
+            sx={{ ...sx }}
+          >
             <Controller
               name={`answers.${index}.answer`}
               control={control}

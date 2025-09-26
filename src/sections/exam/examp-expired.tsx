@@ -25,6 +25,7 @@ export function ExamExpried() {
         justifyItems: 'center',
         flexDirection: 'column',
         alignItems: 'center',
+        mt: 2,
       }}
       component={MotionContainer}
     >

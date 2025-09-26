@@ -10,6 +10,7 @@ import { _question } from 'src/_mock/_question';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { updateQuestions, updateTargetDate } from 'src/lib/features';
 
+import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { Exam } from '../exam';
@@ -27,7 +28,8 @@ export function ExamView() {
   }, [dispatch]);
 
   const renderBody = () => {
-    if (targetDate && targetDate > new Date().getTime()) <ExamExpried />;
+    if (!targetDate) return <SplashScreen />;
+    if (targetDate - new Date().getTime() < 5 * 60 * 1000) return <ExamExpried />;
     return <Exam />;
   };
 
@@ -38,7 +40,7 @@ export function ExamView() {
         sx={{ mb: 3, zIndex: 2, width: 1 }}
       />
 
-      <Exam />
+      {renderBody()}
     </Stack>
   );
 }

@@ -36,6 +36,19 @@ export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) 
     setIsExpanded((pre) => !pre);
   };
 
+  const handleScroll = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const elementRect = element.getBoundingClientRect();
+      const offset = window.innerHeight / 2 - elementRect.height / 2;
+
+      window.scrollTo({
+        top: window.scrollY + elementRect.top - offset,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <Card ref={ref} sx={{ ...sx, mb: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="end">
@@ -120,6 +133,7 @@ export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) 
                   color="primary"
                   variant={field?.answer ? 'contained' : 'outlined'}
                   sx={{ width: 'fit-content' }}
+                  onClick={() => handleScroll(`question_${index}`)}
                 >
                   {index + 1}
                 </Button>
