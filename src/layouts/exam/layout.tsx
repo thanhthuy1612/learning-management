@@ -5,11 +5,6 @@ import type { Theme, CSSObject, Breakpoint } from '@mui/material/styles';
 import { merge } from 'es-toolkit';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
-
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 
 import { CONFIG } from 'src/global-config';
 
@@ -49,29 +44,9 @@ export function ExamLayout({
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
 
     const headerSlots: HeaderSectionProps['slots'] = {
-      topArea: (
-        <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-          This is an info Alert.
-        </Alert>
-      ),
-      leftArea: (
-        <>
-          {/** @slot Logo */}
-          <Logo />
-        </>
-      ),
+      leftArea: <Logo />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
-          {/** @slot Help link */}
-          <Link
-            href={paths.faqs}
-            component={RouterLink}
-            color="inherit"
-            sx={{ typography: 'subtitle2' }}
-          >
-            Need help?
-          </Link>
-
           {/** @slot Settings button */}
           {showSettings && <SettingsButton />}
         </Box>
@@ -102,11 +77,9 @@ export function ExamLayout({
       {...slotProps?.main}
       sx={[
         (theme) => ({
-          // alignItems: 'center',
           p: theme.spacing(3, 2, 10, 2),
           [theme.breakpoints.up(layoutQuery)]: {
-            // justifyContent: 'center',
-            p: theme.spacing(10, 0, 10, 0),
+            p: theme.spacing(10, 3, 10, 3),
           },
         }),
         ...(Array.isArray(slotProps?.main?.sx)
@@ -114,7 +87,7 @@ export function ExamLayout({
           : [slotProps?.main?.sx]),
       ]}
     >
-      <Box sx={{ width: '100%', mx: 3 }}>{children}</Box>
+      <Box sx={{ width: '100%' }}>{children}</Box>
     </MainSection>
   );
 
@@ -131,7 +104,7 @@ export function ExamLayout({
       /** **************************************
        * @Styles
        *************************************** */
-      cssVars={{ '--layout-auth-content-width': '420px', ...cssVars }}
+      cssVars={cssVars}
       sx={[
         (theme) => ({
           position: 'relative',

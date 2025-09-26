@@ -1,16 +1,12 @@
 'use client';
 
-import type { IQuestionItem } from 'src/types/question';
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { Stack } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
 import { useRouter } from 'src/routes/hooks';
-
-import { _question } from 'src/_mock/_question';
 
 import { ExamFormView } from './exam-form';
 
@@ -25,12 +21,12 @@ export function Exam() {
 
   const defaultCSSCard = {
     p: 3,
-    width: 'calc(100% - 48px)',
     zIndex: 2,
     borderRadius: 2,
     display: 'flex',
     flexDirection: 'column',
     bgcolor: theme.vars.palette.background.default,
+    width: 1,
   };
 
   return (
@@ -45,7 +41,6 @@ export function Exam() {
         handleSend={(error?: string) => {
           if (error) setErrorMessage(error);
         }}
-        questions={_question.De_1 as unknown as IQuestionItem[]}
         sx={defaultCSSCard}
       />
     </Stack>

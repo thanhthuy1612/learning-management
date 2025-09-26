@@ -70,9 +70,9 @@ export function ExamPinView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Sign in..."
+        loadingIndicator="Gửi..."
       >
-        Enter
+        Gửi
       </Button>
     </Box>
   );

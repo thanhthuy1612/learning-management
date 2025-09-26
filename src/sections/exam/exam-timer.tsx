@@ -1,22 +1,23 @@
 'use client';
 
 import React from 'react';
-import { useCountdownDate } from 'minimal-shared/hooks';
 
 import { Box, Stack } from '@mui/material';
+
+import { useCountdownDate } from 'src/hooks/use-countdown';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 type Props = {
-  targetDate: Date;
+  targetDate: number;
 };
 
 // ----------------------------------------------------------------------
 
 export function ExamTimer({ targetDate }: Props) {
-  const countdown = useCountdownDate(targetDate);
+  const countdown = useCountdownDate(new Date(targetDate));
 
   return (
     <Label
@@ -43,9 +44,9 @@ export function ExamTimer({ targetDate }: Props) {
         }}
       >
         {Number(countdown?.days) > 0 && <TimeBlock label="days" value={countdown.days} />}
-        <TimeBlock label="hours" value={countdown.hours} />
-        <TimeBlock label="minutes" value={countdown.minutes} />
-        <TimeBlock label="seconds" value={countdown.seconds} />
+        <TimeBlock value={countdown.hours} />
+        <TimeBlock value={countdown.minutes} />
+        <TimeBlock value={countdown.seconds} />
       </Stack>
     </Label>
   );
@@ -54,7 +55,7 @@ export function ExamTimer({ targetDate }: Props) {
 // ----------------------------------------------------------------------
 
 type TimeBlockProps = {
-  label: string;
+  label?: string;
   value: string;
 };
 

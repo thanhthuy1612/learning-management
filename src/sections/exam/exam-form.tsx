@@ -1,7 +1,6 @@
 'use client';
 
 import type { Theme, SxProps } from '@mui/material';
-import type { IQuestionItem } from 'src/types/question';
 
 import React from 'react';
 import { z as zod } from 'zod';
@@ -12,13 +11,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Grid, Radio, FormLabel, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { useAppSelector } from 'src/lib/hooks';
+
 import { Form } from 'src/components/hook-form';
 import { Iconify } from 'src/components/iconify';
 import { ComponentBox } from 'src/components/layout';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import { Choices } from 'src/types/question';
 
 import { ExamHeader } from './exam-header';
+import { ExamFooter } from './exam-footer';
 
 // ----------------------------------------------------------------------
 
@@ -39,42 +44,51 @@ export const ExamFormSchema = zod.object({
 // ----------------------------------------------------------------------
 type Props = {
   handleSend: (error?: string) => void;
-  questions: IQuestionItem[];
   sx?: SxProps<Theme>;
 };
 
 // ----------------------------------------------------------------------
 
-export function ExamFormView({ handleSend, questions, sx }: Props) {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const targetScrollPosition = 500;
+export function ExamFormView({ handleSend, sx }: Props) {
+  const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
+  const [isVisible, setIsVisible] = React.useState<boolean>(false);
 
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY >= targetScrollPosition) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  };
+  const ref = React.useRef<HTMLDivElement | null>(null);
+
+  const confirmDialog = useBoolean();
+
+  const { questions } = useAppSelector((state) => state.exam);
 
   React.useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.1, // Điều chỉnh ngưỡng nếu cần
+      }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
     };
-  }, []);
+  }, [ref]);
+
   const methods = useForm<ExamFormSchemaType>({
     resolver: zodResolver(ExamFormSchema),
-    defaultValues: {
-      answers: questions.map((item) => ({ question: item.question, answer: '' })),
-    },
   });
 
   const {
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -83,18 +97,52 @@ export function ExamFormView({ handleSend, questions, sx }: Props) {
     name: 'answers',
   });
 
+  React.useEffect(() => {
+    setValue(
+      'answers',
+      questions.map((item) => ({ question: item.question, answer: '' }))
+    );
+  }, [questions, setValue]);
+
+  const answers = watch('answers');
+
   const onSubmit = handleSubmit(async (data) => {
-    handleSend();
+    setDataSubmit(data);
+    console.log(data);
+    confirmDialog.onTrue();
   });
+
+  const renderConfirmDialog = () => (
+    <ConfirmDialog
+      open={confirmDialog.value}
+      onClose={confirmDialog.onFalse}
+      title="Delete"
+      content="Are you sure want to delete?"
+      action={
+        <Button
+          color="primary"
+          variant="contained"
+          loading={isSubmitting}
+          onClick={() => {
+            console.log(dataSubmit);
+          }}
+          loadingIndicator="Nộp bài..."
+          sx={{ zIndex: 2 }}
+          startIcon={<Iconify width={16} icon="custom:send-fill" />}
+        >
+          Nộp bài
+        </Button>
+      }
+    />
+  );
 
   const renderButtonSubmit = () => (
     <Button
-      fullWidth
-      color="inherit"
+      color="primary"
       type="submit"
       variant="contained"
       loading={isSubmitting}
-      loadingIndicator="Sign in..."
+      loadingIndicator="Nộp bài..."
       sx={{ zIndex: 2 }}
       startIcon={<Iconify width={16} icon="custom:send-fill" />}
     >
@@ -104,13 +152,9 @@ export function ExamFormView({ handleSend, questions, sx }: Props) {
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
-      <ExamHeader
-        sx={sx}
-        targetDate={new Date('2025-09-26 23:09')}
-        renderButtonSubmit={renderButtonSubmit()}
-      />
+      <ExamHeader ref={ref} sx={sx} renderButtonSubmit={renderButtonSubmit()} fields={answers} />
 
-      <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ gap: 3, mb: 5, display: 'flex', flexDirection: 'column' }}>
         {fields.map((field, index) => (
           <ComponentBox title={`Câu ${index + 1}:`} key={`question_${index}`} sx={{ ...sx }}>
             <Controller
@@ -125,7 +169,11 @@ export function ExamFormView({ handleSend, questions, sx }: Props) {
                     <Grid container spacing={2}>
                       {Choices.map((option) => (
                         <Grid key={option} size={{ xs: 12, md: 6 }}>
-                          <Button variant="outlined" fullWidth>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            color={typeField.value === option ? 'primary' : 'inherit'}
+                          >
                             <FormControlLabel
                               key={option}
                               value={option}
@@ -144,6 +192,10 @@ export function ExamFormView({ handleSend, questions, sx }: Props) {
           </ComponentBox>
         ))}
       </Box>
+      {isVisible && (
+        <ExamFooter sx={sx} renderButtonSubmit={renderButtonSubmit()} fields={answers} />
+      )}
+      {renderConfirmDialog()}
     </Form>
   );
 }

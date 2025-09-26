@@ -35,4 +35,6 @@ export const paths = {
       account: `${ROOTS.DASHBOARD}/user/account`,
     },
   },
+  pin: '/exam',
+  exam: (id: string) => `/exam/${id}`,
 };
