@@ -17,7 +17,6 @@ import IconButton from '@mui/material/IconButton';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -33,9 +32,9 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
-import { UserTableToolbar } from '../user-table-toolbar';
-import { UserQuickEditForm } from '../user-quick-edit-form';
-import { UserTableFiltersResult } from '../user-table-filters-result';
+import { ScoresTableToolbar } from '../scores-table-toolbar';
+import { ScoresQuickEditForm } from '../scores-quick-edit-form';
+import { ScoresTableFiltersResult } from '../scores-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +42,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 // ----------------------------------------------------------------------
 
-export function UserListView() {
+export function ScoresListView() {
   const [tableData, setTableData] = React.useState<IUserItem[]>(_userList);
   const [row, setRow] = React.useState<IUserItem>();
   const [total, setTotal] = React.useState<number>(0);
@@ -164,7 +163,7 @@ export function UserListView() {
   const onDeleteRow = () => {};
 
   const renderQuickEditForm = () => (
-    <UserQuickEditForm
+    <ScoresQuickEditForm
       currentUser={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}
@@ -191,19 +190,9 @@ export function UserListView() {
         heading="Danh sách"
         links={[
           { name: 'Tổng quan', href: paths.dashboard.root },
-          { name: 'Người dùng', href: paths.dashboard.user.root },
+          { name: 'Điểm thi', href: paths.dashboard.scores.root },
           { name: 'Danh sách' },
         ]}
-        action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.user.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            New user
-          </Button>
-        }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
@@ -246,14 +235,14 @@ export function UserListView() {
           ))}
         </Tabs>
 
-        <UserTableToolbar
+        <ScoresTableToolbar
           filters={filters}
           onResetPage={table.onResetPage}
           options={{ roles: _roles }}
         />
 
         {canReset && (
-          <UserTableFiltersResult
+          <ScoresTableFiltersResult
             filters={filters}
             totalResults={dataFiltered.length}
             onResetPage={table.onResetPage}

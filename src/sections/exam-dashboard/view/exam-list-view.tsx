@@ -33,9 +33,9 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
-import { UserTableToolbar } from '../user-table-toolbar';
-import { UserQuickEditForm } from '../user-quick-edit-form';
-import { UserTableFiltersResult } from '../user-table-filters-result';
+import { ExamTableToolbar } from '../exam-table-toolbar';
+import { ExamQuickEditForm } from '../exam-quick-edit-form';
+import { ExamTableFiltersResult } from '../exam-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 // ----------------------------------------------------------------------
 
-export function UserListView() {
+export function ExamListView() {
   const [tableData, setTableData] = React.useState<IUserItem[]>(_userList);
   const [row, setRow] = React.useState<IUserItem>();
   const [total, setTotal] = React.useState<number>(0);
@@ -164,7 +164,7 @@ export function UserListView() {
   const onDeleteRow = () => {};
 
   const renderQuickEditForm = () => (
-    <UserQuickEditForm
+    <ExamQuickEditForm
       currentUser={row}
       open={quickEditForm.value}
       onClose={quickEditForm.onFalse}
@@ -191,7 +191,7 @@ export function UserListView() {
         heading="Danh sách"
         links={[
           { name: 'Tổng quan', href: paths.dashboard.root },
-          { name: 'Người dùng', href: paths.dashboard.user.root },
+          { name: 'Đề thi', href: paths.dashboard.exam.root },
           { name: 'Danh sách' },
         ]}
         action={
@@ -246,14 +246,14 @@ export function UserListView() {
           ))}
         </Tabs>
 
-        <UserTableToolbar
+        <ExamTableToolbar
           filters={filters}
           onResetPage={table.onResetPage}
           options={{ roles: _roles }}
         />
 
         {canReset && (
-          <UserTableFiltersResult
+          <ExamTableFiltersResult
             filters={filters}
             totalResults={dataFiltered.length}
             onResetPage={table.onResetPage}

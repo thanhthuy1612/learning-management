@@ -7,7 +7,7 @@ import { AccountGeneralView } from 'src/sections/account/view';
 // ----------------------------------------------------------------------
 
 export const metadata: Metadata = {
-  title: `Account general settings | Dashboard - ${CONFIG.appName}`,
+  title: `Thông tin cá nhân | Tổng quan - ${CONFIG.appName}`,
 };
 
 export default function Page() {

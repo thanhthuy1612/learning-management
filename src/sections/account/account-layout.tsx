@@ -20,12 +20,12 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 const NAV_ITEMS = [
   {
-    label: 'General',
+    label: 'Tổng quan',
     icon: <Iconify width={24} icon="solar:user-id-bold" />,
     href: paths.dashboard.user.account,
   },
   {
-    label: 'Security',
+    label: 'Bảo mật',
     icon: <Iconify width={24} icon="ic:round-vpn-key" />,
     href: `${paths.dashboard.user.account}/change-password`,
   },
@@ -39,11 +39,11 @@ export function AccountLayout({ children, ...other }: DashboardContentProps) {
   return (
     <DashboardContent {...other}>
       <CustomBreadcrumbs
-        heading="Account"
+        heading="Tài khoản"
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: 'Account' },
+          { name: 'Tổng quan', href: paths.dashboard.root },
+          { name: 'Người dùng', href: paths.dashboard.user.root },
+          { name: 'Tài khoản' },
         ]}
         sx={{ mb: 3 }}
       />

@@ -4,7 +4,6 @@ import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/global-config';
 
-import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -45,47 +44,47 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export const navData: NavSectionProps['data'] = [
-  /**
-   * Overview
-   */
   {
-    subheader: 'Overview',
+    subheader: 'Quản lý',
     items: [
       {
-        title: 'User',
+        title: 'Người dùng',
         path: paths.dashboard.user.root,
         icon: ICONS.user,
         children: [
-          { title: 'Profile', path: paths.dashboard.user.account },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
+          { title: 'Thông tin cá nhân', path: paths.dashboard.user.account },
+          { title: 'Danh sách người dùng', path: paths.dashboard.user.list },
+          { title: 'Thêm giáo viên', path: paths.dashboard.user.new },
         ],
       },
-      {
-        title: 'One',
-        path: paths.dashboard.root,
-        icon: ICONS.dashboard,
-        info: <Label>v{CONFIG.appVersion}</Label>,
-      },
-      { title: 'Two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-      { title: 'Three', path: paths.dashboard.three, icon: ICONS.analytics },
     ],
   },
-  /**
-   * Management
-   */
   {
-    subheader: 'Management',
+    subheader: 'Tổng quan',
     items: [
       {
-        title: 'Group',
-        path: paths.dashboard.group.root,
-        icon: ICONS.user,
+        title: 'Đề thi',
+        path: paths.dashboard.exam.root,
+        icon: ICONS.file,
         children: [
-          { title: 'Four', path: paths.dashboard.group.root },
-          { title: 'Five', path: paths.dashboard.group.five },
-          { title: 'Six', path: paths.dashboard.group.six },
+          { title: 'Danh sách', path: paths.dashboard.exam.list },
+          { title: 'Thêm mới', path: paths.dashboard.exam.new },
         ],
+      },
+      {
+        title: 'Kỳ thi',
+        path: paths.dashboard.examSession.root,
+        icon: ICONS.calendar,
+        children: [
+          { title: 'Danh sách', path: paths.dashboard.examSession.list },
+          { title: 'Thêm mới', path: paths.dashboard.examSession.new },
+        ],
+      },
+      {
+        title: 'Kết quả thi',
+        path: paths.dashboard.scores.root,
+        icon: ICONS.calendar,
+        children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
       },
     ],
   },

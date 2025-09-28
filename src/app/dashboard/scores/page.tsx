@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 
 import { CONFIG } from 'src/global-config';
 
-import { UserListView } from 'src/sections/user/view';
+import { ScoresListView } from 'src/sections/scores/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `Danh sách người dùng | Tổng quan - ${CONFIG.appName}` };
+export const metadata: Metadata = { title: `Danh sách điểm thi | Tổng quan - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <UserListView />;
+  return <ScoresListView />;
 }

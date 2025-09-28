@@ -5,7 +5,7 @@ import { ExamPinView } from 'src/sections/exam/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata = { title: `Dashboard - ${CONFIG.appName}` };
+export const metadata = { title: `Vào thi - ${CONFIG.appName}` };
 
 export default function Page() {
   return (

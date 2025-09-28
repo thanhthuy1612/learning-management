@@ -20,19 +20,25 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    two: `${ROOTS.DASHBOARD}/two`,
-    three: `${ROOTS.DASHBOARD}/three`,
-    group: {
-      root: `${ROOTS.DASHBOARD}/group`,
-      five: `${ROOTS.DASHBOARD}/group/five`,
-      six: `${ROOTS.DASHBOARD}/group/six`,
-    },
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,
       list: `${ROOTS.DASHBOARD}/user/list`,
-      profile: `${ROOTS.DASHBOARD}/user/profile`,
       account: `${ROOTS.DASHBOARD}/user/account`,
+    },
+    exam: {
+      root: `${ROOTS.DASHBOARD}/exam`,
+      new: `${ROOTS.DASHBOARD}/exam/new`,
+      list: `${ROOTS.DASHBOARD}/exam/list`,
+    },
+    examSession: {
+      root: `${ROOTS.DASHBOARD}/exam-session`,
+      new: `${ROOTS.DASHBOARD}/exam-session/new`,
+      list: `${ROOTS.DASHBOARD}/exam-session/list`,
+    },
+    scores: {
+      root: `${ROOTS.DASHBOARD}/scores`,
+      list: `${ROOTS.DASHBOARD}/scores/list`,
     },
   },
   pin: '/exam',

@@ -37,7 +37,6 @@ export type AuthCenteredLayoutProps = LayoutBaseProps & {
     main?: MainSectionProps;
     content?: AuthCenteredContentProps;
   };
-  showSettings?: boolean;
 };
 
 export function AuthCenteredLayout({
@@ -46,7 +45,6 @@ export function AuthCenteredLayout({
   children,
   slotProps,
   layoutQuery = 'md',
-  showSettings = true,
 }: AuthCenteredLayoutProps) {
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
@@ -76,7 +74,7 @@ export function AuthCenteredLayout({
           </Link>
 
           {/** @slot Settings button */}
-          {showSettings && <SettingsButton />}
+          <SettingsButton />
         </Box>
       ),
     };

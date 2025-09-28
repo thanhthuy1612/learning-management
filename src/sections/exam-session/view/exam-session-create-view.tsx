@@ -6,24 +6,24 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { ExamSessionNewEditForm } from '../exam-session-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export function UserCreateView() {
+export function ExamSessionCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Thêm giáo viên"
+        heading="Tạo kỳ thi mới"
         links={[
-          { name: 'Danh sách', href: paths.dashboard.root },
-          { name: 'Người dùng', href: paths.dashboard.user.root },
-          { name: 'Thêm giáo viên' },
+          { name: 'Tổng quan', href: paths.dashboard.root },
+          { name: 'Kỳ thi', href: paths.dashboard.examSession.root },
+          { name: 'Tạo mới' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm />
+      <ExamSessionNewEditForm />
     </DashboardContent>
   );
 }

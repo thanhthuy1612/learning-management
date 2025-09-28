@@ -7,7 +7,7 @@ import { AccountChangePasswordView } from 'src/sections/account/view';
 // ----------------------------------------------------------------------
 
 export const metadata: Metadata = {
-  title: `Account change password settings | Dashboard - ${CONFIG.appName}`,
+  title: `Đổi mật khẩu | Tổng quan - ${CONFIG.appName}`,
 };
 
 export default function Page() {
