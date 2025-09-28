@@ -15,6 +15,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { Exam } from '../exam';
 import { ExamExpried } from '../examp-expired';
+import { ExamNameForm } from '../exam-name-form';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ export function ExamView() {
   const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
 
   const dispatch = useAppDispatch();
-  const { targetDate } = useAppSelector((state) => state.exam);
+  const { targetDate, name } = useAppSelector((state) => state.exam);
 
   React.useEffect(() => {
     const handleVisibilityChange = () => {
@@ -53,12 +54,13 @@ export function ExamView() {
 
   React.useEffect(() => {
     dispatch(updateQuestions(_question.De_1 as unknown as IQuestionItem[]));
-    dispatch(updateTargetDate(new Date('2025-09-27 5:00').getTime()));
+    dispatch(updateTargetDate(new Date('2025-09-29 5:00').getTime()));
   }, [dispatch]);
 
   const renderBody = () => {
-    if (!isVisible) return <></>;
+    if (!isVisible) return null;
     if (!targetDate) return <SplashScreen />;
+    if (!name) return <ExamNameForm />;
     if (targetDate - new Date().getTime() < 5 * 60 * 1000) return <ExamExpried />;
     return <Exam />;
   };

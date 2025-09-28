@@ -3,19 +3,17 @@
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { Form, Field } from 'src/components/hook-form';
 import { AnimateLogoRotate } from 'src/components/animate';
-
-import { FormHead } from 'src/auth/components/form-head';
 
 // ----------------------------------------------------------------------
 
@@ -33,8 +31,6 @@ export const ExamPinSchema = zod.object({
 export function ExamPinView() {
   const router = useRouter();
 
-  const showPassword = useBoolean();
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const methods = useForm<ExamPinSchemaType>({
@@ -48,6 +44,7 @@ export function ExamPinView() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    router.push(paths.exam('1'));
     // try {
     //   await ExamPinWithPassword({ email: data.email, password: data.password });
     //   await checkUserSession?.();
@@ -80,8 +77,6 @@ export function ExamPinView() {
   return (
     <>
       <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
-
-      <FormHead title="Trường" description="Vào thi" />
 
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
