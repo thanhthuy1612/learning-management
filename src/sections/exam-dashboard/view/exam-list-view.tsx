@@ -1,6 +1,8 @@
 'use client';
 
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
+import type { IExamTableFilters } from 'src/types/exam';
+import type { IQuestionItem } from 'src/types/question';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 
 import React from 'react';
@@ -21,6 +23,9 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { useAppDispatch } from 'src/lib/hooks';
+import { _question } from 'src/_mock/_question';
+import { updateExamChoice } from 'src/lib/features';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
@@ -33,8 +38,8 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
+import { ExamForm } from '../exam-form';
 import { ExamTableToolbar } from '../exam-table-toolbar';
-import { ExamQuickEditForm } from '../exam-quick-edit-form';
 import { ExamTableFiltersResult } from '../exam-table-filters-result';
 
 // ----------------------------------------------------------------------
@@ -57,6 +62,9 @@ export function ExamListView() {
 
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
+  const viewForm = useBoolean();
+
+  const dispatch = useAppDispatch();
 
   const apiRef = useGridApiRef();
 
@@ -107,17 +115,31 @@ export function ExamListView() {
       headerName: 'Actions',
       align: 'right',
       headerAlign: 'right',
-      width: 80,
+      width: 120,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Quick Edit" placement="top" arrow>
+          <Tooltip title="Xem" placement="top" arrow>
             <IconButton
-              color={quickEditForm.value ? 'inherit' : 'default'}
+              color="info"
+              onClick={() => {
+                viewForm.onTrue();
+                dispatch(updateExamChoice(_question.De_1 as IQuestionItem[]));
+                setRow(params.row);
+              }}
+            >
+              <Iconify icon="solar:eye-bold" />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Sửa" placement="top" arrow>
+            <IconButton
+              color="primary"
               onClick={() => {
                 quickEditForm.onTrue();
+                dispatch(updateExamChoice(_question.De_1 as IQuestionItem[]));
                 setRow(params.row);
               }}
             >
@@ -125,7 +147,7 @@ export function ExamListView() {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Delete" placement="top" arrow>
+          <Tooltip title="Xoá" placement="top" arrow>
             <IconButton
               color="error"
               onClick={() => {
@@ -141,7 +163,7 @@ export function ExamListView() {
     },
   ];
 
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
+  const filters = useSetState<IExamTableFilters>({ name: '', status: 'all' });
   const { state: currentFilters, setState: updateFilters } = filters;
 
   const dataFiltered = applyFilter({
@@ -150,8 +172,7 @@ export function ExamListView() {
     filters: currentFilters,
   });
 
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+  const canReset = !!currentFilters.name || currentFilters.status !== 'all';
 
   const handleFilterStatus = React.useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
@@ -164,22 +185,20 @@ export function ExamListView() {
   const onDeleteRow = () => {};
 
   const renderQuickEditForm = () => (
-    <ExamQuickEditForm
-      currentUser={row}
-      open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
-    />
+    <ExamForm open={quickEditForm.value} onClose={quickEditForm.onFalse} />
   );
+
+  const renderViewForm = () => <ExamForm isView open={viewForm.value} onClose={viewForm.onFalse} />;
 
   const renderConfirmDialog = () => (
     <ConfirmDialog
       open={confirmDialog.value}
       onClose={confirmDialog.onFalse}
-      title="Delete"
-      content="Are you sure want to delete?"
+      title="Xoá"
+      content="Bạn có chắc chắc muốn xoá?"
       action={
         <Button variant="contained" color="error" onClick={onDeleteRow}>
-          Delete
+          Xoá
         </Button>
       }
     />
@@ -197,11 +216,11 @@ export function ExamListView() {
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={paths.dashboard.exam.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
+            Thêm mới
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
@@ -321,6 +340,7 @@ export function ExamListView() {
       </Card>
       {renderQuickEditForm()}
       {renderConfirmDialog()}
+      {renderViewForm()}
     </DashboardContent>
   );
 }
@@ -329,12 +349,12 @@ export function ExamListView() {
 
 type ApplyFilterProps = {
   inputData: IUserItem[];
-  filters: IUserTableFilters;
+  filters: IExamTableFilters;
   comparator: (a: any, b: any) => number;
 };
 
 function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
+  const { name, status } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -352,10 +372,6 @@ function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
 
   if (status !== 'all') {
     inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
   }
 
   return inputData;

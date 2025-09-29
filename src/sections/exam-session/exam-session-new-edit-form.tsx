@@ -1,23 +1,33 @@
-import type { IUserItem } from 'src/types/user';
-
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
+import { Chip } from '@mui/material';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import { MenuItem } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { _roles } from 'src/_mock';
+import { _tags } from 'src/_mock';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
+
+// ----------------------------------------------------------------------
+
+const OPTIONS = [
+  { value: 'option 1', label: 'Option 1' },
+  { value: 'option 2', label: 'Option 2' },
+  { value: 'option 3', label: 'Option 3' },
+  { value: 'option 4', label: 'Option 4' },
+  { value: 'option 5', label: 'Option 5' },
+  { value: 'option 6', label: 'Option 6' },
+  { value: 'option 7', label: 'Option 7' },
+  { value: 'option 8', label: 'Option 8' },
+];
 
 // ----------------------------------------------------------------------
 
@@ -25,37 +35,32 @@ export type NewExamSessionSchemaType = zod.infer<typeof NewExamSessionSchema>;
 
 export const NewExamSessionSchema = zod.object({
   name: zod.string().min(1, { message: 'Name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  status: zod.string(),
+  startDate: schemaHelper.date({ message: { required: 'Start date is required!' } }),
+  duration: zod.number().min(1, { message: 'Required!' }),
+  code: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
 });
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  currentUser?: IUserItem;
+  currentValue?: NewExamSessionSchemaType;
 };
 
-export function ExamSessionNewEditForm({ currentUser }: Props) {
+export function ExamSessionNewEditForm({ currentValue }: Props) {
   const router = useRouter();
 
   const defaultValues: NewExamSessionSchemaType = {
-    status: '',
     name: '',
-    email: '',
-    phoneNumber: '',
-    role: '',
+    startDate: null,
+    duration: 45,
+    code: [],
   };
 
   const methods = useForm<NewExamSessionSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewExamSessionSchema),
     defaultValues,
-    values: currentUser,
+    values: currentValue,
   });
 
   const {
@@ -68,7 +73,7 @@ export function ExamSessionNewEditForm({ currentUser }: Props) {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
-      toast.success(currentUser ? 'Update success!' : 'Create success!');
+      toast.success(currentValue ? 'Cập nhập thành công!' : 'Tạo mới thành công!');
       router.push(paths.dashboard.user.list);
       console.info('DATA', data);
     } catch (error) {
@@ -87,16 +92,36 @@ export function ExamSessionNewEditForm({ currentUser }: Props) {
             gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
           }}
         >
-          <Field.Text name="name" label="Full name" />
-          <Field.Text name="email" label="Email address" />
-          <Field.Phone name="phoneNumber" label="Phone number" country="VN" />
-          <Field.Select name="role" label="Role">
-            {_roles.map((role) => (
-              <MenuItem key={role} value={role}>
-                {role}
-              </MenuItem>
-            ))}
-          </Field.Select>
+          <Field.Text name="name" label="Tên kì thi" />
+          {/* <Field.DatePicker format="dd/mm/yyyy" name="startDate" label="Thời gian bắt đầu thi" /> */}
+          <Field.Text name="duration" label="Thời gian làm bài" />
+          <Field.Autocomplete
+            multiple
+            freeSolo
+            disableCloseOnSelect
+            name="code"
+            label="Mã đề"
+            placeholder="+ Mã đề"
+            options={_tags.map((option) => option)}
+            getOptionLabel={(option) => option}
+            renderOption={(props, option) => (
+              <li {...props} key={option}>
+                {option}
+              </li>
+            )}
+            renderTags={(selected, getTagProps) =>
+              selected.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  key={option}
+                  label={option}
+                  size="small"
+                  color="info"
+                  variant="soft"
+                />
+              ))
+            }
+          />
         </Box>
 
         <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
@@ -105,10 +130,10 @@ export function ExamSessionNewEditForm({ currentUser }: Props) {
             type="submit"
             variant="contained"
             loading={isSubmitting}
-            loadingIndicator="Loading"
+            loadingIndicator="Đang tải..."
             size="large"
           >
-            {!currentUser ? 'Create user' : 'Save changes'}
+            {!currentValue ? 'Tạo thành công' : 'Lưu thay đổi'}
           </LoadingButton>
         </Stack>
       </Card>

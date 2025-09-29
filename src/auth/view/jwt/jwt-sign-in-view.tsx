@@ -13,7 +13,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
@@ -33,12 +32,12 @@ export type SignInSchemaType = zod.infer<typeof SignInSchema>;
 export const SignInSchema = zod.object({
   email: zod
     .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .min(1, { message: 'Email là bắt buộc!' })
+    .email({ message: 'Địa chỉ email phải là địa chỉ email hợp lệ!' }),
   password: zod
     .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(1, { message: 'Mật khẩu là bắt buộc!' })
+    .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -52,9 +51,14 @@ export function JwtSignInView() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const defaultValues: SignInSchemaType = {
+    email: 'demo@minimals.cc',
+    password: '@2Minimal',
+  };
+
   const methods = useForm<SignInSchemaType>({
     resolver: zodResolver(SignInSchema),
-    defaultValues: {},
+    defaultValues,
   });
 
   const {
@@ -77,7 +81,7 @@ export function JwtSignInView() {
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-      <Field.Text name="email" label="Email address" slotProps={{ inputLabel: { shrink: true } }} />
+      <Field.Text name="email" label="Địa chỉ email" slotProps={{ inputLabel: { shrink: true } }} />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
         <Link
@@ -87,13 +91,13 @@ export function JwtSignInView() {
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
         >
-          Forgot password?
+          Quên mật khẩu?
         </Link>
 
         <Field.Text
           name="password"
-          label="Password"
-          placeholder="6+ characters"
+          label="Mật khẩu"
+          placeholder="6+ ký tự"
           type={showPassword.value ? 'text' : 'password'}
           slotProps={{
             inputLabel: { shrink: true },
@@ -119,9 +123,9 @@ export function JwtSignInView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
-        loadingIndicator="Sign in..."
+        loadingIndicator="Đăng nhập..."
       >
-        Sign in
+        Đăng nhập
       </Button>
     </Box>
   );
@@ -130,17 +134,7 @@ export function JwtSignInView() {
     <>
       <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
 
-      <FormHead
-        title="Sign in to your account"
-        description={
-          <>
-            {`Don’t have an account? `}
-            <Link component={RouterLink} href={paths.auth.jwt.signUp} variant="subtitle2">
-              Get started
-            </Link>
-          </>
-        }
-      />
+      <FormHead title="Đăng nhập" />
 
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>

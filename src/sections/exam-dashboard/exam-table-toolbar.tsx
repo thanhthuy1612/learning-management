@@ -1,17 +1,10 @@
-import type { IUserTableFilters } from 'src/types/user';
-import type { SelectChangeEvent } from '@mui/material/Select';
+import type { IExamTableFilters } from 'src/types/exam';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
@@ -20,7 +13,7 @@ import { Iconify } from 'src/components/iconify';
 
 type Props = {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IExamTableFilters>;
   options: {
     roles: string[];
   };
@@ -37,17 +30,6 @@ export function ExamTableToolbar({ filters, options, onResetPage }: Props) {
     [onResetPage, updateFilters]
   );
 
-  const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
-      onResetPage();
-      updateFilters({ role: newValue });
-    },
-    [onResetPage, updateFilters]
-  );
-
   return (
     <Box
       sx={{
@@ -59,7 +41,7 @@ export function ExamTableToolbar({ filters, options, onResetPage }: Props) {
         alignItems: { xs: 'flex-end', md: 'center' },
       }}
     >
-      <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+      {/* <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
         <InputLabel htmlFor="filter-role-select">Role</InputLabel>
         <Select
           multiple
@@ -77,7 +59,7 @@ export function ExamTableToolbar({ filters, options, onResetPage }: Props) {
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
+      </FormControl> */}
 
       <Box
         sx={{

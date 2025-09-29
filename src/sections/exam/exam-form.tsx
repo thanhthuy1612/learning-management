@@ -34,7 +34,7 @@ export const ExamFormSchema = zod.object({
     zod.object({
       question: zod.string(),
       answer: zod.union([
-        zod.enum(Choices, { message: 'Answer must be one of A, B, C, or D!' }),
+        zod.enum(Choices, { message: 'Câu trả lời phải là A, B, C hoặc D!' }),
         zod.enum(['']),
       ]),
     })
@@ -116,8 +116,8 @@ export function ExamFormView({ handleSend, sx }: Props) {
     <ConfirmDialog
       open={confirmDialog.value}
       onClose={confirmDialog.onFalse}
-      title="Delete"
-      content="Are you sure want to delete?"
+      title="Nộp bài"
+      content="Bạn có chắc chắn muốn nộp bài?"
       action={
         <Button
           color="primary"

@@ -1,4 +1,4 @@
-import type { IUserTableFilters } from 'src/types/user';
+import type { IExamTableFilters } from 'src/types/exam';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
@@ -12,7 +12,7 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 
 type Props = FiltersResultProps & {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
+  filters: UseSetStateReturn<IExamTableFilters>;
 };
 
 export function ExamTableFiltersResult({ filters, onResetPage, totalResults, sx }: Props) {
@@ -28,16 +28,6 @@ export function ExamTableFiltersResult({ filters, onResetPage, totalResults, sx 
     updateFilters({ status: 'all' });
   }, [onResetPage, updateFilters]);
 
-  const handleRemoveRole = useCallback(
-    (inputValue: string) => {
-      const newValue = currentFilters.role.filter((item) => item !== inputValue);
-
-      onResetPage();
-      updateFilters({ role: newValue });
-    },
-    [onResetPage, updateFilters, currentFilters.role]
-  );
-
   const handleReset = useCallback(() => {
     onResetPage();
     resetFilters();
@@ -52,12 +42,6 @@ export function ExamTableFiltersResult({ filters, onResetPage, totalResults, sx 
           onDelete={handleRemoveStatus}
           sx={{ textTransform: 'capitalize' }}
         />
-      </FiltersBlock>
-
-      <FiltersBlock label="Role:" isShow={!!currentFilters.role.length}>
-        {currentFilters.role.map((item) => (
-          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveRole(item)} />
-        ))}
       </FiltersBlock>
 
       <FiltersBlock label="Keyword:" isShow={!!currentFilters.name}>

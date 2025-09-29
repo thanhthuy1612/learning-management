@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import userSlice from './features/user';
 import examSlice from './features/exam';
+import examDashboardSlice from './features/exam-dashboard';
 
 export const makeStore = () =>
   configureStore({
     reducer: {
       user: userSlice,
       exam: examSlice,
+      examDashboard: examDashboardSlice,
     },
   });
 

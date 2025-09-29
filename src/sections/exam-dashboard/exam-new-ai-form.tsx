@@ -1,61 +1,49 @@
-import type { IUserItem } from 'src/types/user';
-
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import { MenuItem } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { _roles } from 'src/_mock';
-
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
 export type NewExamSchemaType = zod.infer<typeof NewExamSchema>;
 
 export const NewExamSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  status: zod.string(),
+  code: zod.string().min(1, { message: 'Required!' }),
+  subject: zod.string().min(1, { message: 'Required!' }),
+  class: zod.number().min(1, { message: 'Min 1!' }).max(12, 'Max 12'!),
+  quantity: zod.number().min(1, { message: 'Required!' }),
+  matrix: zod.string().min(1, { message: 'Required!' }),
+  document: zod.string().min(1, { message: 'Required!' }).optional(),
 });
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  currentUser?: IUserItem;
-};
-
-export function ExamNewEditForm({ currentUser }: Props) {
+export function ExamNewAIForm() {
   const router = useRouter();
 
   const defaultValues: NewExamSchemaType = {
-    status: '',
-    name: '',
-    email: '',
-    phoneNumber: '',
-    role: '',
+    code: '',
+    subject: '',
+    class: 6,
+    quantity: 20,
+    matrix: '',
+    document: '',
   };
 
   const methods = useForm<NewExamSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewExamSchema),
     defaultValues,
-    values: currentUser,
   });
 
   const {
@@ -68,8 +56,8 @@ export function ExamNewEditForm({ currentUser }: Props) {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
-      toast.success(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      toast.success('Tạo mới thành công');
+      router.push(paths.dashboard.exam.list);
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -87,16 +75,16 @@ export function ExamNewEditForm({ currentUser }: Props) {
             gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
           }}
         >
-          <Field.Text name="name" label="Full name" />
-          <Field.Text name="email" label="Email address" />
-          <Field.Phone name="phoneNumber" label="Phone number" country="VN" />
-          <Field.Select name="role" label="Role">
-            {_roles.map((role) => (
-              <MenuItem key={role} value={role}>
-                {role}
-              </MenuItem>
-            ))}
-          </Field.Select>
+          <Field.Text name="subject" label="Môn học" />
+          <Field.Text type="number" name="class" label="Lớp" />
+          <Field.Text type="number" name="quantity" label="Số lượng câu" />
+          <Field.Text name="code" label="Mã đề" />
+          <Field.Text name="matrix" multiline rows={5} label="Ma trận đề" />
+          <Field.Text
+            name="document"
+            label="Tài liệu tham khảo"
+            helperText="Link tài liệu. Không bắt buộc."
+          />
         </Box>
 
         <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
@@ -108,7 +96,7 @@ export function ExamNewEditForm({ currentUser }: Props) {
             loadingIndicator="Loading"
             size="large"
           >
-            {!currentUser ? 'Create user' : 'Save changes'}
+            Tạo đề thi
           </LoadingButton>
         </Stack>
       </Card>

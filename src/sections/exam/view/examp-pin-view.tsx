@@ -20,10 +20,7 @@ import { AnimateLogoRotate } from 'src/components/animate';
 export type ExamPinSchemaType = zod.infer<typeof ExamPinSchema>;
 
 export const ExamPinSchema = zod.object({
-  code: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .length(6, { message: 'Code must be exactly 8 characters!' }),
+  code: zod.string().min(1, { message: 'Yêu cầu bắt buộc nhập mã phòng thi!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -58,7 +55,7 @@ export function ExamPinView() {
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-      <Field.Code name="code" />
+      <Field.Text name="code" placeholder="Mã phòng thi" />
 
       <Button
         fullWidth

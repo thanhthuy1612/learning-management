@@ -6,15 +6,11 @@ import { Stack } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
-import { useRouter } from 'src/routes/hooks';
-
 import { ExamFormView } from './exam-form';
 
 // ----------------------------------------------------------------------
 
 export function Exam() {
-  const router = useRouter();
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const theme = useTheme();
