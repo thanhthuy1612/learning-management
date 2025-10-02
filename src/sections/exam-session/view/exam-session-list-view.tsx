@@ -307,7 +307,7 @@ export function ExamSessionListView() {
       title="Xác nhận"
       content={`Bạn chắc chắn muốn ${row?.isOpen ? 'dừng' : 'bắt đầu'} kỳ thi`}
       action={
-        <Button variant="contained" color="error" onClick={onStartRow}>
+        <Button variant="contained" color="primary" onClick={onStartRow}>
           Xác nhận
         </Button>
       }
@@ -321,7 +321,7 @@ export function ExamSessionListView() {
       title="Xác nhận"
       content="Bạn chắc chắn muốn chấm điểm?"
       action={
-        <Button variant="contained" color="error" onClick={onMarkRow}>
+        <Button variant="contained" color="primary" onClick={onMarkRow}>
           Xác nhận
         </Button>
       }

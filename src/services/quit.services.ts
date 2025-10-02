@@ -22,7 +22,7 @@ export const quitService = {
     try {
       const { data } = await axios.post(endpoints.exam.submit, body);
 
-      if (data.data) {
+      if (!data.data) {
         throw data.message;
       }
 

@@ -44,8 +44,8 @@ export function ExamPinForm() {
       <Field.Text name="code" placeholder="Mã phòng thi" />
 
       <Button
+        color="primary"
         fullWidth
-        color="inherit"
         size="large"
         type="submit"
         variant="contained"

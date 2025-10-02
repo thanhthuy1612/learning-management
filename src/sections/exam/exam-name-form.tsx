@@ -89,8 +89,8 @@ export function ExamNameForm() {
       />
 
       <LoadingButton
+        color="primary"
         fullWidth
-        color="inherit"
         size="large"
         type="submit"
         variant="contained"
