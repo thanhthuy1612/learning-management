@@ -43,6 +43,52 @@ const ICONS = {
 
 // ----------------------------------------------------------------------
 
+export const navDataTeacher: NavSectionProps['data'] = [
+  {
+    subheader: 'Quản lý',
+    items: [
+      {
+        title: 'Người dùng',
+        path: paths.dashboard.user.root,
+        icon: ICONS.user,
+        children: [
+          { title: 'Thông tin cá nhân', path: paths.dashboard.user.account },
+          { title: 'Danh sách người dùng', path: paths.dashboard.user.list },
+          { title: 'Thêm giáo viên', path: paths.dashboard.user.new },
+        ],
+      },
+    ],
+  },
+  {
+    subheader: 'Tổng quan',
+    items: [
+      {
+        title: 'Đề thi',
+        path: paths.dashboard.exam.root,
+        icon: ICONS.file,
+        children: [
+          { title: 'Danh sách', path: paths.dashboard.exam.list },
+          { title: 'Thêm mới', path: paths.dashboard.exam.new },
+        ],
+      },
+      {
+        title: 'Kỳ thi',
+        path: paths.dashboard.examSession.root,
+        icon: ICONS.calendar,
+        children: [
+          { title: 'Danh sách', path: paths.dashboard.examSession.list },
+          { title: 'Thêm mới', path: paths.dashboard.examSession.new },
+        ],
+      },
+      {
+        title: 'Kết quả thi',
+        path: paths.dashboard.scores.root,
+        icon: ICONS.booking,
+        children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
+      },
+    ],
+  },
+];
 export const navData: NavSectionProps['data'] = [
   {
     subheader: 'Quản lý',
