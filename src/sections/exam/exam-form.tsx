@@ -5,7 +5,6 @@ import type { IQuitRequestBody } from 'src/types/question';
 
 import React from 'react';
 import { z as zod } from 'zod';
-import router from 'next/router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
@@ -14,6 +13,7 @@ import Button from '@mui/material/Button';
 import { Grid, Radio, FormLabel, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -60,6 +60,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
   const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
 
+  const router = useRouter();
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const confirmDialog = useBoolean();

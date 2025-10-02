@@ -66,7 +66,7 @@ export const examSessionService = {
     try {
       const { data } = await axios.post(endpoints.examSession.scores, body);
 
-      if (data.code) {
+      if (!data.data) {
         throw data.message;
       }
 

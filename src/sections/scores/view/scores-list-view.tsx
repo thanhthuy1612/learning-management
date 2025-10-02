@@ -21,7 +21,6 @@ import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { examSessionService } from 'src/services/exam-session.services';
 import { updateSubmission, updateFiltersScores } from 'src/lib/features';
 
-import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
@@ -136,7 +135,7 @@ export function ScoresListView() {
       field: 'actions',
       align: 'right',
       headerAlign: 'right',
-      width: 160,
+      width: 40,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -147,7 +146,7 @@ export function ScoresListView() {
               color="info"
               onClick={() => {
                 viewForm.onTrue();
-                dispatch(updateSubmission(params.row.question as ISubmission[]));
+                dispatch(updateSubmission(params.row.submission as ISubmission[]));
               }}
             >
               <Iconify icon="solar:eye-bold" />
@@ -166,21 +165,14 @@ export function ScoresListView() {
       const newBody: IExamSessionIdRequestBody = body ?? {
         examSessionId: searchText,
       };
-      const res = await examSessionService.mark(newBody);
-      if (res.total) {
-        dispatch(updateFiltersScores(newBody.examSessionId));
-        setTotal(res.total);
-        setTableData(res.data);
-        apiRef.current.setRows(res.data);
-      } else {
-        setTotal(0);
-        setTableData([]);
-        apiRef.current.setRows([]);
-      }
+      const res = await examSessionService.scores(newBody);
+      dispatch(updateFiltersScores(newBody.examSessionId));
+      setTotal(res.length);
+      setTableData(res);
     } catch (error: any) {
+      console.error(error);
       setTotal(0);
       setTableData([]);
-      toast.error(error.toString());
     } finally {
       setLoading(false);
       setLoadingFirst(false);
@@ -221,7 +213,7 @@ export function ScoresListView() {
         {!loadingFirst && filters && (
           <ScoresTableFiltersResult
             totalResults={tableData.length}
-            onResetPage={fetchData}
+            onResetPage={() => fetchData()}
             sx={{ p: 2.5, pt: 0 }}
           />
         )}

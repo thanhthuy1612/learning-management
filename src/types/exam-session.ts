@@ -38,7 +38,7 @@ export type ISubmission = {
   question: string;
   choices: Record<Choice, string>;
   answer?: Choice;
-  submittedAnswer: string;
+  submittedAnswer: Choice;
   isCorrect: true;
 };
 

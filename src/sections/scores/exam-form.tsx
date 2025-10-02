@@ -72,7 +72,10 @@ export function ExamForm({ sx, open, onClose }: Props) {
   React.useEffect(() => {
     setValue(
       'answers',
-      submission.map((item) => ({ question: item.question, answer: item.answer ?? '' }))
+      (submission ?? []).map((item) => ({
+        question: item.question,
+        answer: item.submittedAnswer ?? '',
+      }))
     );
   }, [submission, setValue]);
 
@@ -113,6 +116,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
                         </FormLabel>
                         <RadioGroup
                           {...typeField}
+                          onChange={() => {}}
                           aria-labelledby={`answers.${index}.answer-radios`}
                         >
                           <Grid container spacing={2}>
@@ -122,7 +126,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                   variant="outlined"
                                   fullWidth
                                   color={
-                                    typeField.value === option
+                                    submission[index].answer === option
                                       ? 'primary'
                                       : option === submission[index].submittedAnswer
                                         ? 'error'
@@ -133,7 +137,20 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                   <FormControlLabel
                                     key={option}
                                     value={option}
-                                    control={<Radio key={option} value={option} />}
+                                    control={
+                                      <Radio
+                                        color={
+                                          submission[index].answer === option
+                                            ? 'primary'
+                                            : option === submission[index].submittedAnswer
+                                              ? 'error'
+                                              : 'default'
+                                        }
+                                        key={option}
+                                        value={option}
+                                        onChange={() => {}}
+                                      />
+                                    }
                                     label={submission[index].choices[option]}
                                     sx={{ width: '100%', height: '100%' }}
                                   />

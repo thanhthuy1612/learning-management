@@ -4,7 +4,10 @@ import React from 'react';
 
 import { Stack } from '@mui/material';
 
-import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
+import { useAppSelector } from 'src/lib/hooks';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
@@ -16,9 +19,8 @@ export function ExamView() {
   const [isVisible, setIsVisible] = React.useState(true);
   const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
 
-  const dispatch = useAppDispatch();
-  const { targetDate } = useAppSelector((state) => state.exam);
-
+  const { questions } = useAppSelector((state) => state.exam);
+  const router = useRouter();
   React.useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
@@ -45,10 +47,14 @@ export function ExamView() {
     };
   }, [timer]);
 
+  React.useEffect(() => {
+    if (!questions) {
+      router.push(paths.pin);
+    }
+  }, [questions, router]);
+
   const renderBody = () => {
     if (!isVisible) return null;
-    // if (!targetDate) return <SplashScreen />;
-    // if (targetDate - new Date().getTime() < 5 * 60 * 1000) return <ExamExpried />;
     return <Exam />;
   };
 
