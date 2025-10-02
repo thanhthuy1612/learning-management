@@ -2,8 +2,6 @@ import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
 
-import { CONFIG } from 'src/global-config';
-
 import {
   setSession,
   JWT_STORAGE_KEY,
@@ -13,7 +11,8 @@ import {
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
+// const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
+const axiosInstance = axios.create({ baseURL: 'http://103.183.118.29' });
 
 axiosInstance.interceptors.response.use(
   (response) => response,
