@@ -1,2 +1,2 @@
-export * from './examp-view';
-export * from './examp-pin-view';
+export * from './exam-view';
+export * from './exam-pin-view';

@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { UserNewEditForm } from '../user-new-edit-form';
+import { UserNewForm } from '../user-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ export function UserCreateView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserNewEditForm />
+      <UserNewForm />
     </DashboardContent>
   );
 }

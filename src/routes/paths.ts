@@ -32,9 +32,9 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/exam/list`,
     },
     examSession: {
-      root: `${ROOTS.DASHBOARD}/exam-session`,
-      new: `${ROOTS.DASHBOARD}/exam-session/new`,
-      list: `${ROOTS.DASHBOARD}/exam-session/list`,
+      root: `${ROOTS.DASHBOARD}/session`,
+      new: `${ROOTS.DASHBOARD}/session/new`,
+      list: `${ROOTS.DASHBOARD}/session/list`,
     },
     scores: {
       root: `${ROOTS.DASHBOARD}/scores`,
@@ -42,5 +42,5 @@ export const paths = {
     },
   },
   pin: '/exam',
-  exam: (id: string) => `/exam/${id}`,
+  exam: '/exam/quit',
 };

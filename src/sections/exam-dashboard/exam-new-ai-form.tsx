@@ -11,6 +11,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
@@ -83,7 +84,12 @@ export function ExamNewAIForm() {
           <Field.Text
             name="document"
             label="Tài liệu tham khảo"
-            helperText="Link tài liệu. Không bắt buộc."
+            helperText={
+              <Box component="span" sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
+                <Iconify icon="solar:info-circle-bold" width={16} />
+                Link tài liệu. Không bắt buộc.
+              </Box>
+            }
           />
         </Box>
 

@@ -201,7 +201,7 @@ const MuiFab: Components<Theme>['MuiFab'] = {
          */
         sizes,
       ].flat(),
-    },
+    } as any,
   },
 };
 

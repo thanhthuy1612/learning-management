@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import userSlice from './features/user';
 import examSlice from './features/exam';
+import scoresSlice from './features/scores';
+import examSessionSlice from './features/exam-session';
 import examDashboardSlice from './features/exam-dashboard';
 
 export const makeStore = () =>
@@ -10,6 +12,8 @@ export const makeStore = () =>
       user: userSlice,
       exam: examSlice,
       examDashboard: examDashboardSlice,
+      examSession: examSessionSlice,
+      scores: scoresSlice,
     },
   });
 

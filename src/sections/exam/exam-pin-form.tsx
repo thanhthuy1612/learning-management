@@ -1,19 +1,16 @@
 'use client';
 
 import { z as zod } from 'zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { updatePin } from 'src/lib/features';
+import { useAppDispatch } from 'src/lib/hooks';
 
 import { Form, Field } from 'src/components/hook-form';
-import { AnimateLogoRotate } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -25,14 +22,12 @@ export const ExamPinSchema = zod.object({
 
 // ----------------------------------------------------------------------
 
-export function ExamPinView() {
-  const router = useRouter();
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export function ExamPinForm() {
+  const dispatch = useAppDispatch();
 
   const methods = useForm<ExamPinSchemaType>({
     resolver: zodResolver(ExamPinSchema),
-    defaultValues: {},
+    defaultValues: { code: '' },
   });
 
   const {
@@ -41,16 +36,7 @@ export function ExamPinView() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    router.push(paths.exam('1'));
-    // try {
-    //   await ExamPinWithPassword({ email: data.email, password: data.password });
-    //   await checkUserSession?.();
-    //   router.refresh();
-    // } catch (error) {
-    //   console.error(error);
-    //   const feedbackMessage = getErrorMessage(error);
-    //   setErrorMessage(feedbackMessage);
-    // }
+    dispatch(updatePin(data.code));
   });
 
   const renderForm = () => (
@@ -72,18 +58,8 @@ export function ExamPinView() {
   );
 
   return (
-    <>
-      <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
-
-      {!!errorMessage && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {errorMessage}
-        </Alert>
-      )}
-
-      <Form methods={methods} onSubmit={onSubmit}>
-        {renderForm()}
-      </Form>
-    </>
+    <Form methods={methods} onSubmit={onSubmit}>
+      {renderForm()}
+    </Form>
   );
 }

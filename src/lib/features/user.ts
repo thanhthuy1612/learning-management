@@ -1,27 +1,40 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { SignInSchemaType } from 'src/auth/view/jwt';
+import type { IUserRequestBody } from 'src/types/user';
 
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState: SignInSchemaType = {
-  email: '',
-  password: '',
+import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
+
+export interface IUserRedux {
+  filters?: IUserRequestBody;
+  searchText: string;
+}
+const initialState: IUserRedux = {
+  searchText: '',
 };
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    updateEmail: (state, action: PayloadAction<string>) => {
-      state.email = action.payload;
+    updateFiltersUser: (state, action: PayloadAction<IUserRequestBody>) => {
+      state.filters = action.payload;
     },
-    updateUser: (_state, action: PayloadAction<SignInSchemaType>) => ({
-      ...action.payload,
-    }),
+    updateFiltersSearchUser: (state, action: PayloadAction<string>) => {
+      state.filters = {
+        pageIndex: defaultPageIndex,
+        pageSize: defaultPageSize,
+        searchText: action.payload,
+      };
+    },
+    updateSearchTextUser: (state, action: PayloadAction<string>) => {
+      state.searchText = action.payload;
+    },
     resetStateUser: () => initialState,
   },
 });
 
 export default userSlice.reducer;
 
-export const { resetStateUser, updateEmail, updateUser } = userSlice.actions;
+export const { resetStateUser, updateFiltersUser, updateFiltersSearchUser, updateSearchTextUser } =
+  userSlice.actions;

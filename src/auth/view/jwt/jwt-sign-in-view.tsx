@@ -7,14 +7,12 @@ import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -30,10 +28,7 @@ import { signInWithPassword } from '../../context/jwt';
 export type SignInSchemaType = zod.infer<typeof SignInSchema>;
 
 export const SignInSchema = zod.object({
-  email: zod
-    .string()
-    .min(1, { message: 'Email là bắt buộc!' })
-    .email({ message: 'Địa chỉ email phải là địa chỉ email hợp lệ!' }),
+  userName: zod.string().min(1, { message: 'Tài khoản là bắt buộc!' }),
   password: zod
     .string()
     .min(1, { message: 'Mật khẩu là bắt buộc!' })
@@ -43,22 +38,20 @@ export const SignInSchema = zod.object({
 // ----------------------------------------------------------------------
 
 export function JwtSignInView() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const router = useRouter();
 
   const showPassword = useBoolean();
 
   const { checkUserSession } = useAuthContext();
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const defaultValues: SignInSchemaType = {
-    email: 'demo@minimals.cc',
-    password: '@2Minimal',
-  };
-
   const methods = useForm<SignInSchemaType>({
     resolver: zodResolver(SignInSchema),
-    defaultValues,
+    defaultValues: {
+      userName: '',
+      password: '',
+    },
   });
 
   const {
@@ -68,12 +61,10 @@ export function JwtSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await signInWithPassword({ email: data.email, password: data.password });
+      await signInWithPassword(data);
       await checkUserSession?.();
-
       router.refresh();
     } catch (error) {
-      console.error(error);
       const feedbackMessage = getErrorMessage(error);
       setErrorMessage(feedbackMessage);
     }
@@ -81,10 +72,10 @@ export function JwtSignInView() {
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-      <Field.Text name="email" label="Địa chỉ email" slotProps={{ inputLabel: { shrink: true } }} />
+      <Field.Text name="userName" label="Tài khoản" slotProps={{ inputLabel: { shrink: true } }} />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
-        <Link
+        {/* <Link
           component={RouterLink}
           href="#"
           variant="body2"
@@ -92,7 +83,7 @@ export function JwtSignInView() {
           sx={{ alignSelf: 'flex-end' }}
         >
           Quên mật khẩu?
-        </Link>
+        </Link> */}
 
         <Field.Text
           name="password"

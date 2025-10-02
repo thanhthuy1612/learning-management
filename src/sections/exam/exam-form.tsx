@@ -1,9 +1,11 @@
 'use client';
 
 import type { Theme, SxProps } from '@mui/material';
+import type { IQuitRequestBody } from 'src/types/question';
 
 import React from 'react';
 import { z as zod } from 'zod';
+import router from 'next/router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
@@ -11,11 +13,15 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Grid, Radio, FormLabel, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
 
+import { paths } from 'src/routes/paths';
+
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { useAppSelector } from 'src/lib/hooks';
+import { quitService } from 'src/services/quit.services';
 
 import { Form } from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { ComponentBox } from 'src/components/layout';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -32,6 +38,7 @@ export type ExamFormSchemaType = zod.infer<typeof ExamFormSchema>;
 export const ExamFormSchema = zod.object({
   answers: zod.array(
     zod.object({
+      id: zod.string(),
       question: zod.string(),
       answer: zod.union([
         zod.enum(Choices, { message: 'Câu trả lời phải là A, B, C hoặc D!' }),
@@ -57,7 +64,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
 
   const confirmDialog = useBoolean();
 
-  const { questions } = useAppSelector((state) => state.exam);
+  const { questions, dataStepOne } = useAppSelector((state) => state.exam);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -100,7 +107,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
   React.useEffect(() => {
     setValue(
       'answers',
-      questions.map((item) => ({ question: item.question, answer: '' }))
+      questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
     );
   }, [questions, setValue]);
 
@@ -108,9 +115,39 @@ export function ExamFormView({ handleSend, sx }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     setDataSubmit(data);
-    console.log(data);
     confirmDialog.onTrue();
   });
+
+  const onHandleSubmit = () => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        quitService
+          .quit({
+            scoreId: dataStepOne?.scoreId,
+            questions: dataSubmit?.answers.map((item) => ({
+              id: item.id,
+              answer: item.answer,
+            })),
+            isFinished: true,
+          } as IQuitRequestBody)
+          .then((res) => {
+            resolve('Nộp thành công');
+            router.push(paths.pin);
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Nộp thành công',
+      });
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
 
   const renderConfirmDialog = () => (
     <ConfirmDialog
@@ -123,9 +160,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
           color="primary"
           variant="contained"
           loading={isSubmitting}
-          onClick={() => {
-            console.log(dataSubmit);
-          }}
+          onClick={onHandleSubmit}
           loadingIndicator="Nộp bài..."
           sx={{ zIndex: 2 }}
           startIcon={<Iconify width={16} icon="custom:send-fill" />}

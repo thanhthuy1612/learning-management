@@ -26,7 +26,7 @@ export type Props = GridSlotProps['toolbar'] & {
 
 export function CustomDataGridToolbar({ setFilterButtonEl, showSearch, sx }: Props) {
   return (
-    <GridToolbarContainer sx={sx}>
+    <GridToolbarContainer sx={{ mt: 2, ...sx }}>
       {showSearch && <GridToolbarQuickFilter />}
       <Box sx={{ flexGrow: 1 }} />
       <GridToolbarColumnsButton />

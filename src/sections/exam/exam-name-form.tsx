@@ -1,19 +1,24 @@
 'use client';
 
+import type { IPinRequestBody } from 'src/types/question';
+
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-import { updateName } from 'src/lib/features';
-import { useAppDispatch } from 'src/lib/hooks';
-import { MainSection } from 'src/layouts/core';
-import { AuthCenteredContent } from 'src/layouts/auth-centered';
+import { paths } from 'src/routes/paths';
 
+import { quitService } from 'src/services/quit.services';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
+import { updateName, updateData, updateQuestions, updateErrorStepOne } from 'src/lib/features';
+
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
-import { AnimateLogoRotate } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -26,11 +31,14 @@ export const ExamNameSchema = zod.object({
 // ----------------------------------------------------------------------
 
 export function ExamNameForm() {
+  const { pin } = useAppSelector((state) => state.exam);
   const dispatch = useAppDispatch();
+
+  const router = useRouter();
 
   const methods = useForm<ExamNameSchemaType>({
     resolver: zodResolver(ExamNameSchema),
-    defaultValues: {},
+    defaultValues: { name: '' },
   });
 
   const {
@@ -40,18 +48,47 @@ export function ExamNameForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     dispatch(updateName(data.name));
+    try {
+      const promise = new Promise((resolve, reject) => {
+        quitService
+          .pin({ code: pin, username: data.name } as IPinRequestBody)
+          .then((res) => {
+            dispatch(updateData(res));
+            dispatch(updateQuestions(res.question));
+            resolve('Tạo thành công');
+            router.push(paths.exam);
+          })
+          .catch((e) => {
+            toast.error(e);
+            dispatch(updateErrorStepOne(e));
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Tạo thành công',
+      });
+    } catch (error: any) {
+      dispatch(updateErrorStepOne(error));
+    }
   });
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
       <Field.Text
         name="name"
-        helperText="Nhập tên theo yêu cầu giáo viên"
+        helperText={
+          <Box component="span" sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
+            <Iconify icon="solar:info-circle-bold" width={16} />
+            Nhập tên theo yêu cầu giáo viên
+          </Box>
+        }
         label="Tên"
         slotProps={{ inputLabel: { shrink: true } }}
       />
 
-      <Button
+      <LoadingButton
         fullWidth
         color="inherit"
         size="large"
@@ -61,30 +98,13 @@ export function ExamNameForm() {
         loadingIndicator="Gửi..."
       >
         Gửi
-      </Button>
+      </LoadingButton>
     </Box>
   );
 
   return (
-    <MainSection
-      sx={[
-        (theme) => ({
-          alignItems: 'center',
-          p: theme.spacing(3, 2, 10, 2),
-          [theme.breakpoints.up('md')]: {
-            justifyContent: 'center',
-            p: theme.spacing(10, 0, 10, 0),
-          },
-        }),
-      ]}
-    >
-      <AuthCenteredContent sx={{ '--layout-auth-content-width': '420px' }}>
-        <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
-
-        <Form methods={methods} onSubmit={onSubmit}>
-          {renderForm()}
-        </Form>
-      </AuthCenteredContent>
-    </MainSection>
+    <Form methods={methods} onSubmit={onSubmit}>
+      {renderForm()}
+    </Form>
   );
 }

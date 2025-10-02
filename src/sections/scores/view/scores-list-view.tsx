@@ -1,68 +1,68 @@
 'use client';
 
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
+import type { IScores, ISubmission, IExamSessionIdRequestBody } from 'src/types/exam-session';
 
 import React from 'react';
-import { varAlpha } from 'minimal-shared/utils';
-import { useSetState } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
+import { Tooltip, IconButton } from '@mui/material';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { fDateTime } from 'src/utils/format-time';
 
-import { Label } from 'src/components/label';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
+import { examSessionService } from 'src/services/exam-session.services';
+import { updateSubmission, updateFiltersScores } from 'src/lib/features';
+
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
+import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
+import { ExamForm } from '../exam-form';
 import { ScoresTableToolbar } from '../scores-table-toolbar';
-import { ScoresQuickEditForm } from '../scores-quick-edit-form';
 import { ScoresTableFiltersResult } from '../scores-table-filters-result';
 
-// ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const HIDE_COLUMNS = {
+  enrollDate: false,
+  lastSubmittedDate: false,
+  finishedDate: false,
+  endTime: false,
+};
 
 // ----------------------------------------------------------------------
 
 export function ScoresListView() {
-  const [tableData, setTableData] = React.useState<IUserItem[]>(_userList);
-  const [row, setRow] = React.useState<IUserItem>();
+  const [tableData, setTableData] = React.useState<IScores[]>([]);
   const [total, setTotal] = React.useState<number>(0);
+  const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(1);
   const [pageSize, setPageSize] = React.useState<number>(10);
   const [columnVisibilityModel, setColumnVisibilityModel] =
-    React.useState<GridColumnVisibilityModel>({});
-
-  const table = useTable();
-
-  const confirmDialog = useBoolean();
-  const quickEditForm = useBoolean();
+    React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
 
   const apiRef = useGridApiRef();
 
+  const viewForm = useBoolean();
+
+  const dispatch = useAppDispatch();
+  const { searchText, filters } = useAppSelector((state) => state.scores);
+
   const columns: GridColDef[] = [
     {
-      field: 'name',
-      headerName: 'Name',
+      field: 'username',
+      headerName: 'Tên',
       minWidth: 200,
       flex: 1,
       hideable: false,
@@ -70,8 +70,8 @@ export function ScoresListView() {
       headerAlign: 'center',
     },
     {
-      field: 'email',
-      headerName: 'Email',
+      field: 'score',
+      headerName: 'Điểm',
       minWidth: 200,
       flex: 1,
       hideable: false,
@@ -79,60 +79,78 @@ export function ScoresListView() {
       headerAlign: 'center',
     },
     {
-      field: 'status',
-      headerName: 'Status',
+      field: 'examSessionId',
+      headerName: 'Mã kỳ thi',
       minWidth: 200,
       flex: 1,
-      hideable: false,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => (
-        <Label
-          variant="soft"
-          color={
-            (params.row.status === 'active' && 'success') ||
-            (params.row.status === 'pending' && 'warning') ||
-            (params.row.status === 'banned' && 'error') ||
-            'default'
-          }
-        >
-          {params.row.status}
-        </Label>
-      ),
+      renderCell: (params) => <CopyTitle value={params.row.examSessionId} />,
+    },
+    {
+      field: 'examSessionName',
+      headerName: 'Tên kỳ thi',
+      minWidth: 200,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+    },
+    {
+      field: 'enrollDate',
+      headerName: 'Bắt đầu thi',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY h:mm a')}`,
+    },
+    {
+      field: 'lastSubmittedDate',
+      headerName: 'Nộp bài',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY h:mm a')}`,
+    },
+    {
+      field: 'finishedDate',
+      headerName: 'Ngày kết thúc',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.finishedDate, 'DD/MM/YYYY')}`,
+    },
+    {
+      field: 'endTime',
+      headerName: 'Giờ kết thúc',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.endTime, 'h:mm a')}`,
     },
     {
       type: 'actions',
       field: 'actions',
-      headerName: 'Actions',
       align: 'right',
       headerAlign: 'right',
-      width: 80,
+      width: 160,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Quick Edit" placement="top" arrow>
+          <Tooltip title="Xem" placement="top" arrow>
             <IconButton
-              color={quickEditForm.value ? 'inherit' : 'default'}
+              color="info"
               onClick={() => {
-                quickEditForm.onTrue();
-                setRow(params.row);
+                viewForm.onTrue();
+                dispatch(updateSubmission(params.row.question as ISubmission[]));
               }}
             >
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Delete" placement="top" arrow>
-            <IconButton
-              color="error"
-              onClick={() => {
-                confirmDialog.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:trash-bin-trash-bold" />
+              <Iconify icon="solar:eye-bold" />
             </IconButton>
           </Tooltip>
         </Box>
@@ -140,47 +158,48 @@ export function ScoresListView() {
     },
   ];
 
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
-  const { state: currentFilters, setState: updateFilters } = filters;
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
-  });
-
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
-
-  const handleFilterStatus = React.useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
-      table.onResetPage();
-      updateFilters({ status: newValue });
-    },
-    [updateFilters, table]
-  );
-
-  const onDeleteRow = () => {};
-
-  const renderQuickEditForm = () => (
-    <ScoresQuickEditForm
-      currentUser={row}
-      open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
-    />
-  );
-
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={confirmDialog.value}
-      onClose={confirmDialog.onFalse}
-      title="Delete"
-      content="Are you sure want to delete?"
-      action={
-        <Button variant="contained" color="error" onClick={onDeleteRow}>
-          Delete
-        </Button>
+  const fetchData = async (body?: IExamSessionIdRequestBody) => {
+    try {
+      setLoading(true);
+      setPageIndex(1);
+      setPageSize(10);
+      const newBody: IExamSessionIdRequestBody = body ?? {
+        examSessionId: searchText,
+      };
+      const res = await examSessionService.mark(newBody);
+      if (res.total) {
+        dispatch(updateFiltersScores(newBody.examSessionId));
+        setTotal(res.total);
+        setTableData(res.data);
+        apiRef.current.setRows(res.data);
+      } else {
+        setTotal(0);
+        setTableData([]);
+        apiRef.current.setRows([]);
       }
+    } catch (error: any) {
+      setTotal(0);
+      setTableData([]);
+      toast.error(error.toString());
+    } finally {
+      setLoading(false);
+      setLoadingFirst(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (searchText) {
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const renderViewForm = () => (
+    <ExamForm
+      open={viewForm.value}
+      onClose={() => {
+        viewForm.onFalse();
+      }}
     />
   );
 
@@ -197,155 +216,55 @@ export function ScoresListView() {
       />
 
       <Card>
-        <Tabs
-          value={currentFilters.status}
-          onChange={handleFilterStatus}
-          sx={[
-            (theme) => ({
-              px: 2.5,
-              boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-            }),
-          ]}
-        >
-          {STATUS_OPTIONS.map((tab) => (
-            <Tab
-              key={tab.value}
-              iconPosition="end"
-              value={tab.value}
-              label={tab.label}
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                    'soft'
-                  }
-                  color={
-                    (tab.value === 'active' && 'success') ||
-                    (tab.value === 'pending' && 'warning') ||
-                    (tab.value === 'banned' && 'error') ||
-                    'default'
-                  }
-                >
-                  {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                    ? tableData.filter((user) => user.status === tab.value).length
-                    : tableData.length}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
+        <ScoresTableToolbar sx={{ p: 2.5 }} onResetPage={fetchData} />
 
-        <ScoresTableToolbar
-          filters={filters}
-          onResetPage={table.onResetPage}
-          options={{ roles: _roles }}
-        />
-
-        {canReset && (
+        {!loadingFirst && filters && (
           <ScoresTableFiltersResult
-            filters={filters}
-            totalResults={dataFiltered.length}
-            onResetPage={table.onResetPage}
+            totalResults={tableData.length}
+            onResetPage={fetchData}
             sx={{ p: 2.5, pt: 0 }}
           />
         )}
 
-        <Box sx={{ position: 'relative' }}>
-          <TableSelectedAction
-            dense={table.dense}
-            numSelected={table.selected.length}
-            rowCount={dataFiltered.length}
-            onSelectAllRows={(checked) =>
-              table.onSelectAllRows(
-                checked,
-                dataFiltered.map((r) => r.id)
-              )
-            }
-            action={
-              <Tooltip title="Delete">
-                <IconButton color="primary" onClick={confirmDialog.onTrue}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
-            }
-          />
-
-          <DataGrid
-            paginationModel={{
-              page: pageIndex - 1,
-              pageSize,
-            }}
-            apiRef={apiRef}
-            loading={loading}
-            columns={columns}
-            rows={tableData}
-            columnVisibilityModel={columnVisibilityModel}
-            onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
-            disableRowSelectionOnClick
-            slots={{
-              toolbar: (props) => (
-                <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
-              ),
-              pagination: () => (
-                <PaginationCustom
-                  page={pageIndex}
-                  count={Math.ceil(total / pageSize)}
-                  rowsPerPage={pageSize}
-                  onChange={(_event, page) => {
-                    setPageIndex(page);
-                  }}
-                  onRowsPerPageChange={(pagesize: number) => {
-                    setPageSize(pagesize);
-                    // resetPage(pagesize);
-                  }}
-                  total={total}
-                  optionAll
-                />
-              ),
-              noRowsOverlay: () => <EmptyContent title="No results" />,
-              noResultsOverlay: () => <EmptyContent title="No results found" />,
-            }}
-          />
-        </Box>
+        {!!filters && (
+          <Box sx={{ position: 'relative' }}>
+            <DataGrid
+              paginationModel={{
+                page: pageIndex - 1,
+                pageSize,
+              }}
+              apiRef={apiRef}
+              loading={loading}
+              columns={columns}
+              rows={tableData}
+              columnVisibilityModel={columnVisibilityModel}
+              onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
+              disableRowSelectionOnClick
+              slots={{
+                toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
+                pagination: () => (
+                  <PaginationCustom
+                    total={total}
+                    page={pageIndex}
+                    count={Math.ceil(total / pageSize)}
+                    rowsPerPage={pageSize}
+                    onChange={(_event, page) => {
+                      setPageIndex(page);
+                    }}
+                    onRowsPerPageChange={(pagesize: number) => {
+                      setPageSize(pagesize);
+                      setPageIndex(1);
+                    }}
+                  />
+                ),
+                noRowsOverlay: () => <EmptyContent title="Không có kết quả" />,
+                noResultsOverlay: () => <EmptyContent title="Không tìm thấy kết quả" />,
+              }}
+            />
+          </Box>
+        )}
       </Card>
-      {renderQuickEditForm()}
-      {renderConfirmDialog()}
+      {renderViewForm()}
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-type ApplyFilterProps = {
-  inputData: IUserItem[];
-  filters: IUserTableFilters;
-  comparator: (a: any, b: any) => number;
-};
-
-function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
-  }
-
-  return inputData;
 }

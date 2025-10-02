@@ -9,6 +9,7 @@ import { CONFIG } from 'src/global-config';
 import { primary } from 'src/theme/core/palette';
 import { themeConfig, ThemeProvider } from 'src/theme';
 
+import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { detectSettings } from 'src/components/settings/server';
@@ -81,6 +82,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
                 >
                   <MotionLazy>
+                    <Snackbar />
                     <ProgressBar />
                     <SettingsDrawer defaultSettings={defaultSettings} />
                     {children}

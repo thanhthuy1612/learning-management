@@ -18,6 +18,7 @@ const isStaticExport = false;
 // ----------------------------------------------------------------------
 
 const nextConfig: NextConfig = {
+  reactStrictMode: false,
   trailingSlash: true,
   output: isStaticExport ? 'export' : undefined,
   env: {

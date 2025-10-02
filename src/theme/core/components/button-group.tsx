@@ -102,7 +102,7 @@ const MuiButtonGroup: Components<Theme>['MuiButtonGroup'] = {
         softVariant.base,
         softVariant.colors,
       ].flat(),
-    },
+    } as any,
     /**
      * @variant contained
      */

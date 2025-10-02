@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { ExamSessionNewEditForm } from '../exam-session-new-edit-form';
+import { ExamSessionNewForm } from '../exam-session-new-form';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ export function ExamSessionCreateView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <ExamSessionNewEditForm />
+      <ExamSessionNewForm />
     </DashboardContent>
   );
 }

@@ -125,7 +125,7 @@ const MuiChip: Components<Theme>['MuiChip'] = {
         ].flat(),
         ...styled.colors,
         ...styled.disabled,
-      };
+      } as any;
     },
     label: ({ theme }) => ({ fontWeight: theme.typography.fontWeightMedium }),
     icon: { color: 'currentColor' },
@@ -137,8 +137,8 @@ const MuiChip: Components<Theme>['MuiChip'] = {
     /**
      * @sizes
      */
-    sizeMedium: ({ theme }) => ({ borderRadius: theme.shape.borderRadius * 1.25 }),
-    sizeSmall: ({ theme }) => ({ borderRadius: theme.shape.borderRadius }),
+    sizeMedium: ({ theme }) => ({ borderRadius: Number(theme.shape.borderRadius) * 1.25 }),
+    sizeSmall: ({ theme }) => ({ borderRadius: Number(theme.shape.borderRadius) }),
     /**
      * @variant filled
      */

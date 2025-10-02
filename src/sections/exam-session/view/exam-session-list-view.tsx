@@ -1,15 +1,18 @@
 'use client';
 
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IQuestionItem } from 'src/types/question';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
+import type {
+  IExamSession,
+  ITypeExamRequestBody,
+  IExamSessionRequestBody,
+  IExamSessionIdRequestBody,
+} from 'src/types/exam-session';
 
 import React from 'react';
-import { varAlpha } from 'minimal-shared/utils';
-import { useSetState } from 'minimal-shared/hooks';
+import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -21,119 +24,169 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { fDateTime } from 'src/utils/format-time';
 
-import { Label } from 'src/components/label';
+import { useAppDispatch } from 'src/lib/hooks';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { examSessionService } from 'src/services/exam-session.services';
+import { updateExamChoice, updateFiltersScores, updateSearchTextScores } from 'src/lib/features';
+
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
+import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
-import { ExamSessionTableToolbar } from '../exam-session-table-toolbar';
-import { ExamSessionQuickEditForm } from '../exam-session-quick-edit-form';
-import { ExamSessionTableFiltersResult } from '../exam-session-table-filters-result';
+import { ExamForm } from 'src/sections/exam-dashboard/exam-form';
 
-// ----------------------------------------------------------------------
+import { useAuthContext } from 'src/auth/hooks';
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
 
 // ----------------------------------------------------------------------
 
 export function ExamSessionListView() {
-  const [tableData, setTableData] = React.useState<IUserItem[]>(_userList);
-  const [row, setRow] = React.useState<IUserItem>();
+  const [tableData, setTableData] = React.useState<IExamSession[]>([]);
+  const [row, setRow] = React.useState<IExamSession>();
   const [total, setTotal] = React.useState<number>(0);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(1);
   const [pageSize, setPageSize] = React.useState<number>(10);
   const [columnVisibilityModel, setColumnVisibilityModel] =
-    React.useState<GridColumnVisibilityModel>({});
-
-  const table = useTable();
+    React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
 
   const confirmDialog = useBoolean();
-  const quickEditForm = useBoolean();
+  const viewForm = useBoolean();
+  const mark = useBoolean();
+
+  const dispatch = useAppDispatch();
+
+  const { user } = useAuthContext();
 
   const apiRef = useGridApiRef();
 
+  const router = useRouter();
+
   const columns: GridColDef[] = [
     {
+      field: 'id',
+      headerName: 'Mã',
+      minWidth: 200,
+      flex: 1,
+      hideable: false,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => <CopyTitle value={params.row.id} />,
+    },
+    {
+      field: 'code',
+      headerName: 'Code',
+      minWidth: 200,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => <CopyTitle value={params.row.code} />,
+    },
+    {
       field: 'name',
-      headerName: 'Name',
-      minWidth: 200,
+      headerName: 'Tên',
+      minWidth: 100,
       flex: 1,
-      hideable: false,
       align: 'center',
       headerAlign: 'center',
     },
     {
-      field: 'email',
-      headerName: 'Email',
-      minWidth: 200,
+      field: 'duration',
+      headerName: 'Thời gian',
+      minWidth: 80,
       flex: 1,
-      hideable: false,
       align: 'center',
       headerAlign: 'center',
+      renderCell: (params) => <CopyTitle value={params.row.duration} />,
     },
     {
-      field: 'status',
-      headerName: 'Status',
+      field: 'createdDate',
+      headerName: 'Ngày tạo',
+      flex: 1,
       minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+    },
+    {
+      field: 'isOpen',
+      headerName: 'Trạng thái',
+      minWidth: 80,
       flex: 1,
       hideable: false,
       align: 'center',
       headerAlign: 'center',
       renderCell: (params) => (
-        <Label
-          variant="soft"
-          color={
-            (params.row.status === 'active' && 'success') ||
-            (params.row.status === 'pending' && 'warning') ||
-            (params.row.status === 'banned' && 'error') ||
-            'default'
-          }
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
         >
-          {params.row.status}
-        </Label>
-      ),
-    },
-    {
-      type: 'actions',
-      field: 'actions',
-      headerName: 'Actions',
-      align: 'right',
-      headerAlign: 'right',
-      width: 80,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Quick Edit" placement="top" arrow>
+          <Tooltip title={params.row.isOpen ? 'Dừng' : 'Bắt đầu'} placement="top" arrow>
             <IconButton
-              color={quickEditForm.value ? 'inherit' : 'default'}
-              onClick={() => {
-                quickEditForm.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Delete" placement="top" arrow>
-            <IconButton
-              color="error"
+              color={params.row.isOpen ? 'error' : 'success'}
               onClick={() => {
                 confirmDialog.onTrue();
                 setRow(params.row);
               }}
             >
-              <Iconify icon="solar:trash-bin-trash-bold" />
+              <Iconify
+                icon={params.row.isOpen ? 'solar:stop-circle-bold' : 'solar:play-circle-bold'}
+              />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+    {
+      type: 'actions',
+      field: 'actions',
+      align: 'right',
+      headerAlign: 'right',
+      width: 120,
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title="Xem" placement="top" arrow>
+            <IconButton
+              color="info"
+              onClick={() => {
+                viewForm.onTrue();
+                dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
+              }}
+            >
+              <Iconify icon="solar:eye-bold" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Chấm điểm" placement="top" arrow>
+            <IconButton
+              color="default"
+              onClick={() => {
+                mark.onTrue();
+                setRow(params.row);
+              }}
+            >
+              <Iconify icon="solar:heart-bold" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Xem điểm" placement="top" arrow>
+            <IconButton
+              color="primary"
+              onClick={() => {
+                dispatch(updateFiltersScores(params.row.id));
+                dispatch(updateSearchTextScores(params.row.id));
+                router.push(paths.dashboard.scores.list);
+              }}
+            >
+              <Iconify icon="solar:file-check-bold-duotone" />
             </IconButton>
           </Tooltip>
         </Box>
@@ -141,33 +194,109 @@ export function ExamSessionListView() {
     },
   ];
 
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
-  const { state: currentFilters, setState: updateFilters } = filters;
+  const fetchData = async (body?: IExamSessionRequestBody) => {
+    try {
+      setLoading(true);
+      const newBody: IExamSessionRequestBody = body ?? {
+        ownerId: user?.id,
+        pageIndex,
+        pageSize,
+      };
+      const res = await examSessionService.list(newBody);
+      if (res.total) {
+        setTotal(res.total);
+        setTableData(res.data);
+        apiRef.current.setRows(res.data);
+      } else {
+        setTotal(0);
+        setTableData([]);
+        apiRef.current.setRows([]);
+      }
+    } catch (error: any) {
+      setTotal(0);
+      setTableData([]);
+      toast.error(error.toString());
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
-  });
+  React.useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex]);
 
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
+  const resetPage = async (newPageSize = pageSize) => {
+    if (pageIndex === 1) {
+      await fetchData({
+        ownerId: user?.id,
+        pageIndex,
+        pageSize: newPageSize,
+      });
+    } else {
+      setPageIndex(1);
+    }
+  };
 
-  const handleFilterStatus = React.useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
-      table.onResetPage();
-      updateFilters({ status: newValue });
-    },
-    [updateFilters, table]
-  );
+  const onStartRow = () => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        examSessionService
+          .openOrClose({
+            examSessionId: row?.id,
+            isOpen: !row?.isOpen,
+          } as ITypeExamRequestBody)
+          .then(() => {
+            resolve('Cập nhật thành công');
+            fetchData();
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
 
-  const onDeleteRow = () => {};
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Cập nhật thành công',
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const renderQuickEditForm = () => (
-    <ExamSessionQuickEditForm
-      currentUser={row}
-      open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
+  const onMarkRow = () => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        examSessionService
+          .mark({
+            examSessionId: row?.id,
+          } as IExamSessionIdRequestBody)
+          .then(() => {
+            resolve('Cập nhật thành công');
+            fetchData();
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Cập nhật thành công',
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const renderViewForm = () => (
+    <ExamForm
+      open={viewForm.value}
+      onClose={() => {
+        viewForm.onFalse();
+      }}
     />
   );
 
@@ -175,11 +304,25 @@ export function ExamSessionListView() {
     <ConfirmDialog
       open={confirmDialog.value}
       onClose={confirmDialog.onFalse}
-      title="Delete"
-      content="Are you sure want to delete?"
+      title="Xác nhận"
+      content={`Bạn chắc chắn muốn ${row?.isOpen ? 'dừng' : 'bắt đầu'} kỳ thi`}
       action={
-        <Button variant="contained" color="error" onClick={onDeleteRow}>
-          Delete
+        <Button variant="contained" color="error" onClick={onStartRow}>
+          Xác nhận
+        </Button>
+      }
+    />
+  );
+
+  const renderMarkDialog = () => (
+    <ConfirmDialog
+      open={mark.value}
+      onClose={mark.onFalse}
+      title="Xác nhận"
+      content="Bạn chắc chắn muốn chấm điểm?"
+      action={
+        <Button variant="contained" color="error" onClick={onMarkRow}>
+          Xác nhận
         </Button>
       }
     />
@@ -197,95 +340,19 @@ export function ExamSessionListView() {
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={paths.dashboard.examSession.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
+            Thêm mới
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card>
-        <Tabs
-          value={currentFilters.status}
-          onChange={handleFilterStatus}
-          sx={[
-            (theme) => ({
-              px: 2.5,
-              boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-            }),
-          ]}
-        >
-          {STATUS_OPTIONS.map((tab) => (
-            <Tab
-              key={tab.value}
-              iconPosition="end"
-              value={tab.value}
-              label={tab.label}
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                    'soft'
-                  }
-                  color={
-                    (tab.value === 'active' && 'success') ||
-                    (tab.value === 'pending' && 'warning') ||
-                    (tab.value === 'banned' && 'error') ||
-                    'default'
-                  }
-                >
-                  {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                    ? tableData.filter((user) => user.status === tab.value).length
-                    : tableData.length}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
-
-        <ExamSessionTableToolbar
-          filters={filters}
-          onResetPage={table.onResetPage}
-          options={{ roles: _roles }}
-        />
-
-        {canReset && (
-          <ExamSessionTableFiltersResult
-            filters={filters}
-            totalResults={dataFiltered.length}
-            onResetPage={table.onResetPage}
-            sx={{ p: 2.5, pt: 0 }}
-          />
-        )}
-
         <Box sx={{ position: 'relative' }}>
-          <TableSelectedAction
-            dense={table.dense}
-            numSelected={table.selected.length}
-            rowCount={dataFiltered.length}
-            onSelectAllRows={(checked) =>
-              table.onSelectAllRows(
-                checked,
-                dataFiltered.map((r) => r.id)
-              )
-            }
-            action={
-              <Tooltip title="Delete">
-                <IconButton color="primary" onClick={confirmDialog.onTrue}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
-            }
-          />
-
           <DataGrid
-            paginationModel={{
-              page: pageIndex - 1,
-              pageSize,
-            }}
             apiRef={apiRef}
             loading={loading}
             columns={columns}
@@ -293,6 +360,8 @@ export function ExamSessionListView() {
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
             disableRowSelectionOnClick
+            disableColumnFilter
+            disableColumnSorting
             slots={{
               toolbar: (props) => (
                 <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
@@ -307,56 +376,21 @@ export function ExamSessionListView() {
                   }}
                   onRowsPerPageChange={(pagesize: number) => {
                     setPageSize(pagesize);
-                    // resetPage(pagesize);
+                    resetPage(pagesize);
                   }}
                   total={total}
                   optionAll
                 />
               ),
-              noRowsOverlay: () => <EmptyContent title="No results" />,
-              noResultsOverlay: () => <EmptyContent title="No results found" />,
+              noRowsOverlay: () => <EmptyContent title="Không có kết quả" />,
+              noResultsOverlay: () => <EmptyContent title="Không tìm thấy kết quả" />,
             }}
           />
         </Box>
       </Card>
-      {renderQuickEditForm()}
+      {renderViewForm()}
       {renderConfirmDialog()}
+      {renderMarkDialog()}
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-type ApplyFilterProps = {
-  inputData: IUserItem[];
-  filters: IUserTableFilters;
-  comparator: (a: any, b: any) => number;
-};
-
-function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
-  }
-
-  return inputData;
 }

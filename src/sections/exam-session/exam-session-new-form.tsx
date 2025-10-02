@@ -1,89 +1,89 @@
+import React from 'react';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import { Chip } from '@mui/material';
 import Card from '@mui/material/Card';
+import { Alert } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { _tags } from 'src/_mock';
+import { examSessionService } from 'src/services/exam-session.services';
 
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
-
-// ----------------------------------------------------------------------
-
-const OPTIONS = [
-  { value: 'option 1', label: 'Option 1' },
-  { value: 'option 2', label: 'Option 2' },
-  { value: 'option 3', label: 'Option 3' },
-  { value: 'option 4', label: 'Option 4' },
-  { value: 'option 5', label: 'Option 5' },
-  { value: 'option 6', label: 'Option 6' },
-  { value: 'option 7', label: 'Option 7' },
-  { value: 'option 8', label: 'Option 8' },
-];
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
 export type NewExamSessionSchemaType = zod.infer<typeof NewExamSessionSchema>;
 
 export const NewExamSessionSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  startDate: schemaHelper.date({ message: { required: 'Start date is required!' } }),
-  duration: zod.number().min(1, { message: 'Required!' }),
-  code: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
+  examTemplateId: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
+  name: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
+  duration: zod.number().min(1, { message: 'Bắt buộc nhập!' }),
 });
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  currentValue?: NewExamSessionSchemaType;
-};
+export function ExamSessionNewForm() {
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-export function ExamSessionNewEditForm({ currentValue }: Props) {
   const router = useRouter();
 
   const defaultValues: NewExamSessionSchemaType = {
+    examTemplateId: '',
     name: '',
-    startDate: null,
     duration: 45,
-    code: [],
   };
 
   const methods = useForm<NewExamSessionSchemaType>({
     mode: 'onSubmit',
     resolver: zodResolver(NewExamSessionSchema),
     defaultValues,
-    values: currentValue,
   });
 
   const {
-    reset,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      toast.success(currentValue ? 'Cập nhập thành công!' : 'Tạo mới thành công!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
+      setErrorMessage('');
+      const promise = new Promise((resolve, reject) => {
+        examSessionService
+          .create(data)
+          .then(() => {
+            resolve('Tạo thành công');
+            router.push(paths.dashboard.examSession.list);
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Tạo thành công',
+      });
+    } catch (error: any) {
+      setErrorMessage(error);
     }
   });
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <Card sx={{ p: 3 }}>
+        {!!errorMessage && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
         <Box
           sx={{
             rowGap: 3,
@@ -92,10 +92,10 @@ export function ExamSessionNewEditForm({ currentValue }: Props) {
             gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
           }}
         >
+          <Field.Text name="examTemplateId" label="Mã đề" />
           <Field.Text name="name" label="Tên kì thi" />
-          {/* <Field.DatePicker format="dd/mm/yyyy" name="startDate" label="Thời gian bắt đầu thi" /> */}
           <Field.Text name="duration" label="Thời gian làm bài" />
-          <Field.Autocomplete
+          {/* <Field.Autocomplete
             multiple
             freeSolo
             disableCloseOnSelect
@@ -121,7 +121,7 @@ export function ExamSessionNewEditForm({ currentValue }: Props) {
                 />
               ))
             }
-          />
+          /> */}
         </Box>
 
         <Stack sx={{ mt: 3, alignItems: 'flex-end' }}>
@@ -133,7 +133,7 @@ export function ExamSessionNewEditForm({ currentValue }: Props) {
             loadingIndicator="Đang tải..."
             size="large"
           >
-            {!currentValue ? 'Tạo thành công' : 'Lưu thay đổi'}
+            Tạo thành công
           </LoadingButton>
         </Stack>
       </Card>

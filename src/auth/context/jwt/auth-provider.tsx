@@ -3,11 +3,9 @@
 import { useSetState } from 'minimal-shared/hooks';
 import { useMemo, useEffect, useCallback } from 'react';
 
-import axios, { endpoints } from 'src/lib/axios';
-
-import { JWT_STORAGE_KEY } from './constant';
+import { setSession } from './utils';
 import { AuthContext } from '../auth-context';
-import { setSession, isValidToken } from './utils';
+import { JWT_STORAGE_KEY, USER_LOCAL_STORAGE, JWT_REFRESH_STORAGE_KEY } from './constant';
 
 import type { AuthState } from '../../types';
 
@@ -29,21 +27,27 @@ export function AuthProvider({ children }: Props) {
   const checkUserSession = useCallback(async () => {
     try {
       const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
+      const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
+      const userString = localStorage.getItem(USER_LOCAL_STORAGE);
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+      if (accessToken && refreshToken && userString) {
+        setSession(accessToken, refreshToken);
 
-        const res = await axios.get(endpoints.auth.me);
+        // const res = await axios.get(endpoints.auth.me);
 
-        const { user } = res.data;
+        // const { user } = res.data;
+
+        const user = JSON.parse(userString);
 
         setState({ user: { ...user, accessToken }, loading: false });
       } else {
         setState({ user: null, loading: false });
+        sessionStorage.removeItem(USER_LOCAL_STORAGE);
       }
     } catch (error) {
       console.error(error);
       setState({ user: null, loading: false });
+      sessionStorage.removeItem(USER_LOCAL_STORAGE);
     }
   }, [setState]);
 

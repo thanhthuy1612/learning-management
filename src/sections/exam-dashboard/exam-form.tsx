@@ -9,7 +9,6 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Grid,
   Radio,
@@ -41,7 +40,7 @@ export type ExamFormSchemaType = zod.infer<typeof ExamFormSchema>;
 export const ExamFormSchema = zod.object({
   answers: zod.array(
     zod.object({
-      question: zod.string(),
+      question: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
       answer: zod.union([
         zod.enum(Choices, { message: 'Answer must be one of A, B, C, or D!' }),
         zod.enum(['']),
@@ -55,12 +54,11 @@ type Props = {
   open: boolean;
   onClose: () => void;
   sx?: SxProps<Theme>;
-  isView?: boolean;
 };
 
 // ----------------------------------------------------------------------
 
-export function ExamForm({ sx, isView = false, open, onClose }: Props) {
+export function ExamForm({ sx, open, onClose }: Props) {
   const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
 
   const confirmDialog = useBoolean();
@@ -92,7 +90,6 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
 
   const onSubmit = handleSubmit(async (data) => {
     setDataSubmit(data);
-    console.log(data);
     confirmDialog.onTrue();
   });
 
@@ -131,7 +128,7 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
         },
       }}
     >
-      <DialogTitle>Chỉnh sửa đề thi</DialogTitle>
+      <DialogTitle>Xem đề thi</DialogTitle>
       <Form methods={methods} onSubmit={onSubmit}>
         <Scrollbar sx={{ maxHeight: '70vh' }}>
           <DialogContent sx={{ pt: 2 }}>
@@ -146,7 +143,7 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
                   <Controller
                     name={`answers.${index}.answer`}
                     control={control}
-                    disabled={isView}
+                    disabled
                     render={({ field: typeField }) => (
                       <FormControl component="fieldset" sx={{ width: 1 }}>
                         <FormLabel component="legend" sx={{ mb: 1, typography: 'subtitle1' }}>
@@ -191,12 +188,6 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
           <Button variant="outlined" onClick={onClose}>
             Huỷ
           </Button>
-
-          {!isView && (
-            <LoadingButton type="submit" variant="contained" color="primary" loading={isSubmitting}>
-              Cập nhật
-            </LoadingButton>
-          )}
         </DialogActions>
       </Form>
     </Dialog>

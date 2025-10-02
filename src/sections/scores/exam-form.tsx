@@ -9,7 +9,6 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Grid,
   Radio,
@@ -23,14 +22,11 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
 import { useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
 import { ComponentBox } from 'src/components/layout';
 import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import { Choices } from 'src/types/question';
 
@@ -41,7 +37,7 @@ export type ExamFormSchemaType = zod.infer<typeof ExamFormSchema>;
 export const ExamFormSchema = zod.object({
   answers: zod.array(
     zod.object({
-      question: zod.string(),
+      question: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
       answer: zod.union([
         zod.enum(Choices, { message: 'Answer must be one of A, B, C, or D!' }),
         zod.enum(['']),
@@ -55,28 +51,18 @@ type Props = {
   open: boolean;
   onClose: () => void;
   sx?: SxProps<Theme>;
-  isView?: boolean;
 };
 
 // ----------------------------------------------------------------------
 
-export function ExamForm({ sx, isView = false, open, onClose }: Props) {
-  const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
-
-  const confirmDialog = useBoolean();
-
-  const { questions } = useAppSelector((state) => state.examDashboard);
+export function ExamForm({ sx, open, onClose }: Props) {
+  const { submission } = useAppSelector((state) => state.scores);
 
   const methods = useForm<ExamFormSchemaType>({
     resolver: zodResolver(ExamFormSchema),
   });
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { isSubmitting },
-  } = methods;
+  const { handleSubmit, control, setValue } = methods;
 
   const { fields } = useFieldArray({
     control,
@@ -86,38 +72,11 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
   React.useEffect(() => {
     setValue(
       'answers',
-      questions.map((item) => ({ question: item.question, answer: item?.answer ?? '' }))
+      submission.map((item) => ({ question: item.question, answer: item.answer ?? '' }))
     );
-  }, [questions, setValue]);
+  }, [submission, setValue]);
 
-  const onSubmit = handleSubmit(async (data) => {
-    setDataSubmit(data);
-    console.log(data);
-    confirmDialog.onTrue();
-  });
-
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={confirmDialog.value}
-      onClose={confirmDialog.onFalse}
-      title="Chỉnh sửa"
-      content="Bạn có chắc chắc muốn chỉnh sửa?"
-      action={
-        <Button
-          color="primary"
-          variant="contained"
-          loading={isSubmitting}
-          onClick={() => {
-            console.log(dataSubmit);
-          }}
-          loadingIndicator="Chỉnh sửa..."
-          sx={{ zIndex: 2 }}
-        >
-          Chỉnh sửa
-        </Button>
-      }
-    />
-  );
+  const onSubmit = handleSubmit(async () => {});
 
   return (
     <Dialog
@@ -131,7 +90,7 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
         },
       }}
     >
-      <DialogTitle>Chỉnh sửa đề thi</DialogTitle>
+      <DialogTitle>Xem đề thi</DialogTitle>
       <Form methods={methods} onSubmit={onSubmit}>
         <Scrollbar sx={{ maxHeight: '70vh' }}>
           <DialogContent sx={{ pt: 2 }}>
@@ -146,7 +105,7 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
                   <Controller
                     name={`answers.${index}.answer`}
                     control={control}
-                    disabled={isView}
+                    disabled
                     render={({ field: typeField }) => (
                       <FormControl component="fieldset" sx={{ width: 1 }}>
                         <FormLabel component="legend" sx={{ mb: 1, typography: 'subtitle1' }}>
@@ -162,14 +121,20 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
                                 <Button
                                   variant="outlined"
                                   fullWidth
-                                  color={typeField.value === option ? 'primary' : 'inherit'}
+                                  color={
+                                    typeField.value === option
+                                      ? 'primary'
+                                      : option === submission[index].submittedAnswer
+                                        ? 'error'
+                                        : 'inherit'
+                                  }
                                   sx={{ flexGrow: 1 }}
                                 >
                                   <FormControlLabel
                                     key={option}
                                     value={option}
                                     control={<Radio key={option} value={option} />}
-                                    label={questions[index].choices[option]}
+                                    label={submission[index].choices[option]}
                                     sx={{ width: '100%', height: '100%' }}
                                   />
                                 </Button>
@@ -183,7 +148,6 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
                 </ComponentBox>
               ))}
             </Box>
-            {renderConfirmDialog()}
           </DialogContent>
         </Scrollbar>
 
@@ -191,12 +155,6 @@ export function ExamForm({ sx, isView = false, open, onClose }: Props) {
           <Button variant="outlined" onClick={onClose}>
             Huỷ
           </Button>
-
-          {!isView && (
-            <LoadingButton type="submit" variant="contained" color="primary" loading={isSubmitting}>
-              Cập nhật
-            </LoadingButton>
-          )}
         </DialogActions>
       </Form>
     </Dialog>

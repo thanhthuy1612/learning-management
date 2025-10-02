@@ -1,18 +1,13 @@
-import type { IUserTableFilters } from 'src/types/user';
-import type { SelectChangeEvent } from '@mui/material/Select';
-import type { UseSetStateReturn } from 'minimal-shared/hooks';
+import type { Theme, SxProps } from '@mui/material';
 
 import { useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
+import { Grid, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
+
+import { updateSearchTextScores } from 'src/lib/features';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -20,79 +15,29 @@ import { Iconify } from 'src/components/iconify';
 
 type Props = {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IUserTableFilters>;
-  options: {
-    roles: string[];
-  };
+  sx?: SxProps<Theme>;
 };
 
-export function ScoresTableToolbar({ filters, options, onResetPage }: Props) {
-  const { state: currentFilters, setState: updateFilters } = filters;
+export function ScoresTableToolbar({ sx, onResetPage }: Props) {
+  const { searchText } = useAppSelector((state) => state.scores);
+  const dispatch = useAppDispatch();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onResetPage();
-      updateFilters({ name: event.target.value });
+      dispatch(updateSearchTextScores(event.target.value));
     },
-    [onResetPage, updateFilters]
-  );
-
-  const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      const newValue =
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-
-      onResetPage();
-      updateFilters({ role: newValue });
-    },
-    [onResetPage, updateFilters]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   return (
-    <Box
-      sx={{
-        p: 2.5,
-        gap: 2,
-        display: 'flex',
-        pr: { xs: 2.5, md: 1 },
-        flexDirection: { xs: 'column', md: 'row' },
-        alignItems: { xs: 'flex-end', md: 'center' },
-      }}
-    >
-      <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
-        <InputLabel htmlFor="filter-role-select">Role</InputLabel>
-        <Select
-          multiple
-          value={currentFilters.role}
-          onChange={handleFilterRole}
-          input={<OutlinedInput label="Role" />}
-          renderValue={(selected) => selected.map((value) => value).join(', ')}
-          inputProps={{ id: 'filter-role-select' }}
-          MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
-        >
-          {options.roles.map((option) => (
-            <MenuItem key={option} value={option}>
-              <Checkbox disableRipple size="small" checked={currentFilters.role.includes(option)} />
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <Box
-        sx={{
-          gap: 2,
-          width: 1,
-          flexGrow: 1,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
+    <Grid container spacing={2} alignItems="end" sx={{ ...sx }}>
+      <Grid size={{ xs: 12, md: 10 }}>
         <TextField
           fullWidth
-          value={currentFilters.name}
+          value={searchText}
           onChange={handleFilterName}
-          placeholder="Search..."
+          placeholder="Mã kỳ thi..."
           slotProps={{
             input: {
               startAdornment: (
@@ -103,7 +48,17 @@ export function ScoresTableToolbar({ filters, options, onResetPage }: Props) {
             },
           }}
         />
-      </Box>
-    </Box>
+      </Grid>
+      <Grid size={{ xs: 12, md: 2 }}>
+        <Button
+          variant="contained"
+          onClick={onResetPage}
+          sx={{ width: 1, height: '56px' }}
+          startIcon={<Iconify icon="eva:search-fill" />}
+        >
+          Tìm kiếm
+        </Button>
+      </Grid>
+    </Grid>
   );
 }

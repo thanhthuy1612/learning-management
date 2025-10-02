@@ -1,40 +1,26 @@
+'use client';
+
 import type { IUserItem } from 'src/types/user';
 
+import React from 'react';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
+import { Tab, Tabs, Alert } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
 
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { userService } from 'src/services/user.services';
 
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
-
-// ----------------------------------------------------------------------
-
-export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
-
-export const UserQuickEditSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  status: zod.string(),
-});
-
-// ----------------------------------------------------------------------
+import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
 
 type Props = {
   open: boolean;
@@ -42,48 +28,25 @@ type Props = {
   currentUser?: IUserItem;
 };
 
+const NAV_ITEMS = [
+  {
+    id: 1,
+    label: 'Cập nhật trạng thái',
+    icon: <Iconify width={24} icon="eva:star-fill" />,
+  },
+  {
+    id: 2,
+    label: 'Đổi mật khẩu',
+    icon: <Iconify width={24} icon="solar:lock-password-outline" />,
+  },
+];
+
 export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
-  const defaultValues: UserQuickEditSchemaType = {
-    name: '',
-    email: '',
-    phoneNumber: '',
-    status: '',
-    role: '',
-  };
+  const [tabSelected, setTagSelected] = React.useState<number>(NAV_ITEMS[0].id);
 
-  const methods = useForm<UserQuickEditSchemaType>({
-    mode: 'all',
-    resolver: zodResolver(UserQuickEditSchema),
-    defaultValues,
-    values: currentUser,
-  });
-
-  const {
-    reset,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
-
-  const onSubmit = handleSubmit(async (data) => {
-    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
-
-    try {
-      reset();
-      onClose();
-
-      toast.promise(promise, {
-        loading: 'Loading...',
-        success: 'Update success!',
-        error: 'Update error!',
-      });
-
-      await promise;
-
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  const handleChangeTab = React.useCallback((_event: React.SyntheticEvent, newValue: number) => {
+    setTagSelected(newValue);
+  }, []);
 
   return (
     <Dialog
@@ -97,55 +60,211 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
         },
       }}
     >
-      <DialogTitle>Quick update</DialogTitle>
-
-      <Form methods={methods} onSubmit={onSubmit}>
-        <DialogContent>
-          <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Account is waiting for confirmation
-          </Alert>
-
-          <Box
-            sx={{
-              rowGap: 3,
-              columnGap: 2,
-              display: 'grid',
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
-            }}
-          >
-            <Field.Select name="status" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
-                </MenuItem>
-              ))}
-            </Field.Select>
-
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-            <Field.Text name="name" label="Full name" />
-            <Field.Text name="email" label="Email address" />
-            <Field.Phone name="phoneNumber" label="Phone number" />
-            <Field.Select name="role" label="Role">
-              {_roles.map((role) => (
-                <MenuItem key={role} value={role}>
-                  {role}
-                </MenuItem>
-              ))}
-            </Field.Select>
-          </Box>
-        </DialogContent>
-
-        <DialogActions>
-          <Button variant="outlined" onClick={onClose}>
-            Cancel
-          </Button>
-
-          <Button type="submit" variant="contained" loading={isSubmitting}>
-            Update
-          </Button>
-        </DialogActions>
-      </Form>
+      <DialogTitle>Chỉnh sửa</DialogTitle>
+      <Box
+        sx={{
+          mx: 3,
+        }}
+      >
+        <Tabs value={tabSelected} onChange={handleChangeTab} sx={{ mb: 5 }}>
+          {NAV_ITEMS.map((tab) => (
+            <Tab key={tab.id} label={tab.label} icon={tab.icon} value={tab.id} />
+          ))}
+        </Tabs>
+      </Box>
+      {tabSelected === NAV_ITEMS[0].id ? (
+        <UserEditStatus onClose={onClose} currentUser={currentUser} />
+      ) : (
+        <UserEditPassword onClose={onClose} currentUser={currentUser} />
+      )}
     </Dialog>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+export type UserEditStatusSchemaType = zod.infer<typeof UserEditStatusSchema>;
+
+export const UserEditStatusSchema = zod.object({
+  status: zod.string(),
+});
+
+// ----------------------------------------------------------------------
+
+type UserEditStatusProps = {
+  onClose: () => void;
+  currentUser?: IUserItem;
+};
+function UserEditStatus({ onClose, currentUser }: UserEditStatusProps) {
+  const [errorMsg, setErrorMsg] = React.useState('');
+
+  const defaultValues: UserEditStatusSchemaType = {
+    status: currentUser?.status?.toString() ?? '',
+  };
+
+  const methods = useForm<UserEditStatusSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(UserEditStatusSchema),
+    defaultValues,
+    values: { status: currentUser?.status?.toString() ?? '' },
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        userService
+          .changeStatus({
+            status: USER_STATUS_OPTIONS.find((item) => item.type === data.status)?.value ?? 0,
+            userId: currentUser?.id ?? '',
+          })
+          .then(() => {
+            resolve('Cập nhật thành công');
+            onClose?.();
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Cập nhật thành công',
+      });
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error);
+    }
+  });
+
+  return (
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Box
+        sx={{
+          rowGap: 3,
+          columnGap: 2,
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(1, 1fr)' },
+          mx: 3,
+        }}
+      >
+        {!!errorMsg && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMsg}
+          </Alert>
+        )}
+
+        <Field.Select name="status" label="Trạng thái">
+          {USER_STATUS_OPTIONS.map((role) => (
+            <MenuItem key={role.type} value={role.type}>
+              {role.label}
+            </MenuItem>
+          ))}
+        </Field.Select>
+      </Box>
+
+      <DialogActions>
+        <Button variant="outlined" onClick={onClose}>
+          Huỷ
+        </Button>
+
+        <Button type="submit" variant="contained" loading={isSubmitting}>
+          Cập nhật
+        </Button>
+      </DialogActions>
+    </Form>
+  );
+}
+export type UserEditPasswordSchemaType = zod.infer<typeof UserEditPasswordSchema>;
+
+export const UserEditPasswordSchema = zod.object({
+  password: zod.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự!'),
+});
+// ----------------------------------------------------------------------
+
+type UserEditPasswordProps = {
+  onClose: () => void;
+  currentUser?: IUserItem;
+};
+function UserEditPassword({ onClose, currentUser }: UserEditPasswordProps) {
+  const [errorMsg, setErrorMsg] = React.useState('');
+
+  const defaultValues: UserEditPasswordSchemaType = {
+    password: '',
+  };
+
+  const methods = useForm<UserEditPasswordSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(UserEditPasswordSchema),
+    defaultValues,
+    values: { password: currentUser?.password ?? '' },
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      const promise = new Promise((resolve, reject) => {
+        userService
+          .changePassword({
+            password: data.password,
+            userId: currentUser?.id ?? '',
+          })
+          .then(() => {
+            resolve('Cập nhật thành công');
+            onClose?.();
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
+      });
+
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Cập nhật thành công',
+      });
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error);
+    }
+  });
+  return (
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Box
+        sx={{
+          rowGap: 3,
+          columnGap: 2,
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(1, 1fr)' },
+          mx: 3,
+        }}
+      >
+        {!!errorMsg && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMsg}
+          </Alert>
+        )}
+        <Field.Text name="password" label="Mật khẩu" />
+      </Box>
+
+      <DialogActions>
+        <Button variant="outlined" onClick={onClose}>
+          Huỷ
+        </Button>
+
+        <Button type="submit" variant="contained" loading={isSubmitting}>
+          Cập nhật
+        </Button>
+      </DialogActions>
+    </Form>
   );
 }

@@ -1,14 +1,18 @@
+/* eslint-disable no-useless-catch */
+
 'use client';
+
+import type { UserType } from 'src/auth/types';
 
 import axios, { endpoints } from 'src/lib/axios';
 
 import { setSession } from './utils';
-import { JWT_STORAGE_KEY } from './constant';
+import { JWT_STORAGE_KEY, USER_LOCAL_STORAGE } from './constant';
 
 // ----------------------------------------------------------------------
 
 export type SignInParams = {
-  email: string;
+  userName: string;
   password: string;
 };
 
@@ -22,21 +26,25 @@ export type SignUpParams = {
 /** **************************************
  * Sign in
  *************************************** */
-export const signInWithPassword = async ({ email, password }: SignInParams): Promise<void> => {
+export const signInWithPassword = async ({
+  userName,
+  password,
+}: SignInParams): Promise<UserType> => {
   try {
-    const params = { email, password };
+    const params = { userName, password };
 
     const res = await axios.post(endpoints.auth.signIn, params);
 
-    const { accessToken } = res.data;
+    const { accessToken, refreshToken } = res.data.data;
 
     if (!accessToken) {
-      throw new Error('Access token not found in response');
+      throw new Error(res.data.message);
     }
+    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data.data));
+    setSession(accessToken, refreshToken);
 
-    setSession(accessToken);
+    return res.data;
   } catch (error) {
-    console.error('Error during sign in:', error);
     throw error;
   }
 };
@@ -68,7 +76,6 @@ export const signUp = async ({
 
     sessionStorage.setItem(JWT_STORAGE_KEY, accessToken);
   } catch (error) {
-    console.error('Error during sign up:', error);
     throw error;
   }
 };
@@ -78,9 +85,8 @@ export const signUp = async ({
  *************************************** */
 export const signOut = async (): Promise<void> => {
   try {
-    await setSession(null);
+    await setSession(null, null);
   } catch (error) {
-    console.error('Error during sign out:', error);
     throw error;
   }
 };

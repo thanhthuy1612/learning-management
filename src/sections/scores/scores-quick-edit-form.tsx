@@ -55,7 +55,6 @@ export function ScoresQuickEditForm({ currentUser, open, onClose }: Props) {
     mode: 'all',
     resolver: zodResolver(ScoresQuickEditSchema),
     defaultValues,
-    values: currentUser,
   });
 
   const {

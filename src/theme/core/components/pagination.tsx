@@ -75,7 +75,7 @@ const MuiPagination: Components<Theme>['MuiPagination'] = {
         softVariant.standardColor,
         softVariant.colors,
       ].flat(),
-    },
+    } as any,
     /**
      * @variant text
      */

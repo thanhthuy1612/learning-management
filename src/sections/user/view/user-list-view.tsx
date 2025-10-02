@@ -1,15 +1,12 @@
 'use client';
 
-import type { IUserItem, IUserTableFilters } from 'src/types/user';
+import type { IUserItem, IUserRequestBody } from 'src/types/user';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 
 import React from 'react';
-import { varAlpha } from 'minimal-shared/utils';
-import { useSetState } from 'minimal-shared/hooks';
+import { toast } from 'sonner';
 
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -21,49 +18,50 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { fDateTime } from 'src/utils/format-time';
+import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
+
+import { USER_STATUS_OPTIONS } from 'src/_mock';
+import { updateFiltersUser } from 'src/lib/features';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { userService } from 'src/services/user.services';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { useTable, getComparator, TableSelectedAction } from 'src/components/table';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { UserTableToolbar } from '../user-table-toolbar';
 import { UserQuickEditForm } from '../user-quick-edit-form';
 import { UserTableFiltersResult } from '../user-table-filters-result';
 
+const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
 // ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
-
-// ----------------------------------------------------------------------
-
 export function UserListView() {
-  const [tableData, setTableData] = React.useState<IUserItem[]>(_userList);
+  const [tableData, setTableData] = React.useState<IUserItem[]>([]);
   const [row, setRow] = React.useState<IUserItem>();
   const [total, setTotal] = React.useState<number>(0);
+  const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [pageIndex, setPageIndex] = React.useState<number>(1);
-  const [pageSize, setPageSize] = React.useState<number>(10);
+  const [pageIndex, setPageIndex] = React.useState<number>(defaultPageIndex);
+  const [pageSize, setPageSize] = React.useState<number>(defaultPageSize);
   const [columnVisibilityModel, setColumnVisibilityModel] =
-    React.useState<GridColumnVisibilityModel>({});
+    React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
 
-  const table = useTable();
-
-  const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
+
+  const dispatch = useAppDispatch();
+  const { searchText, filters } = useAppSelector((state) => state.user);
 
   const apiRef = useGridApiRef();
 
   const columns: GridColDef[] = [
     {
-      field: 'name',
-      headerName: 'Name',
+      field: 'username',
+      headerName: 'Tài khoản',
       minWidth: 200,
       flex: 1,
       hideable: false,
@@ -75,36 +73,59 @@ export function UserListView() {
       headerName: 'Email',
       minWidth: 200,
       flex: 1,
-      hideable: false,
       align: 'center',
       headerAlign: 'center',
     },
     {
-      field: 'status',
-      headerName: 'Status',
-      minWidth: 200,
+      field: 'phone',
+      headerName: 'Số điện thoại',
+      minWidth: 100,
       flex: 1,
-      hideable: false,
+      align: 'center',
+      headerAlign: 'center',
+    },
+    {
+      field: 'createdDate',
+      headerName: 'Ngày tạo',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+    },
+    {
+      field: 'modifiedDate',
+      headerName: 'Ngày cập nhật',
+      flex: 1,
+      minWidth: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+    },
+    {
+      field: 'status',
+      headerName: 'Trạng thái',
+      minWidth: 100,
+      flex: 1,
       align: 'center',
       headerAlign: 'center',
       renderCell: (params) => (
         <Label
           variant="soft"
           color={
-            (params.row.status === 'active' && 'success') ||
-            (params.row.status === 'pending' && 'warning') ||
-            (params.row.status === 'banned' && 'error') ||
-            'default'
+            (params.row.status === 'ACTIVE' && 'success') ||
+            (params.row.status === 'INACTIVE' && 'default') ||
+            (params.row.status === 'BANNED' && 'error') ||
+            'warning'
           }
         >
-          {params.row.status}
+          {USER_STATUS_OPTIONS.find((item) => item.type === params.row.status)?.label}
         </Label>
       ),
     },
     {
       type: 'actions',
       field: 'actions',
-      headerName: 'Actions',
       align: 'right',
       headerAlign: 'right',
       width: 80,
@@ -124,64 +145,72 @@ export function UserListView() {
               <Iconify icon="solar:pen-bold" />
             </IconButton>
           </Tooltip>
-
-          <Tooltip title="Delete" placement="top" arrow>
-            <IconButton
-              color="error"
-              onClick={() => {
-                confirmDialog.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
-          </Tooltip>
         </Box>
       ),
     },
   ];
+  const fetchData = async (body?: IUserRequestBody) => {
+    try {
+      setLoading(true);
+      const newBody: IUserRequestBody = body ?? {
+        searchText,
+        pageIndex,
+        pageSize,
+      };
+      const res = await userService.list(newBody);
+      if (res.total) {
+        dispatch(updateFiltersUser(newBody));
+        setTotal(res.total);
+        setTableData(res.data);
+        apiRef.current.setRows(res.data);
+      } else {
+        setTotal(0);
+        setTableData([]);
+        apiRef.current.setRows([]);
+      }
+    } catch (error: any) {
+      setTotal(0);
+      setTableData([]);
+      toast.error(error.toString());
+    } finally {
+      setLoading(false);
+      setLoadingFirst(false);
+    }
+  };
 
-  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
-  const { state: currentFilters, setState: updateFilters } = filters;
+  React.useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex]);
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
-  });
+  const resetPage = async (newPageSize = pageSize) => {
+    if (pageIndex === 1) {
+      await fetchData({
+        searchText,
+        pageIndex,
+        pageSize: newPageSize,
+      });
+    } else {
+      setPageIndex(1);
+    }
+  };
 
-  const canReset =
-    !!currentFilters.name || currentFilters.role.length > 0 || currentFilters.status !== 'all';
-
-  const handleFilterStatus = React.useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
-      table.onResetPage();
-      updateFilters({ status: newValue });
-    },
-    [updateFilters, table]
-  );
-
-  const onDeleteRow = () => {};
+  const resetPageResult = async (body?: IUserRequestBody) => {
+    if (pageIndex === 1) {
+      await fetchData(body);
+    } else {
+      setPageIndex(1);
+    }
+  };
 
   const renderQuickEditForm = () => (
     <UserQuickEditForm
       currentUser={row}
       open={quickEditForm.value}
-      onClose={quickEditForm.onFalse}
-    />
-  );
-
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={confirmDialog.value}
-      onClose={confirmDialog.onFalse}
-      title="Delete"
-      content="Are you sure want to delete?"
-      action={
-        <Button variant="contained" color="error" onClick={onDeleteRow}>
-          Delete
-        </Button>
-      }
+      onClose={() => {
+        quickEditForm.onFalse();
+        resetPage(1);
+      }}
     />
   );
 
@@ -201,98 +230,34 @@ export function UserListView() {
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
+            Thêm mới
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Card>
-        <Tabs
-          value={currentFilters.status}
-          onChange={handleFilterStatus}
-          sx={[
-            (theme) => ({
-              px: 2.5,
-              boxShadow: `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-            }),
-          ]}
-        >
-          {STATUS_OPTIONS.map((tab) => (
-            <Tab
-              key={tab.value}
-              iconPosition="end"
-              value={tab.value}
-              label={tab.label}
-              icon={
-                <Label
-                  variant={
-                    ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
-                    'soft'
-                  }
-                  color={
-                    (tab.value === 'active' && 'success') ||
-                    (tab.value === 'pending' && 'warning') ||
-                    (tab.value === 'banned' && 'error') ||
-                    'default'
-                  }
-                >
-                  {['active', 'pending', 'banned', 'rejected'].includes(tab.value)
-                    ? tableData.filter((user) => user.status === tab.value).length
-                    : tableData.length}
-                </Label>
-              }
-            />
-          ))}
-        </Tabs>
+        <UserTableToolbar sx={{ p: 2.5 }} onResetPage={() => resetPage()} />
 
-        <UserTableToolbar
-          filters={filters}
-          onResetPage={table.onResetPage}
-          options={{ roles: _roles }}
-        />
-
-        {canReset && (
+        {!loadingFirst && filters?.searchText && (
           <UserTableFiltersResult
-            filters={filters}
-            totalResults={dataFiltered.length}
-            onResetPage={table.onResetPage}
+            totalResults={tableData.length}
+            onResetPage={resetPageResult}
             sx={{ p: 2.5, pt: 0 }}
           />
         )}
 
         <Box sx={{ position: 'relative' }}>
-          <TableSelectedAction
-            dense={table.dense}
-            numSelected={table.selected.length}
-            rowCount={dataFiltered.length}
-            onSelectAllRows={(checked) =>
-              table.onSelectAllRows(
-                checked,
-                dataFiltered.map((r) => r.id)
-              )
-            }
-            action={
-              <Tooltip title="Delete">
-                <IconButton color="primary" onClick={confirmDialog.onTrue}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
-            }
-          />
-
           <DataGrid
-            paginationModel={{
-              page: pageIndex - 1,
-              pageSize,
-            }}
             apiRef={apiRef}
-            loading={loading}
+            loading={loadingFirst || loading}
             columns={columns}
             rows={tableData}
             columnVisibilityModel={columnVisibilityModel}
             onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
             disableRowSelectionOnClick
+            disableColumnFilter
+            disableColumnSorting
             slots={{
               toolbar: (props) => (
                 <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
@@ -307,56 +272,19 @@ export function UserListView() {
                   }}
                   onRowsPerPageChange={(pagesize: number) => {
                     setPageSize(pagesize);
-                    // resetPage(pagesize);
+                    resetPage(pagesize);
                   }}
                   total={total}
                   optionAll
                 />
               ),
-              noRowsOverlay: () => <EmptyContent title="No results" />,
-              noResultsOverlay: () => <EmptyContent title="No results found" />,
+              noRowsOverlay: () => <EmptyContent title="Không có kết quả" />,
+              noResultsOverlay: () => <EmptyContent title="Không tìm thấy kết quả" />,
             }}
           />
         </Box>
       </Card>
       {renderQuickEditForm()}
-      {renderConfirmDialog()}
     </DashboardContent>
   );
-}
-
-// ----------------------------------------------------------------------
-
-type ApplyFilterProps = {
-  inputData: IUserItem[];
-  filters: IUserTableFilters;
-  comparator: (a: any, b: any) => number;
-};
-
-function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
-  const { name, status, role } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter((user) => user.name.toLowerCase().includes(name.toLowerCase()));
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
-  }
-
-  return inputData;
 }

@@ -83,7 +83,7 @@ export const navData: NavSectionProps['data'] = [
       {
         title: 'Kết quả thi',
         path: paths.dashboard.scores.root,
-        icon: ICONS.calendar,
+        icon: ICONS.booking,
         children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
       },
     ],

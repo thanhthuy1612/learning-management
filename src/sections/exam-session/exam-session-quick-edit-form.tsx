@@ -1,37 +1,29 @@
-import type { IUserItem } from 'src/types/user';
-
+import React from 'react';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import MenuItem from '@mui/material/MenuItem';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { examSessionService } from 'src/services/exam-session.services';
 
 import { toast } from 'src/components/snackbar';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export type ExamSessionQuickEditSchemaType = zod.infer<typeof ExamSessionQuickEditSchema>;
+export type NewExamSessionSchemaType = zod.infer<typeof NewExamSessionSchema>;
 
-export const ExamSessionQuickEditSchema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required!' }),
-  email: zod
-    .string()
-    .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
-  phoneNumber: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
-  role: zod.string().min(1, { message: 'Role is required!' }),
-  status: zod.string(),
+export const NewExamSessionSchema = zod.object({
+  examTemplateId: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
+  name: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
+  duration: zod.number().min(1, { message: 'Bắt buộc nhập!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -39,49 +31,58 @@ export const ExamSessionQuickEditSchema = zod.object({
 type Props = {
   open: boolean;
   onClose: () => void;
-  currentUser?: IUserItem;
+  examTemplateId?: string;
 };
 
-export function ExamSessionQuickEditForm({ currentUser, open, onClose }: Props) {
-  const defaultValues: ExamSessionQuickEditSchemaType = {
+export function ExamSessionQuickEditForm({ examTemplateId, open, onClose }: Props) {
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const defaultValues: NewExamSessionSchemaType = {
+    examTemplateId: examTemplateId ?? '',
     name: '',
-    email: '',
-    phoneNumber: '',
-    status: '',
-    role: '',
+    duration: 45,
   };
 
-  const methods = useForm<ExamSessionQuickEditSchemaType>({
+  const methods = useForm<NewExamSessionSchemaType>({
     mode: 'all',
-    resolver: zodResolver(ExamSessionQuickEditSchema),
+    resolver: zodResolver(NewExamSessionSchema),
     defaultValues,
-    values: currentUser,
   });
 
   const {
-    reset,
     handleSubmit,
+    setValue,
+    reset,
     formState: { isSubmitting },
   } = methods;
 
+  React.useEffect(() => {
+    reset();
+    setValue('examTemplateId', examTemplateId ?? '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examTemplateId]);
+
   const onSubmit = handleSubmit(async (data) => {
-    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
-
     try {
-      reset();
-      onClose();
-
-      toast.promise(promise, {
-        loading: 'Loading...',
-        success: 'Update success!',
-        error: 'Update error!',
+      setErrorMessage('');
+      const promise = new Promise((resolve, reject) => {
+        examSessionService
+          .create(data)
+          .then(() => {
+            resolve('Tạo thành công');
+            onClose?.();
+          })
+          .catch((e) => {
+            toast.error(e);
+            reject(e);
+          });
       });
 
-      await promise;
-
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
+      toast.promise(promise, {
+        loading: 'Đang tải',
+        success: 'Tạo thành công',
+      });
+    } catch (error: any) {
+      setErrorMessage(error);
     }
   });
 
@@ -97,52 +98,36 @@ export function ExamSessionQuickEditForm({ currentUser, open, onClose }: Props) 
         },
       }}
     >
-      <DialogTitle>Quick update</DialogTitle>
+      <DialogTitle>Tạo kỳ thi</DialogTitle>
 
       <Form methods={methods} onSubmit={onSubmit}>
-        <DialogContent>
-          <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Account is waiting for confirmation
+        {!!errorMessage && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {errorMessage}
           </Alert>
-
+        )}
+        <DialogContent>
           <Box
             sx={{
               rowGap: 3,
               columnGap: 2,
               display: 'grid',
-              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' },
+              mt: 2,
+              gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(1, 1fr)' },
             }}
           >
-            <Field.Select name="status" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
-                </MenuItem>
-              ))}
-            </Field.Select>
-
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-            <Field.Text name="name" label="Full name" />
-            <Field.Text name="email" label="Email address" />
-            <Field.Phone name="phoneNumber" label="Phone number" />
-            <Field.Select name="role" label="Role">
-              {_roles.map((role) => (
-                <MenuItem key={role} value={role}>
-                  {role}
-                </MenuItem>
-              ))}
-            </Field.Select>
+            <Field.Text disabled={Boolean(examTemplateId)} name="examTemplateId" label="Mã đề" />
+            <Field.Text name="name" label="Tên kỳ thi" />
+            <Field.Text name="duration" label="Thời gian làm bài" />
           </Box>
         </DialogContent>
-
         <DialogActions>
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            Huỷ
           </Button>
 
           <Button type="submit" variant="contained" loading={isSubmitting}>
-            Update
+            Tạo mới
           </Button>
         </DialogActions>
       </Form>
