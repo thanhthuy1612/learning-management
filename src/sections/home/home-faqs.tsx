@@ -26,9 +26,12 @@ const FAQs = [
     answer: (
       <Box>
         <Typography>
-          Thế Giới Số: Nắm bắt các công nghệ mới nhất trong lĩnh vực thông tin. Học Tập Tương Tác:
+          Học Tập Tương Tác: Sử dụng nền tảng trực tuyến để học hỏi và tương tác.
         </Typography>
-        <Typography> Sử dụng nền tảng trực tuyến để học hỏi và tương tác.</Typography>
+        <Typography>
+          Công nghệ thông tin đang thay đổi cách chúng ta học hỏi và giao tiếp. Việc làm quen với
+          các công cụ công nghệ mới sẽ giúp học sinh phát triển kỹ năng cần thiết cho tương lai.
+        </Typography>
       </Box>
     ),
   },
@@ -37,9 +40,15 @@ const FAQs = [
     answer: (
       <Box>
         <Typography>
-          Hỗ Trợ Học Tập: Trí tuệ nhân tạo giúp cá nhân hóa trải nghiệm học tập. Phân Tích Dữ Liệu:
+          Hỗ Trợ Học Tập: Trí tuệ nhân tạo giúp cá nhân hóa trải nghiệm học tập.
         </Typography>
-        <Typography>Sử dụng AI để đánh giá tiến trình học tập của học sinh.</Typography>
+        <Typography>
+          Phân Tích Dữ Liệu: Sử dụng AI để đánh giá tiến trình học tập của học sinh.
+        </Typography>
+        <Typography>
+          Trí tuệ nhân tạo không chỉ giúp cải thiện quá trình học tập mà còn cung cấp các phương
+          pháp học tập tùy chỉnh dựa trên nhu cầu và sở thích cá nhân của học sinh.
+        </Typography>
       </Box>
     ),
   },
@@ -51,6 +60,10 @@ const FAQs = [
           Phương Pháp Kiểm Tra Hiện Đại: Các công cụ đánh giá trực tuyến giúp theo dõi hiệu suất.
         </Typography>
         <Typography>Phản Hồi Nhanh Chóng: Nhận phản hồi tức thì để cải thiện kỹ năng.</Typography>
+        <Typography>
+          Việc sử dụng công nghệ trong kiểm tra và đánh giá giúp cải thiện tính chính xác và tiết
+          kiệm thời gian, đồng thời cung cấp cho học sinh phản hồi cần thiết để phát triển.
+        </Typography>
       </Box>
     ),
   },
@@ -59,10 +72,33 @@ const FAQs = [
     answer: (
       <Box>
         <Typography>
-          Khuyến Khích Sáng Tạo: Tạo ra môi trường học tập khuyến khích sự sáng tạo và đổi mới. Hợp
+          Khuyến Khích Sáng Tạo: Tạo ra môi trường học tập khuyến khích sự sáng tạo và đổi mới.
         </Typography>
         <Typography>
           Tác & Giao Tiếp: Phát triển kỹ năng làm việc nhóm và giao tiếp hiệu quả.
+        </Typography>
+        <Typography>
+          Tập trung vào học sinh giúp tạo ra một môi trường học tập tích cực, nơi mà học sinh cảm
+          thấy được khuyến khích để thể hiện bản thân và phát triển kỹ năng xã hội.
+        </Typography>
+      </Box>
+    ),
+  },
+  {
+    question: 'Kỹ Năng Mềm',
+    answer: (
+      <Box>
+        <Typography>
+          Kỹ Năng Giao Tiếp: Học sinh cần phát triển khả năng giao tiếp hiệu quả với bạn bè và giáo
+          viên.
+        </Typography>
+        <Typography>
+          Kỹ Năng Giải Quyết Vấn Đề: Khả năng tư duy phản biện và giải quyết các tình huống trong
+          học tập và cuộc sống là rất quan trọng.
+        </Typography>
+        <Typography>
+          Phát triển kỹ năng mềm không chỉ giúp học sinh trong học tập mà còn trong sự nghiệp tương
+          lai, giúp họ tự tin hơn trong các tình huống giao tiếp và làm việc nhóm.
         </Typography>
       </Box>
     ),
