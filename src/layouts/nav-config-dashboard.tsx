@@ -51,11 +51,7 @@ export const navDataTeacher: NavSectionProps['data'] = [
         title: 'Người dùng',
         path: paths.dashboard.user.root,
         icon: ICONS.user,
-        children: [
-          { title: 'Thông tin cá nhân', path: paths.dashboard.user.account },
-          { title: 'Danh sách người dùng', path: paths.dashboard.user.list },
-          { title: 'Thêm giáo viên', path: paths.dashboard.user.new },
-        ],
+        children: [{ title: 'Thông tin cá nhân', path: paths.dashboard.user.account }],
       },
     ],
   },
@@ -112,19 +108,13 @@ export const navData: NavSectionProps['data'] = [
         title: 'Đề thi',
         path: paths.dashboard.exam.root,
         icon: ICONS.dashboard,
-        children: [
-          { title: 'Danh sách', path: paths.dashboard.exam.list },
-          { title: 'Thêm mới', path: paths.dashboard.exam.new },
-        ],
+        children: [{ title: 'Danh sách', path: paths.dashboard.exam.list }],
       },
       {
         title: 'Kỳ thi',
         path: paths.dashboard.examSession.root,
         icon: ICONS.course,
-        children: [
-          { title: 'Danh sách', path: paths.dashboard.examSession.list },
-          { title: 'Thêm mới', path: paths.dashboard.examSession.new },
-        ],
+        children: [{ title: 'Danh sách', path: paths.dashboard.examSession.list }],
       },
       {
         title: 'Kết quả thi',
