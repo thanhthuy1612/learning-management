@@ -27,10 +27,10 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fDateTime } from 'src/utils/format-time';
 import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
-import { updateExamChoice } from 'src/lib/features';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { examSessionService } from 'src/services/exam-session.services';
+import { updateExamChoice, resetStateExamSession } from 'src/lib/features';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -78,6 +78,10 @@ export function ExamSessionListView() {
   const apiRef = useGridApiRef();
 
   const router = useRouter();
+
+  React.useEffect(() => {
+    dispatch(resetStateExamSession());
+  }, []);
 
   const columns: GridColDef[] = [
     {
@@ -226,12 +230,12 @@ export function ExamSessionListView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex]);
 
-  const resetPage = async (newPageSize = pageSize) => {
+  const resetPage = async (newPageIndex = pageIndex) => {
     if (pageIndex === 1) {
       await fetchData({
         name: searchText,
-        pageIndex,
-        pageSize: newPageSize,
+        pageIndex: newPageIndex,
+        pageSize,
       });
     } else {
       setPageIndex(1);

@@ -22,10 +22,10 @@ import { fDateTime } from 'src/utils/format-time';
 import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
-import { updateFiltersUser } from 'src/lib/features';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { userService } from 'src/services/user.services';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
+import { resetStateUser, updateFiltersUser } from 'src/lib/features';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -57,6 +57,10 @@ export function UserListView() {
   const { searchText, filters } = useAppSelector((state) => state.user);
 
   const apiRef = useGridApiRef();
+
+  React.useEffect(() => {
+    dispatch(resetStateUser());
+  }, []);
 
   const columns: GridColDef[] = [
     {
@@ -181,12 +185,12 @@ export function UserListView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex]);
 
-  const resetPage = async (newPageSize = pageSize) => {
+  const resetPage = async (newPageIndex = pageIndex) => {
     if (pageIndex === 1) {
       await fetchData({
         searchText,
-        pageIndex,
-        pageSize: newPageSize,
+        pageIndex: newPageIndex,
+        pageSize,
       });
     } else {
       setPageIndex(1);

@@ -12,6 +12,9 @@ import { Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { paths } from 'src/routes/paths';
+import { RouterLink } from 'src/routes/components';
+
 import { ServerErrorIllustration } from 'src/assets/illustrations';
 
 import { varFade, MotionContainer } from 'src/components/animate';
@@ -53,7 +56,13 @@ export function HomeHero({ sx, ...other }: BoxProps) {
         description="KIỂM TRA, ĐÁNH GIÁ - TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO CAI"
         img={<ServerErrorIllustration hideBackground />}
         action={
-          <Button variant="contained" size="large" color="primary">
+          <Button
+            component={RouterLink}
+            href={paths.pin}
+            variant="contained"
+            size="large"
+            color="primary"
+          >
             Bắt đầu kiểm tra
           </Button>
         }

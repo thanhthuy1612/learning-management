@@ -24,7 +24,12 @@ import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 import { examService } from 'src/services/exam.services';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
-import { updateExamId, updateExamName, updateExamChoice } from 'src/lib/features';
+import {
+  updateExamId,
+  updateExamName,
+  updateExamChoice,
+  resetStateExamDashboard,
+} from 'src/lib/features';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -71,6 +76,10 @@ export function ExamListView() {
   const { user } = useAuthContext();
 
   const isAdmin = user?.roles[0] === 'admin';
+
+  React.useEffect(() => {
+    dispatch(resetStateExamDashboard());
+  }, []);
 
   const columns: GridColDef[] = [
     {
@@ -202,12 +211,12 @@ export function ExamListView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex]);
 
-  const resetPage = async (newPageSize = pageSize) => {
+  const resetPage = async (newPageIndex = pageIndex) => {
     if (pageIndex === 1) {
       await fetchData({
         name: searchText,
-        pageIndex,
-        pageSize: newPageSize,
+        pageIndex: newPageIndex,
+        pageSize,
       });
     } else {
       setPageIndex(1);
@@ -232,6 +241,7 @@ export function ExamListView() {
           } as IExamEditRequestBody)
           .then(() => {
             resolve('Xoá thành công');
+            confirmDialog.onFalse();
             fetchData();
           })
           .catch((e) => {
