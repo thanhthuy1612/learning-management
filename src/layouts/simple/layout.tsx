@@ -30,6 +30,7 @@ export type SimpleLayoutProps = LayoutBaseProps & {
     main?: MainSectionProps;
     content?: SimpleCompactContentProps & { compact?: boolean };
   };
+  isHeader?: boolean;
 };
 
 export function SimpleLayout({
@@ -38,6 +39,7 @@ export function SimpleLayout({
   children,
   slotProps,
   layoutQuery = 'md',
+  isHeader = true,
 }: SimpleLayoutProps) {
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
@@ -101,7 +103,7 @@ export function SimpleLayout({
       /** **************************************
        * @Header
        *************************************** */
-      headerSection={renderHeader()}
+      headerSection={isHeader ? renderHeader() : renderFooter()}
       /** **************************************
        * @Footer
        *************************************** */

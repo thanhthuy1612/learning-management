@@ -76,12 +76,6 @@ export const navDataTeacher: NavSectionProps['data'] = [
           { title: 'Thêm mới', path: paths.dashboard.examSession.new },
         ],
       },
-      {
-        title: 'Kết quả thi',
-        path: paths.dashboard.scores.root,
-        icon: ICONS.tour,
-        children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
-      },
     ],
   },
 ];
@@ -115,12 +109,6 @@ export const navData: NavSectionProps['data'] = [
         path: paths.dashboard.examSession.root,
         icon: ICONS.course,
         children: [{ title: 'Danh sách', path: paths.dashboard.examSession.list }],
-      },
-      {
-        title: 'Kết quả thi',
-        path: paths.dashboard.scores.root,
-        icon: ICONS.tour,
-        children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
       },
     ],
   },

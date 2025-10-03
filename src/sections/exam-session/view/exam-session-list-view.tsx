@@ -27,27 +27,26 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fDateTime } from 'src/utils/format-time';
 import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
+import { updateExamChoice } from 'src/lib/features';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { examSessionService } from 'src/services/exam-session.services';
-import { updateExamChoice, updateFiltersScores, updateSearchTextScores } from 'src/lib/features';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { LoadingScreen } from 'src/components/loading-screen';
+import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamForm } from 'src/sections/exam-dashboard/exam-form';
 
 import { ExamSessionTableToolbar } from '../exam-session-table-toolbar';
 import { ExamSessionTableFiltersResult } from '../exam-session-table-filters-result';
 
-const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
+const HIDE_COLUMNS = {};
 
 // ----------------------------------------------------------------------
 
@@ -76,19 +75,10 @@ export function ExamSessionListView() {
 
   const columns: GridColDef[] = [
     {
-      field: 'id',
-      headerName: 'Mã',
-      minWidth: 200,
-      flex: 1,
-      hideable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => <CopyTitle value={params.row.id} />,
-    },
-    {
       field: 'code',
       headerName: 'Code',
-      minWidth: 200,
+      minWidth: 150,
+      hideable: false,
       flex: 1,
       align: 'center',
       headerAlign: 'center',
@@ -115,10 +105,10 @@ export function ExamSessionListView() {
       field: 'createdDate',
       headerName: 'Ngày tạo',
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'isOpen',
@@ -161,7 +151,7 @@ export function ExamSessionListView() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title="Xem" placement="top" arrow>
             <IconButton
-              color="info"
+              color="inherit"
               onClick={() => {
                 viewForm.onTrue();
                 dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
@@ -172,25 +162,23 @@ export function ExamSessionListView() {
           </Tooltip>
           <Tooltip title="Chấm điểm" placement="top" arrow>
             <IconButton
-              color="default"
+              color="inherit"
               onClick={() => {
                 mark.onTrue();
                 setRow(params.row);
               }}
             >
-              <Iconify icon="solar:heart-bold" />
+              <Iconify icon="solar:file-text-bold" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Xem điểm" placement="top" arrow>
             <IconButton
-              color="primary"
+              color="inherit"
               onClick={() => {
-                dispatch(updateFiltersScores(params.row.id));
-                dispatch(updateSearchTextScores(params.row.id));
-                router.push(paths.dashboard.scores.list);
+                router.push(paths.dashboard.scores.list(params.row.id));
               }}
             >
-              <Iconify icon="solar:file-check-bold-duotone" />
+              <Iconify icon="solar:cup-star-bold" />
             </IconButton>
           </Tooltip>
         </Box>
@@ -339,7 +327,7 @@ export function ExamSessionListView() {
     />
   );
 
-  if (loadingFirst) return <LoadingScreen />;
+  if (loadingFirst) return <SplashScreen />;
 
   return (
     <DashboardContent>
@@ -406,9 +394,9 @@ export function ExamSessionListView() {
             disableColumnFilter
             disableColumnSorting
             slots={{
-              toolbar: (props) => (
-                <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
-              ),
+              // toolbar: (props) => (
+              //   <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
+              // ),
               pagination: () => (
                 <PaginationCustom
                   page={pageIndex}

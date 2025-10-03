@@ -130,8 +130,8 @@ export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) 
           {fields.map((field, index) => (
             <Grid key={index}>
               <Button
-                color="primary"
-                variant={field?.answer ? 'contained' : 'outlined'}
+                color={field?.answer ? 'primary' : 'inherit'}
+                variant="outlined"
                 sx={{ width: 'fit-content' }}
                 onClick={() => handleScroll(`question_${index}`)}
               >

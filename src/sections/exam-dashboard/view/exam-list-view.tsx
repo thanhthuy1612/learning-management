@@ -28,13 +28,11 @@ import { updateExamId, updateExamName, updateExamChoice } from 'src/lib/features
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
-import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { LoadingScreen } from 'src/components/loading-screen';
+import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamSessionQuickEditForm } from 'src/sections/exam-session/exam-session-quick-edit-form';
 
@@ -43,7 +41,7 @@ import { ExamEditForm } from '../exam-edit-form';
 import { ExamDashboardTableToolbar } from '../exam-dashboard-table-toolbar';
 import { ExamDashboardTableFiltersResult } from '../exam-dashboard-table-filters-result';
 
-const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
+const HIDE_COLUMNS = {};
 
 // ----------------------------------------------------------------------
 
@@ -70,19 +68,9 @@ export function ExamListView() {
 
   const columns: GridColDef[] = [
     {
-      field: 'id',
-      headerName: 'Mã',
-      minWidth: 200,
-      flex: 1,
-      hideable: false,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => <CopyTitle value={params.row.id} />,
-    },
-    {
       field: 'name',
       headerName: 'Tên',
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
       hideable: false,
       align: 'center',
@@ -92,19 +80,19 @@ export function ExamListView() {
       field: 'createdDate',
       headerName: 'Ngày tạo',
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'modifiedDate',
       headerName: 'Ngày cập nhật',
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       type: 'actions',
@@ -293,7 +281,7 @@ export function ExamListView() {
     />
   );
 
-  if (loadingFirst) return <LoadingScreen />;
+  if (loadingFirst) return <SplashScreen />;
 
   return (
     <DashboardContent>
@@ -360,9 +348,9 @@ export function ExamListView() {
             disableColumnFilter
             disableColumnSorting
             slots={{
-              toolbar: (props) => (
-                <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
-              ),
+              // toolbar: (props) => (
+              //   <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
+              // ),
               pagination: () => (
                 <PaginationCustom
                   page={pageIndex}

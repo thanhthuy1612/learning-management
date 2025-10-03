@@ -15,12 +15,17 @@ import { varBounce, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export function View403() {
+type Props = {
+  isHeader?: boolean;
+  isButton?: boolean;
+};
+export function View403({ isHeader = true, isButton = false }: Props) {
   return (
     <SimpleLayout
       slotProps={{
         content: { compact: true },
       }}
+      isHeader={isHeader}
     >
       <Container component={MotionContainer}>
         <m.div variants={varBounce('in')}>
@@ -40,9 +45,13 @@ export function View403() {
           <ForbiddenIllustration sx={{ my: { xs: 5, sm: 10 } }} />
         </m.div>
 
-        <Button component={RouterLink} href="/" size="large" variant="contained">
-          Về trang chủ
-        </Button>
+        {isButton ? (
+          <Button component={RouterLink} href="/" size="large" variant="contained">
+            Về trang chủ
+          </Button>
+        ) : (
+          <></>
+        )}
       </Container>
     </SimpleLayout>
   );

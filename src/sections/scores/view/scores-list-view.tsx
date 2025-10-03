@@ -4,6 +4,8 @@ import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import type { IScores, ISubmission, IExamSessionIdRequestBody } from 'src/types/exam-session';
 
 import React from 'react';
+import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -19,19 +21,16 @@ import { fDateTime } from 'src/utils/format-time';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { examSessionService } from 'src/services/exam-session.services';
-import { updateSubmission, updateFiltersScores } from 'src/lib/features';
+import { updateSubmission, updateFiltersScores, updateSearchTextScores } from 'src/lib/features';
 
 import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
-import { LoadingScreen } from 'src/components/loading-screen';
+import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamForm } from '../exam-form';
-import { ScoresTableToolbar } from '../scores-table-toolbar';
-import { ScoresTableFiltersResult } from '../scores-table-filters-result';
 
 const HIDE_COLUMNS = {
   enrollDate: false,
@@ -55,6 +54,7 @@ export function ScoresListView() {
   const apiRef = useGridApiRef();
 
   const viewForm = useBoolean();
+  const param = useParams();
 
   const dispatch = useAppDispatch();
   const { searchText, filters } = useAppSelector((state) => state.scores);
@@ -63,7 +63,7 @@ export function ScoresListView() {
     {
       field: 'username',
       headerName: 'Tên',
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
       hideable: false,
       align: 'center',
@@ -72,7 +72,7 @@ export function ScoresListView() {
     {
       field: 'score',
       headerName: 'Điểm',
-      minWidth: 200,
+      minWidth: 80,
       flex: 1,
       hideable: false,
       align: 'center',
@@ -81,7 +81,7 @@ export function ScoresListView() {
     {
       field: 'examSessionId',
       headerName: 'Mã kỳ thi',
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
       align: 'center',
       headerAlign: 'center',
@@ -90,7 +90,7 @@ export function ScoresListView() {
     {
       field: 'examSessionName',
       headerName: 'Tên kỳ thi',
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
       align: 'center',
       headerAlign: 'center',
@@ -99,25 +99,25 @@ export function ScoresListView() {
       field: 'enrollDate',
       headerName: 'Bắt đầu thi',
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'lastSubmittedDate',
       headerName: 'Nộp bài',
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'finishedDate',
       headerName: 'Ngày kết thúc',
       flex: 1,
-      minWidth: 200,
+      minWidth: 100,
       align: 'center',
       headerAlign: 'center',
       renderCell: (params) => `${fDateTime(params.row.finishedDate, 'DD/MM/YYYY')}`,
@@ -126,10 +126,10 @@ export function ScoresListView() {
       field: 'endTime',
       headerName: 'Giờ kết thúc',
       flex: 1,
-      minWidth: 200,
+      minWidth: 100,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.endTime, 'h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.endTime, 'HH:MM')}`,
     },
     {
       type: 'actions',
@@ -142,17 +142,19 @@ export function ScoresListView() {
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Xem" placement="top" arrow>
-            <IconButton
-              color="info"
-              onClick={() => {
-                viewForm.onTrue();
-                dispatch(updateSubmission(params.row.submission as ISubmission[]));
-              }}
-            >
-              <Iconify icon="solar:eye-bold" />
-            </IconButton>
-          </Tooltip>
+          {typeof params.row.score === 'number' && (
+            <Tooltip title="Xem" placement="top" arrow>
+              <IconButton
+                color="info"
+                onClick={() => {
+                  viewForm.onTrue();
+                  dispatch(updateSubmission(params.row.submission as ISubmission[]));
+                }}
+              >
+                <Iconify icon="solar:eye-bold" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       ),
     },
@@ -171,7 +173,7 @@ export function ScoresListView() {
       setTotal(res.length);
       setTableData(res);
     } catch (error: any) {
-      console.error(error);
+      toast.error(error);
       setTotal(0);
       setTableData([]);
     } finally {
@@ -181,8 +183,10 @@ export function ScoresListView() {
   };
 
   React.useEffect(() => {
-    if (searchText) {
-      fetchData();
+    const id = (param?.id ?? '').toString();
+    if (id) {
+      dispatch(updateSearchTextScores(id));
+      fetchData({ examSessionId: id });
     } else {
       setLoadingFirst(false);
     }
@@ -198,7 +202,7 @@ export function ScoresListView() {
     />
   );
 
-  if (loadingFirst) return <LoadingScreen />;
+  if (loadingFirst) return <SplashScreen />;
 
   return (
     <DashboardContent>
@@ -213,19 +217,6 @@ export function ScoresListView() {
       />
 
       <Card>
-        <ScoresTableToolbar
-          sx={{ p: 2.5 }}
-          onResetPage={() => fetchData({ examSessionId: searchText })}
-        />
-
-        {!loadingFirst && filters && (
-          <ScoresTableFiltersResult
-            totalResults={tableData.length}
-            onResetPage={() => fetchData()}
-            sx={{ p: 2.5, pt: 0 }}
-          />
-        )}
-
         {!!filters && (
           <Box
             sx={
@@ -253,7 +244,7 @@ export function ScoresListView() {
               onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
               disableRowSelectionOnClick
               slots={{
-                toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
+                // toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
                 pagination: () => (
                   <PaginationCustom
                     total={total}

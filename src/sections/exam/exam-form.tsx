@@ -12,19 +12,18 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Grid, Radio, FormLabel, RadioGroup, FormControl, FormControlLabel } from '@mui/material';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { useAppSelector } from 'src/lib/hooks';
+import { updateSubmit } from 'src/lib/features';
 import { quizService } from 'src/services/quiz.services';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { ComponentBox } from 'src/components/layout';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { SplashScreen } from 'src/components/loading-screen';
 
 import { Choices } from 'src/types/question';
 
@@ -57,15 +56,37 @@ type Props = {
 // ----------------------------------------------------------------------
 
 export function ExamFormView({ handleSend, sx }: Props) {
+  const [isVisibleTime, setIsVisibleTime] = React.useState(true);
+  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
+  const [count, setCount] = React.useState<number>(0);
 
-  const router = useRouter();
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const confirmDialog = useBoolean();
+  const dispatch = useAppDispatch();
 
-  const { questions, dataStepOne } = useAppSelector((state) => state.exam);
+  const { questions, dataStepOne, targetDate } = useAppSelector((state) => state.exam);
+
+  const methods = useForm<ExamFormSchemaType>({
+    resolver: zodResolver(ExamFormSchema),
+  });
+
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    reset,
+    getValues,
+    formState: { isSubmitting },
+  } = methods;
+
+  const { fields } = useFieldArray({
+    control,
+    name: 'answers',
+  });
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -88,22 +109,43 @@ export function ExamFormView({ handleSend, sx }: Props) {
     };
   }, [ref]);
 
-  const methods = useForm<ExamFormSchemaType>({
-    resolver: zodResolver(ExamFormSchema),
-  });
+  React.useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        const newTimer = setTimeout(() => {
+          setCount((pre) => pre + 1);
+          alert('Bạn đã không focus vào trang trong 3 giây!');
+        }, 3000);
+        setTimer(newTimer);
+      } else {
+        if (timer) {
+          clearTimeout(timer);
+          setTimer(null);
+        }
+      }
+      setIsVisibleTime(document.visibilityState === 'visible');
+    };
 
-  const {
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { isSubmitting },
-  } = methods;
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
-  const { fields } = useFieldArray({
-    control,
-    name: 'answers',
-  });
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [timer]);
+
+  React.useEffect(() => {
+    if (count > 2) {
+      reset();
+    }
+    setValue(
+      'answers',
+      questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
 
   React.useEffect(() => {
     setValue(
@@ -112,6 +154,28 @@ export function ExamFormView({ handleSend, sx }: Props) {
     );
   }, [questions, setValue]);
 
+  React.useEffect(() => {
+    const checkTime = () => {
+      if (new Date().getTime() >= targetDate) {
+        const body = {
+          scoreId: dataStepOne?.scoreId,
+          questions: (getValues('answers') ?? []).map((item) => ({
+            id: item.id,
+            answer: item.answer,
+          })),
+          isFinished: true,
+        } as IQuizRequestBody;
+        onHandleSubmit(body);
+        clearInterval(intervalId);
+      }
+    };
+
+    const intervalId = setInterval(checkTime, 120000); // Kiểm tra mỗi 2 phút
+    checkTime(); // Kiểm tra ngay lần đầu tiên
+
+    return () => clearInterval(intervalId); // Dọn dẹp khi component unmount
+  }, []);
+
   const answers = watch('answers');
 
   const onSubmit = handleSubmit(async (data) => {
@@ -119,21 +183,24 @@ export function ExamFormView({ handleSend, sx }: Props) {
     confirmDialog.onTrue();
   });
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = (body?: IQuizRequestBody) => {
     try {
       const promise = new Promise((resolve, reject) => {
         quizService
-          .quiz({
-            scoreId: dataStepOne?.scoreId,
-            questions: dataSubmit?.answers.map((item) => ({
-              id: item.id,
-              answer: item.answer,
-            })),
-            isFinished: true,
-          } as IQuizRequestBody)
+          .quiz(
+            body ??
+              ({
+                scoreId: dataStepOne?.scoreId,
+                questions: dataSubmit?.answers.map((item) => ({
+                  id: item.id,
+                  answer: item.answer,
+                })),
+                isFinished: true,
+              } as IQuizRequestBody)
+          )
           .then((res) => {
             resolve('Nộp thành công');
-            router.push(paths.pin);
+            dispatch(updateSubmit(true));
           })
           .catch((e) => {
             toast.error(e);
@@ -161,7 +228,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
           color="primary"
           variant="contained"
           loading={isSubmitting}
-          onClick={onHandleSubmit}
+          onClick={() => onHandleSubmit()}
           loadingIndicator="Nộp bài..."
           sx={{ zIndex: 2 }}
           startIcon={<Iconify width={16} icon="custom:send-fill" />}
@@ -185,6 +252,8 @@ export function ExamFormView({ handleSend, sx }: Props) {
       Nộp bài
     </Button>
   );
+
+  if (!isVisibleTime) return <SplashScreen />;
 
   return (
     <Form methods={methods} onSubmit={onSubmit}>

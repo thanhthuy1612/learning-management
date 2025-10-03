@@ -29,7 +29,7 @@ export type IQuizRequestBody = {
   scoreId: string;
   questions: {
     id: string;
-    answer: string;
+    answer?: Choice;
   }[];
 
   isFinished: boolean;

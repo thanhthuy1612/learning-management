@@ -10,6 +10,7 @@ export type IExamReduce = {
   pin: string;
   errorStepOne: string;
   dataStepOne?: IPin;
+  submit?: boolean;
 };
 
 const initialState: IExamReduce = {
@@ -29,6 +30,9 @@ export const examSlice = createSlice({
     },
     updateTargetDate: (state, action: PayloadAction<number>) => {
       state.targetDate = action.payload;
+    },
+    updateSubmit: (state, action: PayloadAction<boolean>) => {
+      state.submit = action.payload;
     },
     updateName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
@@ -56,4 +60,5 @@ export const {
   updateQuestions,
   updateName,
   updateData,
+  updateSubmit,
 } = examSlice.actions;

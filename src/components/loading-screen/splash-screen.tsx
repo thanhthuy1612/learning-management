@@ -7,6 +7,8 @@ import { Fragment } from 'react';
 import Portal from '@mui/material/Portal';
 import { Box, styled } from '@mui/material';
 
+import { CONFIG } from 'src/global-config';
+
 // ----------------------------------------------------------------------
 
 export type SplashScreenProps = React.ComponentProps<'div'> & {
@@ -123,5 +125,7 @@ const LoadingContent = styled('div')(({ theme }) => ({
   position: 'fixed',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: theme.vars.palette.primary.lighter,
+  ...theme.mixins.bgGradient({
+    images: [`url(${CONFIG.assetsDir}/assets/background/background-3-blur.webp)`],
+  }),
 }));

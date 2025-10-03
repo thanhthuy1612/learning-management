@@ -30,10 +30,9 @@ import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
-import { LoadingScreen } from 'src/components/loading-screen';
+import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
-import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { UserTableToolbar } from '../user-table-toolbar';
 import { UserQuickEditForm } from '../user-quick-edit-form';
@@ -89,19 +88,19 @@ export function UserListView() {
       field: 'createdDate',
       headerName: 'Ngày tạo',
       flex: 1,
-      minWidth: 200,
+      minWidth: 180,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'modifiedDate',
       headerName: 'Ngày cập nhật',
       flex: 1,
-      minWidth: 200,
+      minWidth: 180,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY h:mm a')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
       field: 'status',
@@ -213,7 +212,7 @@ export function UserListView() {
     />
   );
 
-  if (loadingFirst) return <LoadingScreen />;
+  if (loadingFirst) return <SplashScreen />;
 
   return (
     <DashboardContent>
@@ -281,9 +280,9 @@ export function UserListView() {
             disableColumnFilter
             disableColumnSorting
             slots={{
-              toolbar: (props) => (
-                <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
-              ),
+              // toolbar: (props) => (
+              //   <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
+              // ),
               pagination: () => (
                 <PaginationCustom
                   page={pageIndex}

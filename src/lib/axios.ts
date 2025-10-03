@@ -2,10 +2,6 @@ import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
 
-import { paths } from 'src/routes/paths';
-
-import { CONFIG } from 'src/global-config';
-
 import {
   setSession,
   JWT_STORAGE_KEY,
@@ -15,7 +11,7 @@ import {
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
+const axiosInstance = axios.create({ baseURL: 'https://api.dethiai.org/' });
 
 axiosInstance.interceptors.response.use(
   (response) => {
@@ -30,12 +26,11 @@ axiosInstance.interceptors.response.use(
     return response.data;
   },
   async (error) => {
-    console.log(error);
     if (error.status === 403) {
-      window.location.href = '/' + paths.error[403];
+      throw error.message;
     }
     if (error.status === 500) {
-      window.location.href = '/' + paths.error[500];
+      throw error.message;
     }
     const originalRequest = error.config;
     if (error.status === 401 && !originalRequest._retry) {

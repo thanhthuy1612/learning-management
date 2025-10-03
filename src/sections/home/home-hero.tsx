@@ -8,21 +8,15 @@ import { m, useScroll, useSpring, useTransform, useMotionValueEvent } from 'fram
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { Typography } from '@mui/material';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Avatar, { avatarClasses } from '@mui/material/Avatar';
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
+import { ServerErrorIllustration } from 'src/assets/illustrations';
 
-import { _mock } from 'src/_mock';
-import { CONFIG } from 'src/global-config';
-
-import { Iconify } from 'src/components/iconify';
 import { varFade, MotionContainer } from 'src/components/animate';
 
+import { HomeWelcome } from './home-welcome';
 import { HeroBackground } from './components/hero-background';
 
 // ----------------------------------------------------------------------
@@ -45,8 +39,6 @@ export function HomeHero({ sx, ...other }: BoxProps) {
   const y1 = useTransformY(scrollProgress.scrollY, distance * -7);
   const y2 = useTransformY(scrollProgress.scrollY, distance * -6);
   const y3 = useTransformY(scrollProgress.scrollY, distance * -5);
-  const y4 = useTransformY(scrollProgress.scrollY, distance * -4);
-  const y5 = useTransformY(scrollProgress.scrollY, distance * -3);
 
   const opacity: MotionValue<number> = useTransform(
     scrollProgress.scrollY,
@@ -55,6 +47,21 @@ export function HomeHero({ sx, ...other }: BoxProps) {
   );
 
   const renderHeading = () => (
+    <m.div {...motionProps}>
+      <HomeWelcome
+        title="TRƯỜNG THCS CỔ PHÚC"
+        description="KIỂM TRA, ĐÁNH GIÁ TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO C"
+        img={<ServerErrorIllustration hideBackground />}
+        action={
+          <Button variant="contained" color="primary">
+            Bắt đầu kiểm tra
+          </Button>
+        }
+      />
+    </m.div>
+  );
+
+  const renderTextLarge = () => (
     <m.div {...motionProps}>
       <Box
         component="h1"
@@ -76,9 +83,8 @@ export function HomeHero({ sx, ...other }: BoxProps) {
         ]}
       >
         <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
-          Boost your building
+          Khám Phá Học Tập Thông Minh
         </Box>
-        process with
         <Box
           component={m.span}
           animate={{ backgroundPosition: '200% center' }}
@@ -98,7 +104,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             }),
           ]}
         >
-          Minimal
+          Công Nghệ Đồng Hành Tri Thức
         </Box>
       </Box>
     </m.div>
@@ -107,7 +113,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
   const renderText = () => (
     <m.div {...motionProps}>
       <Typography
-        variant="body2"
+        variant="h6"
         sx={[
           (theme) => ({
             mx: 'auto',
@@ -116,136 +122,9 @@ export function HomeHero({ sx, ...other }: BoxProps) {
           }),
         ]}
       >
-        {`The starting point for your next project is based on MUI. \nEasy customization helps you build apps faster and better.`}
+        Công Nghệ Thông Tin - Trí Tuệ Nhân Tạo - Đánh Giá Hiệu Quả
       </Typography>
     </m.div>
-  );
-
-  const renderRatings = () => (
-    <m.div {...motionProps}>
-      <Box
-        sx={{
-          gap: 1.5,
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          typography: 'subtitle2',
-          justifyContent: 'center',
-        }}
-      >
-        <AvatarGroup sx={{ [`& .${avatarClasses.root}`]: { width: 32, height: 32 } }}>
-          {Array.from({ length: 3 }, (_, index) => (
-            <Avatar
-              key={_mock.fullName(index + 1)}
-              alt={_mock.fullName(index + 1)}
-              src={_mock.image.avatar(index + 1)}
-            />
-          ))}
-        </AvatarGroup>
-        160+ Happy customers
-      </Box>
-    </m.div>
-  );
-
-  const renderButtons = () => (
-    <Box
-      sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: { xs: 1.5, sm: 2 },
-      }}
-    >
-      <m.div {...motionProps}>
-        <Stack spacing={2.5} sx={{ alignItems: 'center' }}>
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.root}
-            color="inherit"
-            size="large"
-            variant="contained"
-            startIcon={<Iconify width={24} icon="custom:flash-outline" />}
-          >
-            <span>
-              Live preview
-              <Box
-                component="small"
-                sx={[
-                  (theme) => ({
-                    mt: '-3px',
-                    opacity: 0.64,
-                    display: 'flex',
-                    fontSize: theme.typography.pxToRem(10),
-                    fontWeight: theme.typography.fontWeightMedium,
-                  }),
-                ]}
-              >
-                v{CONFIG.appVersion}
-              </Box>
-            </span>
-          </Button>
-
-          {/* <Link
-            color="inherit"
-            variant="body2"
-            target="_blank"
-            rel="noopener"
-            href={paths.freeUI}
-            underline="always"
-            sx={{ gap: 0.75, alignItems: 'center', display: 'inline-flex' }}
-          >
-            <Iconify width={16} icon="eva:external-link-fill" />
-            Get free version
-          </Link> */}
-        </Stack>
-      </m.div>
-
-      <m.div {...motionProps}>
-        {/* <Button
-          color="inherit"
-          size="large"
-          variant="outlined"
-          target="_blank"
-          rel="noopener"
-          href={paths.figmaUrl}
-          startIcon={<Iconify width={24} icon="solar:figma-outline" />}
-          sx={{ borderColor: 'text.primary' }}
-        >
-          Figma preview
-        </Button> */}
-      </m.div>
-    </Box>
-  );
-
-  const renderIcons = () => (
-    <Stack spacing={3} sx={{ textAlign: 'center' }}>
-      <m.div {...motionProps}>
-        <Typography variant="overline" sx={{ opacity: 0.4 }}>
-          Available For
-        </Typography>
-      </m.div>
-
-      <Box sx={{ gap: 2.5, display: 'flex' }}>
-        {['js', 'ts', 'nextjs', 'vite', 'figma'].map((platform) => (
-          <m.div {...motionProps} key={platform}>
-            <Box
-              component="img"
-              alt={platform}
-              src={`${CONFIG.assetsDir}/assets/icons/platforms/ic-${platform}.svg`}
-              sx={[
-                (theme) => ({
-                  width: 24,
-                  height: 24,
-                  ...theme.applyStyles('dark', {
-                    ...(platform === 'nextjs' && { filter: 'invert(1)' }),
-                  }),
-                }),
-              ]}
-            />
-          </m.div>
-        ))}
-      </Box>
-    </Stack>
   );
 
   return (
@@ -297,22 +176,20 @@ export function HomeHero({ sx, ...other }: BoxProps) {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
+              justifyContent: 'flex-start',
               [theme.breakpoints.up(mdKey)]: {
                 flex: '1 1 auto',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 py: 'var(--layout-header-desktop-height)',
               },
             }),
           ]}
         >
-          <Stack spacing={3} sx={{ textAlign: 'center' }}>
+          <Stack spacing={3} sx={{ textAlign: 'center', width: '100%' }}>
             <m.div style={{ y: y1 }}>{renderHeading()}</m.div>
-            <m.div style={{ y: y2 }}>{renderText()}</m.div>
+            <m.div style={{ y: y2 }}>{renderTextLarge()}</m.div>
+            <m.div style={{ y: y3 }}>{renderText()}</m.div>
           </Stack>
-
-          <m.div style={{ y: y3 }}>{renderRatings()}</m.div>
-          <m.div style={{ y: y4 }}>{renderButtons()}</m.div>
-          <m.div style={{ y: y5 }}>{renderIcons()}</m.div>
         </Container>
 
         <HeroBackground />

@@ -5,9 +5,7 @@ import { m } from 'framer-motion';
 import { varAlpha } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Accordion, { accordionClasses } from '@mui/material/Accordion';
@@ -24,100 +22,38 @@ import { FloatLine, FloatPlusIcon, FloatTriangleDownIcon } from './components/sv
 
 const FAQs = [
   {
-    question: 'How can I get the update?',
+    question: 'Khám Phá Công Nghệ',
     answer: (
       <Typography>
-        You will get 12 months of free
-        <Link
-          href="https://support.mui.com/hc/en-us/articles/360008775240-How-do-I-get-access-to-an-item-I-purchased"
-          target="_blank"
-          rel="noopener"
-          sx={{ mx: 0.5 }}
-        >
-          updates
-        </Link>
-        with the purchase. Please renew your license to get updates after that.
+        Thế Giới Số: Nắm bắt các công nghệ mới nhất trong lĩnh vực thông tin. Học Tập Tương Tác: Sử
+        dụng nền tảng trực tuyến để học hỏi và tương tác.
       </Typography>
     ),
   },
   {
-    question: 'Which license is right for you?',
-    answer: (
-      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
-        <li> All licenses do not apply to open source.</li>
-        <li> One licenses / one end product (3 licenses / 3 products...).</li>
-        <li>
-          <strong>Standard / Plus</strong> license used in free products (Internal management...).
-        </li>
-        <li>
-          <strong>Extended</strong> license used in charge products, collect fees from users
-          (SAAS...).
-        </li>
-        <li>
-          Learn more about the
-          <Link
-            href="https://docs.minimals.cc/package/"
-            target="_blank"
-            rel="noopener"
-            sx={{ mx: 0.5 }}
-          >
-            package & license
-          </Link>
-        </li>
-      </Box>
-    ),
-  },
-  {
-    question: 'How long is my license valid for?',
-    answer: (
-      <Box component="ul" sx={{ pl: 3, listStyleType: 'disc' }}>
-        <li> The license is lifetime.</li>
-        <li> You get 12 months of free updates.</li>
-      </Box>
-    ),
-  },
-  {
-    question: 'Which platforms will the template support?',
+    question: 'Trí Tuệ Nhân Tạo',
     answer: (
       <Typography>
-        {`The components in MUI are designed to work in the latest, stable releases of all major browsers, including Chrome, Firefox, Safari, and Edge. We don't support Internet Explorer 11. `}
-        Learn more about the
-        <Link
-          href="https://mui.com/material-ui/getting-started/supported-platforms/"
-          target="_blank"
-          rel="noopener"
-          sx={{ mx: 0.5 }}
-        >
-          supported platforms
-        </Link>
+        Hỗ Trợ Học Tập: Trí tuệ nhân tạo giúp cá nhân hóa trải nghiệm học tập. Phân Tích Dữ Liệu: Sử
+        dụng AI để đánh giá tiến trình học tập của học sinh.
       </Typography>
     ),
   },
   {
-    question: 'For what kind of projects is the Standard license intended?',
+    question: 'Kiểm Tra & Đánh Giá',
     answer: (
       <Typography>
-        The Standard license is designed for internal applications in which staff will access the
-        application. An example could be the back-office dashboard of a public-facing e-commerce
-        website in which staff would sign in and manage inventory, customers, etc.
+        Phương Pháp Kiểm Tra Hiện Đại: Các công cụ đánh giá trực tuyến giúp theo dõi hiệu suất. Phản
+        Hồi Nhanh Chóng: Nhận phản hồi tức thì để cải thiện kỹ năng.
       </Typography>
     ),
   },
   {
-    question: 'Do you have a free demo to review the code before purchasing?',
+    question: 'Học Sinh Là Trung Tâm',
     answer: (
       <Typography>
-        Yes, you can check out our
-        <Link
-          href="https://mui.com/store/items/minimal-dashboard-free/"
-          target="_blank"
-          rel="noopener"
-          sx={{ mx: 0.5 }}
-        >
-          open source
-        </Link>
-        dashboard template which should give you an overview of the code quality and folder
-        structure. Keep in mind that some aspects may differ from this Paid version.
+        Khuyến Khích Sáng Tạo: Tạo ra môi trường học tập khuyến khích sự sáng tạo và đổi mới. Hợp
+        Tác & Giao Tiếp: Phát triển kỹ năng làm việc nhóm và giao tiếp hiệu quả.
       </Typography>
     ),
   },
@@ -134,9 +70,9 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
 
   const renderDescription = () => (
     <SectionTitle
-      caption="FAQs"
-      title="We’ve got the"
-      txtGradient="answers"
+      caption="Mục tiêu"
+      title="Mục tiêu đề ra cho"
+      txtGradient="ứng dụng"
       sx={{ textAlign: 'center' }}
     />
   );
@@ -204,40 +140,6 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
     </Stack>
   );
 
-  const renderContact = () => (
-    <Box
-      sx={[
-        (theme) => ({
-          px: 3,
-          py: 8,
-          textAlign: 'center',
-          background: `linear-gradient(to left, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}, transparent)`,
-        }),
-      ]}
-    >
-      <m.div variants={varFade('in')}>
-        <Typography variant="h4">Still have questions?</Typography>
-      </m.div>
-
-      <m.div variants={varFade('in')}>
-        <Typography sx={{ mt: 2, mb: 3, color: 'text.secondary' }}>
-          Please describe your case to receive the most accurate advice
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade('in')}>
-        <Button
-          color="inherit"
-          variant="contained"
-          href="mailto:support@minimals.cc?subject=[Feedback] from Customer"
-          startIcon={<Iconify icon="solar:letter-bold" />}
-        >
-          Contact us
-        </Button>
-      </m.div>
-    </Box>
-  );
-
   return (
     <Box component="section" sx={sx} {...other}>
       <MotionViewport sx={{ py: 10, position: 'relative' }}>
@@ -248,10 +150,7 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
           {renderContent()}
         </Container>
 
-        <Stack sx={{ position: 'relative' }}>
-          {bottomLines()}
-          {renderContact()}
-        </Stack>
+        <Stack sx={{ position: 'relative' }}>{bottomLines()}</Stack>
       </MotionViewport>
     </Box>
   );

@@ -36,7 +36,7 @@ export const paths = {
     },
     scores: {
       root: `${ROOTS.DASHBOARD}/scores`,
-      list: `${ROOTS.DASHBOARD}/scores/list`,
+      list: (id: string) => `${ROOTS.DASHBOARD}/scores/list/${id}`,
     },
   },
   pin: '/exam',

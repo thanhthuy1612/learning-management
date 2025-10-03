@@ -12,40 +12,13 @@ import { useAppSelector } from 'src/lib/hooks';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import { Exam } from '../exam';
+import { SubmitDone } from '../submit-done';
 
 // ----------------------------------------------------------------------
 
 export function ExamView() {
-  const [isVisible, setIsVisible] = React.useState(true);
-  const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
-
-  const { questions } = useAppSelector((state) => state.exam);
+  const { questions, submit } = useAppSelector((state) => state.exam);
   const router = useRouter();
-  React.useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        const newTimer = setTimeout(() => {
-          alert('Bạn đã không focus vào trang trong 3 giây!');
-        }, 3000);
-        setTimer(newTimer);
-      } else {
-        if (timer) {
-          clearTimeout(timer);
-          setTimer(null);
-        }
-      }
-      setIsVisible(document.visibilityState === 'visible');
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [timer]);
 
   React.useEffect(() => {
     if (!questions.length) {
@@ -54,7 +27,7 @@ export function ExamView() {
   }, [questions, router]);
 
   const renderBody = () => {
-    if (!isVisible) return null;
+    if (submit) return <SubmitDone />;
     return <Exam />;
   };
 

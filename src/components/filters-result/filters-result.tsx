@@ -33,13 +33,15 @@ export function FiltersResult({
       <ResultContent>
         {children}
 
-        <Button
-          color="error"
-          onClick={onReset}
-          startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-        >
-          Clear
-        </Button>
+        {onReset && (
+          <Button
+            color="error"
+            onClick={onReset}
+            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+          >
+            Clear
+          </Button>
+        )}
       </ResultContent>
     </ResultRoot>
   );

@@ -81,8 +81,8 @@ const renderDescription = () => (
         typography: { xs: 'h2', md: 'h1' },
       }}
     >
-      Get started with
-      <br /> Minimal kit
+      Cùng bắt đầu với
+      <br /> chúng tôi
       <Box
         component="span"
         sx={(theme) => ({
@@ -92,7 +92,7 @@ const renderDescription = () => (
           ml: 1,
         })}
       >
-        today
+        hôm nay.
       </Box>
     </Box>
 

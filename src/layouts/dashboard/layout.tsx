@@ -3,7 +3,9 @@
 import type { Breakpoint } from '@mui/material/styles';
 import type { NavItemProps, NavSectionProps } from 'src/components/nav-section';
 
+import React from 'react';
 import { merge } from 'es-toolkit';
+import { usePathname } from 'next/navigation';
 import { useBoolean } from 'minimal-shared/hooks';
 
 import Box from '@mui/material/Box';
@@ -13,8 +15,11 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
+import { SplashScreen } from 'src/components/loading-screen';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { View403 } from 'src/sections/error';
+
+import { useAuthContext } from 'src/auth/hooks';
 
 import { NavMobile } from './nav-mobile';
 import { VerticalDivider } from './content';
@@ -23,7 +28,6 @@ import { layoutClasses } from '../core/classes';
 import { NavHorizontal } from './nav-horizontal';
 import { _account } from '../nav-config-account';
 import { MainSection } from '../core/main-section';
-import { Searchbar } from '../components/searchbar';
 // import { _workspaces } from '../nav-config-workspace';
 import { MenuButton } from '../components/menu-button';
 import { HeaderSection } from '../core/header-section';
@@ -58,9 +62,13 @@ export function DashboardLayout({
   slotProps,
   layoutQuery = 'lg',
 }: DashboardLayoutProps) {
+  const [loading, setLoading] = React.useState();
+
+  const pathname = usePathname();
+
   const theme = useTheme();
 
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const settings = useSettingsContext();
 
@@ -68,7 +76,11 @@ export function DashboardLayout({
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
   const navRole =
-    user?.role === 'admin' ? dashboardNavData : user?.role === 'teacher' ? navDataTeacher : [];
+    user?.roles?.[0] === 'admin'
+      ? dashboardNavData
+      : user?.roles?.[0] === 'teacher'
+        ? navDataTeacher
+        : [];
 
   const navData = slotProps?.nav?.data ?? navRole;
 
@@ -78,6 +90,27 @@ export function DashboardLayout({
 
   const canDisplayItemByRole = (allowedRoles: NavItemProps['allowedRoles']): boolean =>
     !allowedRoles?.includes(user?.role);
+
+  console.log(pathname);
+  const checkPermission = () => {
+    if (
+      pathname.includes('dashboard') &&
+      pathname !== '/dashboard/' &&
+      !pathname.includes('/dashboard/scores/list/')
+    ) {
+      const permission = navData.reduce((res: string[], item) => {
+        item.items.map((i) => {
+          res.push(i?.path + '/');
+          (i?.children ?? []).map((c) => res.push(c?.path + '/'));
+          return;
+        });
+        return res;
+      }, []);
+      console.log(permission);
+      return permission.includes(pathname);
+    }
+    return true;
+  };
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
@@ -142,7 +175,7 @@ export function DashboardLayout({
       ),
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
-          <Searchbar data={navData} />
+          {/* <Searchbar data={navData} /> */}
           {/* <SettingsButton /> */}
           <AccountDrawer data={_account} />
         </Box>
@@ -179,7 +212,11 @@ export function DashboardLayout({
 
   const renderFooter = () => null;
 
-  const renderMain = () => <MainSection {...slotProps?.main}>{children}</MainSection>;
+  const renderMain = () => {
+    if (loading) return <SplashScreen />;
+    if (checkPermission()) return <MainSection {...slotProps?.main}>{children}</MainSection>;
+    return <View403 isHeader={false} isButton={false} />;
+  };
 
   return (
     <LayoutSection

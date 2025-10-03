@@ -2,7 +2,7 @@ import type { Theme, SxProps } from '@mui/material';
 
 import { useCallback } from 'react';
 
-import { Grid, Button } from '@mui/material';
+import { Grid } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -32,9 +32,10 @@ export function ScoresTableToolbar({ sx, onResetPage }: Props) {
 
   return (
     <Grid container spacing={2} alignItems="end" sx={{ ...sx }}>
-      <Grid size={{ xs: 12, md: 10 }}>
+      <Grid size={{ xs: 12, md: 12 }}>
         <TextField
           fullWidth
+          disabled
           value={searchText}
           onChange={handleFilterName}
           placeholder="Mã kỳ thi..."
@@ -49,7 +50,7 @@ export function ScoresTableToolbar({ sx, onResetPage }: Props) {
           }}
         />
       </Grid>
-      <Grid size={{ xs: 12, md: 2 }}>
+      {/* <Grid size={{ xs: 12, md: 2 }}>
         <Button
           variant="contained"
           onClick={onResetPage}
@@ -59,7 +60,7 @@ export function ScoresTableToolbar({ sx, onResetPage }: Props) {
         >
           Tìm kiếm
         </Button>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }
