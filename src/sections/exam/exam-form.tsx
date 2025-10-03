@@ -1,7 +1,7 @@
 'use client';
 
 import type { Theme, SxProps } from '@mui/material';
-import type { IQuitRequestBody } from 'src/types/question';
+import type { IQuizRequestBody } from 'src/types/question';
 
 import React from 'react';
 import { z as zod } from 'zod';
@@ -18,7 +18,7 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { useAppSelector } from 'src/lib/hooks';
-import { quitService } from 'src/services/quit.services';
+import { quizService } from 'src/services/quiz.services';
 
 import { Form } from 'src/components/hook-form';
 import { toast } from 'src/components/snackbar';
@@ -122,15 +122,15 @@ export function ExamFormView({ handleSend, sx }: Props) {
   const onHandleSubmit = () => {
     try {
       const promise = new Promise((resolve, reject) => {
-        quitService
-          .quit({
+        quizService
+          .quiz({
             scoreId: dataStepOne?.scoreId,
             questions: dataSubmit?.answers.map((item) => ({
               id: item.id,
               answer: item.answer,
             })),
             isFinished: true,
-          } as IQuitRequestBody)
+          } as IQuizRequestBody)
           .then((res) => {
             resolve('Nộp thành công');
             router.push(paths.pin);

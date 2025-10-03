@@ -54,6 +54,7 @@ export function ScoresTableToolbar({ sx, onResetPage }: Props) {
           variant="contained"
           onClick={onResetPage}
           sx={{ width: 1, height: '56px' }}
+          disabled={!searchText}
           startIcon={<Iconify icon="eva:search-fill" />}
         >
           Tìm kiếm

@@ -35,12 +35,12 @@ export const signInWithPassword = async ({
 
     const res = await axios.post(endpoints.auth.signIn, params);
 
-    const { accessToken, refreshToken } = res.data.data;
+    const { accessToken, refreshToken } = res.data;
 
     if (!accessToken) {
-      throw new Error(res.data.message);
+      throw new Error(res.data);
     }
-    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data.data));
+    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data));
     setSession(accessToken, refreshToken);
 
     return res.data;

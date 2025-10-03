@@ -38,14 +38,14 @@ export function PaginationCustom({
       }}
     >
       <Box sx={{ typography: 'body2' }}>
-        <strong>{total}</strong>
+        <strong>{total} </strong>
         <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
+          kết quả được tìm thấy
         </Box>
       </Box>
       <Box display="flex" alignItems="center" gap={3}>
         <Stack direction="row" gap={2} alignItems="center" justifyContent="center">
-          <Typography>Rows per page:</Typography>
+          <Typography>Số hàng trên mỗi trang:</Typography>
           <Select
             value={rowsPerPage}
             onChange={(row) => {
@@ -65,7 +65,7 @@ export function PaginationCustom({
             ))}
             {optionAll && (
               <MenuItem key={total} value={total}>
-                All
+                Tất cả
               </MenuItem>
             )}
           </Select>

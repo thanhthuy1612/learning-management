@@ -1,4 +1,4 @@
-import type { IRole, IUserItem } from 'src/types/user';
+import type { IUserItem } from 'src/types/user';
 
 import React from 'react';
 import { z as zod } from 'zod';
@@ -9,8 +9,8 @@ import { isValidPhoneNumber } from 'react-phone-number-input/input';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import { Alert, MenuItem } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Chip, Alert, MenuItem } from '@mui/material';
 
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 import { userService } from 'src/services/user.services';
@@ -44,8 +44,6 @@ type Props = {
 
 export function UserNewEditForm({ currentUser }: Props) {
   const [errorMsg, setErrorMsg] = React.useState('');
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [roles, setRoles] = React.useState<IRole[]>([]);
 
   const { checkUserSession } = useAuthContext();
 
@@ -63,36 +61,8 @@ export function UserNewEditForm({ currentUser }: Props) {
 
   const {
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = methods;
-
-  const fetchData = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await userService.roles();
-
-      setRoles(res);
-      setValue(
-        'roles',
-        (currentUser?.roles ?? []).reduce((result: string[], role) => {
-          const roleFind: any = res.find((item: IRole) => item.name === role);
-          if (roleFind) {
-            result.push(roleFind.description);
-          }
-          return result;
-        }, [])
-      );
-    } catch (error: any) {
-      toast.error(error.toString());
-    } finally {
-      setLoading(false);
-    }
-  }, [currentUser?.roles, setValue]);
-
-  React.useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -148,7 +118,7 @@ export function UserNewEditForm({ currentUser }: Props) {
           <Field.Text disabled name="username" label="Tài khoản" />
           <Field.Text name="email" label="Địa chỉ email" />
           <Field.Phone name="phone" label="Số điện thoại" country="VN" />
-          <Field.Autocomplete
+          {/* <Field.Autocomplete
             multiple
             freeSolo
             disableCloseOnSelect
@@ -175,7 +145,7 @@ export function UserNewEditForm({ currentUser }: Props) {
                 />
               ))
             }
-          />
+          /> */}
           <Field.Select disabled name="status" label="Trạng thái">
             {USER_STATUS_OPTIONS.map((role) => (
               <MenuItem key={role.type} value={role.type.toString()}>
@@ -190,8 +160,8 @@ export function UserNewEditForm({ currentUser }: Props) {
             fullWidth
             type="submit"
             variant="contained"
-            loading={isSubmitting || loading}
-            loadingIndicator="Loading"
+            loading={isSubmitting}
+            loadingIndicator="Đang tải"
             size="large"
           >
             Cập nhật

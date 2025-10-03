@@ -32,7 +32,7 @@ export const SignInSchema = zod.object({
   password: zod
     .string()
     .min(1, { message: 'Mật khẩu là bắt buộc!' })
-    .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự!' }),
+    .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -72,7 +72,12 @@ export function JwtSignInView() {
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-      <Field.Text name="userName" label="Tài khoản" slotProps={{ inputLabel: { shrink: true } }} />
+      <Field.Text
+        name="userName"
+        label="Tài khoản"
+        placeholder="Tài khoản"
+        slotProps={{ inputLabel: { shrink: true } }}
+      />
 
       <Box sx={{ gap: 1.5, display: 'flex', flexDirection: 'column' }}>
         {/* <Link
@@ -88,7 +93,7 @@ export function JwtSignInView() {
         <Field.Text
           name="password"
           label="Mật khẩu"
-          placeholder="6+ ký tự"
+          placeholder="8+ ký tự"
           type={showPassword.value ? 'text' : 'password'}
           slotProps={{
             inputLabel: { shrink: true },

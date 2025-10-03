@@ -21,9 +21,9 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fDateTime } from 'src/utils/format-time';
 import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
-import { useAppDispatch } from 'src/lib/hooks';
-import { DashboardContent } from 'src/layouts/dashboard';
 import { examService } from 'src/services/exam.services';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { updateExamId, updateExamName, updateExamChoice } from 'src/lib/features';
 
 import { toast } from 'src/components/snackbar';
@@ -31,16 +31,17 @@ import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamSessionQuickEditForm } from 'src/sections/exam-session/exam-session-quick-edit-form';
 
-import { useAuthContext } from 'src/auth/hooks';
-
 import { ExamForm } from '../exam-form';
 import { ExamEditForm } from '../exam-edit-form';
+import { ExamDashboardTableToolbar } from '../exam-dashboard-table-toolbar';
+import { ExamDashboardTableFiltersResult } from '../exam-dashboard-table-filters-result';
 
 const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
 
@@ -50,13 +51,12 @@ export function ExamListView() {
   const [tableData, setTableData] = React.useState<IExamItem[]>([]);
   const [row, setRow] = React.useState<IExamItem>();
   const [total, setTotal] = React.useState<number>(0);
+  const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(defaultPageIndex);
   const [pageSize, setPageSize] = React.useState<number>(defaultPageSize);
   const [columnVisibilityModel, setColumnVisibilityModel] =
     React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
-
-  const { user } = useAuthContext();
 
   const confirmDialog = useBoolean();
   const quickEditForm = useBoolean();
@@ -64,6 +64,7 @@ export function ExamListView() {
   const createSession = useBoolean();
 
   const dispatch = useAppDispatch();
+  const { searchText, filters } = useAppSelector((state) => state.examDashboard);
 
   const apiRef = useGridApiRef();
 
@@ -118,7 +119,7 @@ export function ExamListView() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title="Tạo kỳ thi" placement="top" arrow>
             <IconButton
-              color="primary"
+              color="inherit"
               onClick={() => {
                 createSession.onTrue();
                 setRow(params.row);
@@ -130,7 +131,7 @@ export function ExamListView() {
 
           <Tooltip title="Xem" placement="top" arrow>
             <IconButton
-              color="info"
+              color="inherit"
               onClick={() => {
                 viewForm.onTrue();
                 dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
@@ -174,7 +175,7 @@ export function ExamListView() {
     try {
       setLoading(true);
       const newBody: IExamRequestBody = body ?? {
-        ownerId: user?.id,
+        name: searchText,
         pageIndex,
         pageSize,
       };
@@ -182,11 +183,9 @@ export function ExamListView() {
       if (res.total) {
         setTotal(res.total);
         setTableData(res.data);
-        apiRef.current.setRows(res.data);
       } else {
         setTotal(0);
         setTableData([]);
-        apiRef.current.setRows([]);
       }
     } catch (error: any) {
       setTotal(0);
@@ -194,6 +193,7 @@ export function ExamListView() {
       toast.error(error.toString());
     } finally {
       setLoading(false);
+      setLoadingFirst(false);
     }
   };
 
@@ -205,10 +205,18 @@ export function ExamListView() {
   const resetPage = async (newPageSize = pageSize) => {
     if (pageIndex === 1) {
       await fetchData({
-        ownerId: user?.id,
+        name: searchText,
         pageIndex,
         pageSize: newPageSize,
       });
+    } else {
+      setPageIndex(1);
+    }
+  };
+
+  const resetPageResult = async (body?: IExamRequestBody) => {
+    if (pageIndex === 1) {
+      await fetchData(body);
     } else {
       setPageIndex(1);
     }
@@ -285,6 +293,8 @@ export function ExamListView() {
     />
   );
 
+  if (loadingFirst) return <LoadingScreen />;
+
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -308,40 +318,72 @@ export function ExamListView() {
       />
 
       <Card>
-        <DataGrid
-          apiRef={apiRef}
-          loading={loading}
-          columns={columns}
-          rows={tableData}
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
-          disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnSorting
-          slots={{
-            toolbar: (props) => (
-              <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
-            ),
-            pagination: () => (
-              <PaginationCustom
-                page={pageIndex}
-                count={Math.ceil(total / pageSize)}
-                rowsPerPage={pageSize}
-                onChange={(_event, page) => {
-                  setPageIndex(page);
-                }}
-                onRowsPerPageChange={(pagesize: number) => {
-                  setPageSize(pagesize);
-                  resetPage(pagesize);
-                }}
-                total={total}
-                optionAll
-              />
-            ),
-            noRowsOverlay: () => <EmptyContent title="Không có kết quả" />,
-            noResultsOverlay: () => <EmptyContent title="Không tìm thấy kết quả" />,
-          }}
+        <ExamDashboardTableToolbar
+          sx={{ p: 2.5 }}
+          onResetPage={() =>
+            resetPageResult({
+              name: searchText,
+              pageIndex: defaultPageIndex,
+              pageSize: defaultPageSize,
+            })
+          }
         />
+
+        {!loadingFirst && filters?.name && (
+          <ExamDashboardTableFiltersResult
+            totalResults={tableData.length}
+            onResetPage={resetPageResult}
+            sx={{ p: 2.5, pt: 0 }}
+          />
+        )}
+        <Box
+          sx={
+            !tableData.length
+              ? {
+                  minHeight: 400,
+                  flexGrow: { md: 1 },
+                  display: { md: 'flex' },
+                  height: { xs: 800, md: '1px' },
+                  flexDirection: { md: 'column' },
+                }
+              : {}
+          }
+        >
+          <DataGrid
+            apiRef={apiRef}
+            loading={loading}
+            columns={columns}
+            rows={tableData}
+            columnVisibilityModel={columnVisibilityModel}
+            onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
+            disableRowSelectionOnClick
+            disableColumnFilter
+            disableColumnSorting
+            slots={{
+              toolbar: (props) => (
+                <CustomDataGridToolbar {...props} showSearch={false} sx={{ pt: 0 }} />
+              ),
+              pagination: () => (
+                <PaginationCustom
+                  page={pageIndex}
+                  count={Math.ceil(total / pageSize)}
+                  rowsPerPage={pageSize}
+                  onChange={(_event, page) => {
+                    setPageIndex(page);
+                  }}
+                  onRowsPerPageChange={(pagesize: number) => {
+                    setPageSize(pagesize);
+                    resetPage(pagesize);
+                  }}
+                  total={total}
+                  optionAll
+                />
+              ),
+              noRowsOverlay: () => <EmptyContent title="Không có kết quả" />,
+              noResultsOverlay: () => <EmptyContent title="Không tìm thấy kết quả" />,
+            }}
+          />
+        </Box>
       </Card>
       {renderQuickEditForm()}
       {renderConfirmDialog()}

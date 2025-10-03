@@ -1,7 +1,7 @@
 import type { Choice, IQuestionItem } from './question';
 
 export type IExamSessionRequestBody = {
-  ownerId: string;
+  name: string;
   pageIndex: number;
   pageSize: number;
 };

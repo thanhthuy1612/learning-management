@@ -22,7 +22,7 @@ export type ConfigValue = {
 // ----------------------------------------------------------------------
 
 export const CONFIG: ConfigValue = {
-  appName: 'Minimal UI',
+  appName: 'Trường THCS Cổ Phúc',
   basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? '',
   appVersion: packageJson.version,
   serverUrl: process.env.NEXT_PUBLIC_SERVER_URL ?? '',

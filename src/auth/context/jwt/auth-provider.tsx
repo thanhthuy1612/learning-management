@@ -28,9 +28,9 @@ export function AuthProvider({ children }: Props) {
     try {
       const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
       const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
-      const userString = localStorage.getItem(USER_LOCAL_STORAGE);
+      const userString = localStorage.getItem(USER_LOCAL_STORAGE) ?? '';
 
-      if (accessToken && refreshToken && userString) {
+      if (accessToken && refreshToken && userString && userString != 'undefined') {
         setSession(accessToken, refreshToken);
 
         // const res = await axios.get(endpoints.auth.me);

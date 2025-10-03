@@ -127,7 +127,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                   fullWidth
                                   color={
                                     submission[index].answer === option
-                                      ? 'primary'
+                                      ? 'success'
                                       : option === submission[index].submittedAnswer
                                         ? 'error'
                                         : 'inherit'
@@ -141,7 +141,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                       <Radio
                                         color={
                                           submission[index].answer === option
-                                            ? 'primary'
+                                            ? 'success'
                                             : option === submission[index].submittedAnswer
                                               ? 'error'
                                               : 'default'

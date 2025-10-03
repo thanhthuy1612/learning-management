@@ -48,7 +48,7 @@ export function ExamView() {
   }, [timer]);
 
   React.useEffect(() => {
-    if (!questions) {
+    if (!questions.length) {
       router.push(paths.pin);
     }
   }, [questions, router]);

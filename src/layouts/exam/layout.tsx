@@ -13,7 +13,6 @@ import { Logo } from 'src/components/logo';
 import { MainSection } from '../core/main-section';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { SettingsButton } from '../components/settings-button';
 
 import type { MainSectionProps } from '../core/main-section';
 import type { HeaderSectionProps } from '../core/header-section';
@@ -38,17 +37,16 @@ export function ExamLayout({
   children,
   slotProps,
   layoutQuery = 'md',
-  showSettings = true,
 }: ExamLayoutProps) {
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
 
     const headerSlots: HeaderSectionProps['slots'] = {
-      leftArea: <Logo />,
+      leftArea: <Logo size={40} />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
           {/** @slot Settings button */}
-          {showSettings && <SettingsButton />}
+          {/* {showSettings && <SettingsButton />} */}
         </Box>
       ),
     };

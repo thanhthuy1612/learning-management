@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { Alert } from '@mui/material';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { paths } from 'src/routes/paths';
@@ -29,7 +29,7 @@ export const ChangePassWordSchema = zod
     oldPassword: zod
       .string()
       .min(1, { message: 'Bắt buộc nhập!' })
-      .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự!' }),
+      .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' }),
     newPassword: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
     confirmNewPassword: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
   })
@@ -173,9 +173,16 @@ export function AccountChangePassword() {
           }}
         />
 
-        <Button type="submit" variant="contained" loading={isSubmitting} sx={{ ml: 'auto' }}>
+        <LoadingButton
+          fullWidth
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+          loadingIndicator="Đang tải"
+          size="large"
+        >
           Cập nhật
-        </Button>
+        </LoadingButton>
       </Card>
     </Form>
   );

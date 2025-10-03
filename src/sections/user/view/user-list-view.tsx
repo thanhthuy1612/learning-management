@@ -30,6 +30,7 @@ import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { EmptyContent } from 'src/components/empty-content';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
@@ -162,11 +163,9 @@ export function UserListView() {
         dispatch(updateFiltersUser(newBody));
         setTotal(res.total);
         setTableData(res.data);
-        apiRef.current.setRows(res.data);
       } else {
         setTotal(0);
         setTableData([]);
-        apiRef.current.setRows([]);
       }
     } catch (error: any) {
       setTotal(0);
@@ -214,6 +213,8 @@ export function UserListView() {
     />
   );
 
+  if (loadingFirst) return <LoadingScreen />;
+
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -237,7 +238,16 @@ export function UserListView() {
       />
 
       <Card>
-        <UserTableToolbar sx={{ p: 2.5 }} onResetPage={() => resetPage()} />
+        <UserTableToolbar
+          sx={{ p: 2.5 }}
+          onResetPage={() =>
+            resetPageResult({
+              searchText,
+              pageIndex: defaultPageIndex,
+              pageSize: defaultPageSize,
+            })
+          }
+        />
 
         {!loadingFirst && filters?.searchText && (
           <UserTableFiltersResult
@@ -247,7 +257,19 @@ export function UserListView() {
           />
         )}
 
-        <Box sx={{ position: 'relative' }}>
+        <Box
+          sx={
+            !tableData.length
+              ? {
+                  minHeight: 400,
+                  flexGrow: { md: 1 },
+                  display: { md: 'flex' },
+                  height: { xs: 800, md: '1px' },
+                  flexDirection: { md: 'column' },
+                }
+              : {}
+          }
+        >
           <DataGrid
             apiRef={apiRef}
             loading={loadingFirst || loading}

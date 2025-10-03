@@ -5,7 +5,7 @@ import type { Theme, SxProps } from '@mui/material';
 
 import React from 'react';
 
-import { Box, Card, Grid, Link, Stack, Button, Typography, LinearProgress } from '@mui/material';
+import { Box, Card, Grid, Stack, Button, Typography, LinearProgress } from '@mui/material';
 
 import { useAppSelector } from 'src/lib/hooks';
 
@@ -28,13 +28,13 @@ type Props = {
 // ----------------------------------------------------------------------
 
 export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) {
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  // const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
 
   const { targetDate } = useAppSelector((state) => state.exam);
 
-  const handleToggle = () => {
-    setIsExpanded((pre) => !pre);
-  };
+  // const handleToggle = () => {
+  //   setIsExpanded((pre) => !pre);
+  // };
 
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
@@ -100,7 +100,7 @@ export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) 
           <Typography variant="body2">
             Hoàn thành {fields.filter((item) => item.answer !== '').length}/{fields.length}
           </Typography>
-          <Link
+          {/* <Link
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -116,31 +116,31 @@ export function ExamHeader({ sx, renderButtonSubmit, fields = [], ref }: Props) 
             <Iconify
               icon={isExpanded ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
             />
-          </Link>
+          </Link> */}
         </Box>
-        <Box
+        {/* <Box
           sx={{
             transition: 'height 0.5s ease',
             height: isExpanded ? '1000px' : '0px',
             maxHeight: 'fit-content',
             overflow: 'hidden',
           }}
-        >
-          <Grid container spacing={1}>
-            {fields.map((field, index) => (
-              <Grid key={index}>
-                <Button
-                  color="primary"
-                  variant={field?.answer ? 'contained' : 'outlined'}
-                  sx={{ width: 'fit-content' }}
-                  onClick={() => handleScroll(`question_${index}`)}
-                >
-                  {index + 1}
-                </Button>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        > */}
+        <Grid container spacing={1}>
+          {fields.map((field, index) => (
+            <Grid key={index}>
+              <Button
+                color="primary"
+                variant={field?.answer ? 'contained' : 'outlined'}
+                sx={{ width: 'fit-content' }}
+                onClick={() => handleScroll(`question_${index}`)}
+              >
+                {index + 1}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
+        {/* </Box> */}
       </Stack>
     </Card>
   );

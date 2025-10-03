@@ -6,7 +6,8 @@ export const prompt = (
   clasIn: number,
   document: string,
   matrix: string,
-  time: number
+  time: number,
+  quantity: number
 ) => `Bạn là một giáo viên bộ môn ${subject}. Hãy tạo một đề thi học kỳ môn ${subject} lớp ${clasIn} với các yêu cầu sau:
 
 1. Nội dung kiến thức: Bám sát sách giáo khoa ${subject} lớp ${clasIn} (không sử dụng nguồn bên ngoài). Sách giáo khoa có thể tham khảo từ file: ${document}
@@ -15,11 +16,12 @@ export const prompt = (
 
 3. Mức độ nhận thức: Phân chia theo thang Bloom – gồm các mức độ: Nhận biết, Thông hiểu, Vận dụng, Vận dụng cao.
 
-4. Tạo ma trận đề thi gồm các câu sau: Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức.
+4. Tạo ma trận đề thi gồm ${quantity} câu với mô tả nội dung câu hỏi như sau: 
 
- - MA TRẬN:
+- MA TRẬN:
     ${matrix}
-
+    
+- Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức.
 5. Thời gian làm bài: ${time} phút.
 
 6. Thang điểm: Tổng điểm 10 điểm, phân bổ theo tỷ lệ câu hỏi.

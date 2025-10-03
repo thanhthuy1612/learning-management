@@ -24,6 +24,7 @@ import { updateSubmission, updateFiltersScores } from 'src/lib/features';
 import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
@@ -182,6 +183,8 @@ export function ScoresListView() {
   React.useEffect(() => {
     if (searchText) {
       fetchData();
+    } else {
+      setLoadingFirst(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -194,6 +197,8 @@ export function ScoresListView() {
       }}
     />
   );
+
+  if (loadingFirst) return <LoadingScreen />;
 
   return (
     <DashboardContent>
@@ -208,7 +213,10 @@ export function ScoresListView() {
       />
 
       <Card>
-        <ScoresTableToolbar sx={{ p: 2.5 }} onResetPage={fetchData} />
+        <ScoresTableToolbar
+          sx={{ p: 2.5 }}
+          onResetPage={() => fetchData({ examSessionId: searchText })}
+        />
 
         {!loadingFirst && filters && (
           <ScoresTableFiltersResult
@@ -219,7 +227,19 @@ export function ScoresListView() {
         )}
 
         {!!filters && (
-          <Box sx={{ position: 'relative' }}>
+          <Box
+            sx={
+              !tableData.length
+                ? {
+                    minHeight: 400,
+                    flexGrow: { md: 1 },
+                    display: { md: 'flex' },
+                    height: { xs: 800, md: '1px' },
+                    flexDirection: { md: 'column' },
+                  }
+                : {}
+            }
+          >
             <DataGrid
               paginationModel={{
                 page: pageIndex - 1,

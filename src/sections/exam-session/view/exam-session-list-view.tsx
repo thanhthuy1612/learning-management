@@ -25,9 +25,10 @@ import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fDateTime } from 'src/utils/format-time';
+import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
-import { useAppDispatch } from 'src/lib/hooks';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 import { examSessionService } from 'src/services/exam-session.services';
 import { updateExamChoice, updateFiltersScores, updateSearchTextScores } from 'src/lib/features';
 
@@ -36,13 +37,15 @@ import { Iconify } from 'src/components/iconify';
 import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
 import { CustomDataGridToolbar } from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamForm } from 'src/sections/exam-dashboard/exam-form';
 
-import { useAuthContext } from 'src/auth/hooks';
+import { ExamSessionTableToolbar } from '../exam-session-table-toolbar';
+import { ExamSessionTableFiltersResult } from '../exam-session-table-filters-result';
 
 const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
 
@@ -52,6 +55,7 @@ export function ExamSessionListView() {
   const [tableData, setTableData] = React.useState<IExamSession[]>([]);
   const [row, setRow] = React.useState<IExamSession>();
   const [total, setTotal] = React.useState<number>(0);
+  const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(1);
   const [pageSize, setPageSize] = React.useState<number>(10);
@@ -64,7 +68,7 @@ export function ExamSessionListView() {
 
   const dispatch = useAppDispatch();
 
-  const { user } = useAuthContext();
+  const { searchText, filters } = useAppSelector((state) => state.examSession);
 
   const apiRef = useGridApiRef();
 
@@ -198,7 +202,7 @@ export function ExamSessionListView() {
     try {
       setLoading(true);
       const newBody: IExamSessionRequestBody = body ?? {
-        ownerId: user?.id,
+        name: searchText,
         pageIndex,
         pageSize,
       };
@@ -206,11 +210,9 @@ export function ExamSessionListView() {
       if (res.total) {
         setTotal(res.total);
         setTableData(res.data);
-        apiRef.current.setRows(res.data);
       } else {
         setTotal(0);
         setTableData([]);
-        apiRef.current.setRows([]);
       }
     } catch (error: any) {
       setTotal(0);
@@ -218,6 +220,7 @@ export function ExamSessionListView() {
       toast.error(error.toString());
     } finally {
       setLoading(false);
+      setLoadingFirst(false);
     }
   };
 
@@ -229,10 +232,18 @@ export function ExamSessionListView() {
   const resetPage = async (newPageSize = pageSize) => {
     if (pageIndex === 1) {
       await fetchData({
-        ownerId: user?.id,
+        name: searchText,
         pageIndex,
         pageSize: newPageSize,
       });
+    } else {
+      setPageIndex(1);
+    }
+  };
+
+  const resetPageResult = async (body?: IExamSessionRequestBody) => {
+    if (pageIndex === 1) {
+      await fetchData(body);
     } else {
       setPageIndex(1);
     }
@@ -328,6 +339,8 @@ export function ExamSessionListView() {
     />
   );
 
+  if (loadingFirst) return <LoadingScreen />;
+
   return (
     <DashboardContent>
       <CustomBreadcrumbs
@@ -351,7 +364,37 @@ export function ExamSessionListView() {
       />
 
       <Card>
-        <Box sx={{ position: 'relative' }}>
+        <ExamSessionTableToolbar
+          sx={{ p: 2.5 }}
+          onResetPage={() =>
+            resetPageResult({
+              name: searchText,
+              pageIndex: defaultPageIndex,
+              pageSize: defaultPageSize,
+            })
+          }
+        />
+
+        {!loadingFirst && filters?.name && (
+          <ExamSessionTableFiltersResult
+            totalResults={tableData.length}
+            onResetPage={resetPageResult}
+            sx={{ p: 2.5, pt: 0 }}
+          />
+        )}
+        <Box
+          sx={
+            !tableData.length
+              ? {
+                  minHeight: 400,
+                  flexGrow: { md: 1 },
+                  display: { md: 'flex' },
+                  height: { xs: 800, md: '1px' },
+                  flexDirection: { md: 'column' },
+                }
+              : {}
+          }
+        >
           <DataGrid
             apiRef={apiRef}
             loading={loading}

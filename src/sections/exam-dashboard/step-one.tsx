@@ -36,6 +36,13 @@ export function StepOne({ control, loading }: Props) {
         )}
       />
       <Controller
+        name="stepOne.quantity"
+        control={control}
+        render={({ field }) => (
+          <Field.Text disabled={loading} type="number" {...field} label="Số lượng câu hỏi" />
+        )}
+      />
+      <Controller
         name="stepOne.matrix"
         control={control}
         render={({ field }) => (

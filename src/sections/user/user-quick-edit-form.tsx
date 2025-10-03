@@ -183,7 +183,7 @@ function UserEditStatus({ onClose, currentUser }: UserEditStatusProps) {
 export type UserEditPasswordSchemaType = zod.infer<typeof UserEditPasswordSchema>;
 
 export const UserEditPasswordSchema = zod.object({
-  password: zod.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự!'),
+  password: zod.string().min(8, 'Mật khẩu phải có ít nhất 8 ký tự!'),
 });
 // ----------------------------------------------------------------------
 

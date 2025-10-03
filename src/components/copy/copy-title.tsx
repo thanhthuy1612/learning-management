@@ -39,6 +39,7 @@ export function CopyTitle({ value }: Props) {
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
+          fontWeight: 600,
         }}
       >
         {value}

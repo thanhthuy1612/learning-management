@@ -228,13 +228,15 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
                                   <Button
                                     variant="outlined"
                                     fullWidth
-                                    color={typeField.value === option ? 'primary' : 'inherit'}
+                                    color={typeField.value === option ? 'success' : 'inherit'}
                                     sx={{ flexGrow: 1 }}
                                   >
                                     <FormControlLabel
                                       key={option}
                                       value={option}
-                                      control={<Radio key={option} value={option} />}
+                                      control={
+                                        <Radio color="success" key={option} value={option} />
+                                      }
                                       label={
                                         <Controller
                                           name={`answers.${index}.choices.${option}`}
@@ -277,7 +279,7 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
           </Button>
 
           {!isView && (
-            <LoadingButton type="submit" variant="contained" color="primary" loading={isSubmitting}>
+            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
               Cập nhật
             </LoadingButton>
           )}

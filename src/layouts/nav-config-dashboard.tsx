@@ -65,7 +65,7 @@ export const navDataTeacher: NavSectionProps['data'] = [
       {
         title: 'Đề thi',
         path: paths.dashboard.exam.root,
-        icon: ICONS.file,
+        icon: ICONS.dashboard,
         children: [
           { title: 'Danh sách', path: paths.dashboard.exam.list },
           { title: 'Thêm mới', path: paths.dashboard.exam.new },
@@ -74,7 +74,7 @@ export const navDataTeacher: NavSectionProps['data'] = [
       {
         title: 'Kỳ thi',
         path: paths.dashboard.examSession.root,
-        icon: ICONS.calendar,
+        icon: ICONS.course,
         children: [
           { title: 'Danh sách', path: paths.dashboard.examSession.list },
           { title: 'Thêm mới', path: paths.dashboard.examSession.new },
@@ -83,7 +83,7 @@ export const navDataTeacher: NavSectionProps['data'] = [
       {
         title: 'Kết quả thi',
         path: paths.dashboard.scores.root,
-        icon: ICONS.booking,
+        icon: ICONS.tour,
         children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
       },
     ],
@@ -111,7 +111,7 @@ export const navData: NavSectionProps['data'] = [
       {
         title: 'Đề thi',
         path: paths.dashboard.exam.root,
-        icon: ICONS.file,
+        icon: ICONS.dashboard,
         children: [
           { title: 'Danh sách', path: paths.dashboard.exam.list },
           { title: 'Thêm mới', path: paths.dashboard.exam.new },
@@ -120,7 +120,7 @@ export const navData: NavSectionProps['data'] = [
       {
         title: 'Kỳ thi',
         path: paths.dashboard.examSession.root,
-        icon: ICONS.calendar,
+        icon: ICONS.course,
         children: [
           { title: 'Danh sách', path: paths.dashboard.examSession.list },
           { title: 'Thêm mới', path: paths.dashboard.examSession.new },
@@ -129,7 +129,7 @@ export const navData: NavSectionProps['data'] = [
       {
         title: 'Kết quả thi',
         path: paths.dashboard.scores.root,
-        icon: ICONS.booking,
+        icon: ICONS.tour,
         children: [{ title: 'Danh sách', path: paths.dashboard.scores.list }],
       },
     ],

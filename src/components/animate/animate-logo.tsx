@@ -41,6 +41,7 @@ export function AnimateLogoZoom({ logo, slotProps, sx, ...other }: AnimateLogoPr
                 ? (slotProps?.logo?.sx ?? [])
                 : [slotProps?.logo?.sx]),
             ]}
+            size={40}
           />
         )}
       </m.span>
@@ -105,6 +106,7 @@ export function AnimateLogoRotate({ logo, sx, slotProps, ...other }: AnimateLogo
               ? (slotProps?.logo?.sx ?? [])
               : [slotProps?.logo?.sx]),
           ]}
+          size={40}
         />
       )}
 

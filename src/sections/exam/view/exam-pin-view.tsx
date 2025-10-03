@@ -6,13 +6,12 @@ import { useAppSelector } from 'src/lib/hooks';
 
 import { AnimateLogoRotate } from 'src/components/animate';
 
-import { ExamPinForm } from '../exam-pin-form';
 import { ExamNameForm } from '../exam-name-form';
 
 // ----------------------------------------------------------------------
 
 export function ExamPinView() {
-  const { pin, errorStepOne } = useAppSelector((state) => state.exam);
+  const { errorStepOne } = useAppSelector((state) => state.exam);
   return (
     <>
       <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
@@ -23,7 +22,7 @@ export function ExamPinView() {
         </Alert>
       )}
 
-      {!!pin && !errorStepOne ? <ExamNameForm /> : <ExamPinForm />}
+      <ExamNameForm />
     </>
   );
 }

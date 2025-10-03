@@ -1,8 +1,11 @@
+import type { IUserRequestBody } from 'src/types/user';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
 import { useCallback } from 'react';
 
 import Chip from '@mui/material/Chip';
+
+import { defaultPageSize, defaultPageIndex } from 'src/utils/default';
 
 import { updateFiltersSearchUser } from 'src/lib/features';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
@@ -12,7 +15,7 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 // ----------------------------------------------------------------------
 
 type Props = FiltersResultProps & {
-  onResetPage: () => void;
+  onResetPage: (body?: IUserRequestBody) => void;
 };
 
 export function UserTableFiltersResult({ onResetPage, totalResults, sx }: Props) {
@@ -21,13 +24,21 @@ export function UserTableFiltersResult({ onResetPage, totalResults, sx }: Props)
   const dispatch = useAppDispatch();
 
   const handleRemoveKeyword = useCallback(() => {
-    onResetPage();
+    onResetPage({
+      pageIndex: defaultPageIndex,
+      pageSize: defaultPageSize,
+      searchText: '',
+    });
     dispatch(updateFiltersSearchUser(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleReset = useCallback(() => {
-    onResetPage();
+    onResetPage({
+      pageIndex: defaultPageIndex,
+      pageSize: defaultPageSize,
+      searchText: '',
+    });
     dispatch(updateFiltersSearchUser(''));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -9,7 +9,7 @@ export type IExamTableFilters = {
 };
 
 export type IExamRequestBody = {
-  ownerId: string;
+  name: string;
   pageIndex: number;
   pageSize: number;
 };

@@ -159,13 +159,13 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                 <Button
                                   variant="outlined"
                                   fullWidth
-                                  color={typeField.value === option ? 'primary' : 'inherit'}
+                                  color={typeField.value === option ? 'success' : 'inherit'}
                                   sx={{ flexGrow: 1 }}
                                 >
                                   <FormControlLabel
                                     key={option}
                                     value={option}
-                                    control={<Radio key={option} value={option} />}
+                                    control={<Radio color="success" key={option} value={option} />}
                                     label={questions[index].choices[option]}
                                     sx={{ width: '100%', height: '100%' }}
                                   />

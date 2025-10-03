@@ -2,6 +2,8 @@ import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
 
+import { paths } from 'src/routes/paths';
+
 import { CONFIG } from 'src/global-config';
 
 import {
@@ -16,13 +18,25 @@ import {
 const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => Promise.reject((error.response && error.response.data) || 'Đã xảy ra lỗi')
-);
+  (response) => {
+    if (response.status === 200 && response.data.code) {
+      throw response.data.message;
+    }
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
+    if (response.status === 200 && !response.data.code && !response.data.data) {
+      throw response.data.message;
+    }
+
+    return response.data;
+  },
   async (error) => {
+    console.log(error);
+    if (error.status === 403) {
+      window.location.href = '/' + paths.error[403];
+    }
+    if (error.status === 500) {
+      window.location.href = '/' + paths.error[500];
+    }
     const originalRequest = error.config;
     if (error.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -43,7 +57,7 @@ axiosInstance.interceptors.response.use(
         console.error('Error during token expiration:', refreshError);
       }
     }
-    return Promise.reject(error);
+    return Promise.reject((error.response && error.response.data) || 'Đã xảy ra lỗi');
   }
 );
 

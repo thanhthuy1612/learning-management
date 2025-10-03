@@ -13,6 +13,7 @@ export const StepOneSchema = zod.object({
     .min(1, { message: 'Giá trị tối thiểu là 1!' })
     .max(12, { message: 'Giá trị tối đa là 12!' }),
   time: zod.number().min(1, { message: 'Giá trị tối thiểu là 1!' }),
+  quantity: zod.number().min(1, { message: 'Giá trị tối thiểu là 1!' }),
   matrix: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
   document: zod.string().optional(),
 });

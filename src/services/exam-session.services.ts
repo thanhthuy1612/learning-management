@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-catch */
-
 import type {
   ITypeExamRequestBody,
   IExamSessionRequestBody,
@@ -11,68 +9,28 @@ import axios, { endpoints } from 'src/lib/axios';
 
 export const examSessionService = {
   async list(body: IExamSessionRequestBody) {
-    try {
-      const { data } = await axios.post(endpoints.examSession.list, body);
+    const { data } = await axios.post(endpoints.examSession.list, body);
 
-      if (data.code) {
-        throw data.message;
-      }
-
-      return data.data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   },
   async create(body: ICreateExamSessionRequestBody) {
-    try {
-      const { data } = await axios.post(endpoints.examSession.create, body);
+    const { data } = await axios.post(endpoints.examSession.create, body);
 
-      if (data.code) {
-        throw data.message;
-      }
-
-      return data.data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   },
   async openOrClose(body: ITypeExamRequestBody) {
-    try {
-      const { data } = await axios.post(endpoints.examSession.openOrClose, body);
+    const { data } = await axios.post(endpoints.examSession.openOrClose, body);
 
-      if (data.code) {
-        throw data.message;
-      }
-
-      return data.data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   },
   async mark(body: IExamSessionIdRequestBody) {
-    try {
-      const { data } = await axios.post(endpoints.examSession.mark, body);
+    const { data } = await axios.post(endpoints.examSession.mark, body);
 
-      if (data.code) {
-        throw data.message;
-      }
-
-      return data.data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   },
   async scores(body: IExamSessionIdRequestBody) {
-    try {
-      const { data } = await axios.post(endpoints.examSession.scores, body);
+    const { data } = await axios.post(endpoints.examSession.scores, body);
 
-      if (!data.data) {
-        throw data.message;
-      }
-
-      return data.data;
-    } catch (error) {
-      throw error;
-    }
+    return data;
   },
 };

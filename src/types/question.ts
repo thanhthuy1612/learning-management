@@ -25,7 +25,7 @@ export type IPin = {
   serverTime: Date;
 };
 
-export type IQuitRequestBody = {
+export type IQuizRequestBody = {
   scoreId: string;
   questions: {
     id: string;

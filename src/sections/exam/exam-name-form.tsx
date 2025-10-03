@@ -12,9 +12,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { paths } from 'src/routes/paths';
 
-import { quitService } from 'src/services/quit.services';
-import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
-import { updateName, updateData, updateQuestions, updateErrorStepOne } from 'src/lib/features';
+import { useAppDispatch } from 'src/lib/hooks';
+import { quizService } from 'src/services/quiz.services';
+import {
+  updateName,
+  updateData,
+  updateQuestions,
+  updateTargetDate,
+  updateErrorStepOne,
+} from 'src/lib/features';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -25,20 +31,20 @@ import { Form, Field } from 'src/components/hook-form';
 export type ExamNameSchemaType = zod.infer<typeof ExamNameSchema>;
 
 export const ExamNameSchema = zod.object({
+  code: zod.string().min(1, { message: 'Yêu cầu bắt buộc nhập mã phòng thi!' }),
   name: zod.string().min(1, { message: 'Bắt buộc nhập tên!' }),
 });
 
 // ----------------------------------------------------------------------
 
 export function ExamNameForm() {
-  const { pin } = useAppSelector((state) => state.exam);
   const dispatch = useAppDispatch();
 
   const router = useRouter();
 
   const methods = useForm<ExamNameSchemaType>({
     resolver: zodResolver(ExamNameSchema),
-    defaultValues: { name: '' },
+    defaultValues: { name: '', code: '' },
   });
 
   const {
@@ -50,12 +56,15 @@ export function ExamNameForm() {
     dispatch(updateName(data.name));
     try {
       const promise = new Promise((resolve, reject) => {
-        quitService
-          .pin({ code: pin, username: data.name } as IPinRequestBody)
+        quizService
+          .pin({ code: data.code, username: data.name } as IPinRequestBody)
           .then((res) => {
             dispatch(updateData(res));
             dispatch(updateQuestions(res.question));
-            resolve('Tạo thành công');
+            dispatch(
+              updateTargetDate(new Date(new Date().getTime() + res.duration * 60 * 1000).getTime())
+            );
+            resolve('Bắt đầu thi');
             router.push(paths.exam);
           })
           .catch((e) => {
@@ -67,7 +76,7 @@ export function ExamNameForm() {
 
       toast.promise(promise, {
         loading: 'Đang tải',
-        success: 'Tạo thành công',
+        success: 'Bắt đầu thi',
       });
     } catch (error: any) {
       dispatch(updateErrorStepOne(error));
@@ -76,6 +85,7 @@ export function ExamNameForm() {
 
   const renderForm = () => (
     <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
+      <Field.Text name="code" label="Mã phòng thi" />
       <Field.Text
         name="name"
         helperText={
@@ -85,7 +95,6 @@ export function ExamNameForm() {
           </Box>
         }
         label="Tên"
-        slotProps={{ inputLabel: { shrink: true } }}
       />
 
       <LoadingButton

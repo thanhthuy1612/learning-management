@@ -41,6 +41,7 @@ export function ExamCreateView() {
       subject: '',
       classId: 6,
       time: 45,
+      quantity: 16,
       matrix: matrixExam,
       document: '',
     },
@@ -79,9 +80,9 @@ export function ExamCreateView() {
         if (isValid) {
           try {
             setLoadingStepOne(true);
-            const { subject, classId, time, matrix, document } = getValues('stepOne');
+            const { subject, classId, time, matrix, document, quantity } = getValues('stepOne');
             const res = await examService.prompt(
-              prompt(subject, classId, document ?? '', matrix, time)
+              prompt(subject, classId, document ?? '', matrix, time, quantity)
             );
             setValue(
               'stepTwo.answers',

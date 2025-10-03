@@ -24,6 +24,13 @@ export type Props = GridSlotProps['toolbar'] & {
   showSearch?: boolean;
 };
 
+export const localeText = {
+  toolbarColumns: 'Cột',
+  toolbarFilters: 'Bộ lọc',
+  toolbarDensity: 'Mật độ',
+  toolbarExport: 'Xuất',
+};
+
 export function CustomDataGridToolbar({ setFilterButtonEl, showSearch, sx }: Props) {
   return (
     <GridToolbarContainer sx={{ mt: 2, ...sx }}>

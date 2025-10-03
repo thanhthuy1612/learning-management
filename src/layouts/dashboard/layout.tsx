@@ -29,7 +29,6 @@ import { MenuButton } from '../components/menu-button';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
 import { AccountDrawer } from '../components/account-drawer';
-import { SettingsButton } from '../components/settings-button';
 import { navData as dashboardNavData } from '../nav-config-dashboard';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 
@@ -129,6 +128,7 @@ export function DashboardLayout({
                 display: 'none',
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
               }}
+              size={40}
             />
           )}
 
@@ -141,7 +141,7 @@ export function DashboardLayout({
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           <Searchbar data={navData} />
-          <SettingsButton />
+          {/* <SettingsButton /> */}
           <AccountDrawer data={_account} />
         </Box>
       ),

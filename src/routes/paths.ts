@@ -8,8 +8,6 @@ const ROOTS = {
 // ----------------------------------------------------------------------
 
 export const paths = {
-  faqs: '/faqs',
-  minimalStore: 'https://mui.com/store/items/minimal-dashboard/',
   // AUTH
   auth: {
     jwt: {
@@ -42,5 +40,10 @@ export const paths = {
     },
   },
   pin: '/exam',
-  exam: '/exam/quit',
+  exam: '/exam/quiz',
+  error: {
+    403: 'error/403',
+    404: 'error/404',
+    500: 'error/500',
+  },
 };
