@@ -19,8 +19,8 @@ import { examService } from 'src/services/exam.services';
 
 import { Form } from 'src/components/hook-form';
 import { toast } from 'src/components/snackbar';
+import { Stepper } from 'src/components/form-wizard/form-steps';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { Stepper, StepCompleted } from 'src/components/form-wizard/form-steps';
 
 import { StepTwo } from '../step-two';
 import { StepOne } from '../step-one';
@@ -191,7 +191,7 @@ export function ExamCreateView() {
         >
           {activeStep === 0 && <StepOne control={control} loading={loadingStepOne} />}
           {activeStep === 1 && <StepTwo control={control} fields={fields} />}
-          {completedStep && <StepCompleted onReset={handleReset} />}
+          {/* {completedStep && <StepCompleted onReset={handleReset} />} */}
         </Box>
 
         {!completedStep && (
