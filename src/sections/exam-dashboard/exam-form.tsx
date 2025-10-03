@@ -152,6 +152,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
                         <RadioGroup
                           {...typeField}
                           aria-labelledby={`answers.${index}.answer-radios`}
+                          onChange={() => {}}
                         >
                           <Grid container spacing={2}>
                             {Choices.map((option) => (
@@ -165,7 +166,14 @@ export function ExamForm({ sx, open, onClose }: Props) {
                                   <FormControlLabel
                                     key={option}
                                     value={option}
-                                    control={<Radio color="success" key={option} value={option} />}
+                                    control={
+                                      <Radio
+                                        color="success"
+                                        key={option}
+                                        value={option}
+                                        onChange={() => {}}
+                                      />
+                                    }
                                     label={questions[index].choices[option]}
                                     sx={{ width: '100%', height: '100%' }}
                                   />

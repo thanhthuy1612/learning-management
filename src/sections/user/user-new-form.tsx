@@ -41,7 +41,7 @@ export const NewUserSchema = zod.object({
   password: zod
     .string()
     .min(1, { message: 'Bắt buộc nhập!' })
-    .min(8, { message: 'Mật khẩu phải có ít nhất 6 ký tự!' }),
+    .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự!' }),
 });
 
 // ----------------------------------------------------------------------

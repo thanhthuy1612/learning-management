@@ -149,7 +149,7 @@ export function AccountChangePassword() {
           }}
           helperText={
             <Box component="span" sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
-              <Iconify icon="solar:info-circle-bold" width={16} /> Mật khẩu phải có ít nhất 6 ký tự!
+              <Iconify icon="solar:info-circle-bold" width={16} /> Mật khẩu phải có ít nhất 8 ký tự!
             </Box>
           }
         />

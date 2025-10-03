@@ -36,6 +36,8 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 
 import { ExamSessionQuickEditForm } from 'src/sections/exam-session/exam-session-quick-edit-form';
 
+import { useAuthContext } from 'src/auth/hooks';
+
 import { ExamForm } from '../exam-form';
 import { ExamEditForm } from '../exam-edit-form';
 import { ExamDashboardTableToolbar } from '../exam-dashboard-table-toolbar';
@@ -65,6 +67,10 @@ export function ExamListView() {
   const { searchText, filters } = useAppSelector((state) => state.examDashboard);
 
   const apiRef = useGridApiRef();
+
+  const { user } = useAuthContext();
+
+  const isAdmin = user?.roles[0] === 'admin';
 
   const columns: GridColDef[] = [
     {
@@ -99,23 +105,25 @@ export function ExamListView() {
       field: 'actions',
       align: 'right',
       headerAlign: 'right',
-      width: 160,
+      width: isAdmin ? 40 : 160,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Tạo kỳ thi" placement="top" arrow>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                createSession.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:export-bold" />
-            </IconButton>
-          </Tooltip>
+          {!isAdmin && (
+            <Tooltip title="Tạo kỳ thi" placement="top" arrow>
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  createSession.onTrue();
+                  setRow(params.row);
+                }}
+              >
+                <Iconify icon="solar:export-bold" />
+              </IconButton>
+            </Tooltip>
+          )}
 
           <Tooltip title="Xem" placement="top" arrow>
             <IconButton
@@ -129,31 +137,35 @@ export function ExamListView() {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Sửa" placement="top" arrow>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                quickEditForm.onTrue();
-                dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
-                dispatch(updateExamName(params.row.name));
-                dispatch(updateExamId(params.row.id));
-              }}
-            >
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip>
+          {!isAdmin && (
+            <>
+              <Tooltip title="Sửa" placement="top" arrow>
+                <IconButton
+                  color="inherit"
+                  onClick={() => {
+                    quickEditForm.onTrue();
+                    dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
+                    dispatch(updateExamName(params.row.name));
+                    dispatch(updateExamId(params.row.id));
+                  }}
+                >
+                  <Iconify icon="solar:pen-bold" />
+                </IconButton>
+              </Tooltip>
 
-          <Tooltip title="Xoá" placement="top" arrow>
-            <IconButton
-              color="error"
-              onClick={() => {
-                confirmDialog.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:trash-bin-trash-bold" />
-            </IconButton>
-          </Tooltip>
+              <Tooltip title="Xoá" placement="top" arrow>
+                <IconButton
+                  color="error"
+                  onClick={() => {
+                    confirmDialog.onTrue();
+                    setRow(params.row);
+                  }}
+                >
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
         </Box>
       ),
     },

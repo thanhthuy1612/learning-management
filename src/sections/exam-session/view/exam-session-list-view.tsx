@@ -43,6 +43,8 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 
 import { ExamForm } from 'src/sections/exam-dashboard/exam-form';
 
+import { useAuthContext } from 'src/auth/hooks';
+
 import { ExamSessionTableToolbar } from '../exam-session-table-toolbar';
 import { ExamSessionTableFiltersResult } from '../exam-session-table-filters-result';
 
@@ -66,6 +68,10 @@ export function ExamSessionListView() {
   const mark = useBoolean();
 
   const dispatch = useAppDispatch();
+
+  const { user } = useAuthContext();
+
+  const isAdmin = user?.roles[0] === 'admin';
 
   const { searchText, filters } = useAppSelector((state) => state.examSession);
 
@@ -129,6 +135,7 @@ export function ExamSessionListView() {
                 confirmDialog.onTrue();
                 setRow(params.row);
               }}
+              disabled={isAdmin}
             >
               <Iconify
                 icon={params.row.isOpen ? 'solar:stop-circle-bold' : 'solar:play-circle-bold'}
@@ -143,7 +150,7 @@ export function ExamSessionListView() {
       field: 'actions',
       align: 'right',
       headerAlign: 'right',
-      width: 120,
+      width: isAdmin ? 80 : 120,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -160,17 +167,19 @@ export function ExamSessionListView() {
               <Iconify icon="solar:eye-bold" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Chấm điểm" placement="top" arrow>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                mark.onTrue();
-                setRow(params.row);
-              }}
-            >
-              <Iconify icon="solar:file-text-bold" />
-            </IconButton>
-          </Tooltip>
+          {!isAdmin && (
+            <Tooltip title="Chấm điểm" placement="top" arrow>
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  mark.onTrue();
+                  setRow(params.row);
+                }}
+              >
+                <Iconify icon="solar:file-text-bold" />
+              </IconButton>
+            </Tooltip>
+          )}
           <Tooltip title="Xem điểm" placement="top" arrow>
             <IconButton
               color="inherit"

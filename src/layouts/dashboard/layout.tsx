@@ -91,8 +91,8 @@ export function DashboardLayout({
   const canDisplayItemByRole = (allowedRoles: NavItemProps['allowedRoles']): boolean =>
     !allowedRoles?.includes(user?.role);
 
-  console.log(pathname);
   const checkPermission = () => {
+    if (pathname.includes('/dashboard/session/new/') && user?.roles?.[0] === 'teacher') return true;
     if (
       pathname.includes('dashboard') &&
       pathname !== '/dashboard/' &&
@@ -107,7 +107,6 @@ export function DashboardLayout({
         });
         return res;
       }, []);
-      console.log(permission);
       return permission.includes(pathname);
     }
     return true;

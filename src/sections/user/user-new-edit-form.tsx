@@ -117,7 +117,12 @@ export function UserNewEditForm({ currentUser }: Props) {
           )}
           <Field.Text disabled name="username" label="Tài khoản" />
           <Field.Text name="email" label="Địa chỉ email" />
-          <Field.Phone name="phone" label="Số điện thoại" country="VN" />
+          <Field.Phone
+            name="phone"
+            label="Số điện thoại"
+            placeholder="Số điện thoại"
+            country="VN"
+          />
           {/* <Field.Autocomplete
             multiple
             freeSolo

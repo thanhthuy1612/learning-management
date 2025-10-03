@@ -73,7 +73,7 @@ export const navDataTeacher: NavSectionProps['data'] = [
         icon: ICONS.course,
         children: [
           { title: 'Danh sách', path: paths.dashboard.examSession.list },
-          { title: 'Thêm mới', path: paths.dashboard.examSession.new },
+          // { title: 'Thêm mới', path: paths.dashboard.examSession.new },
         ],
       },
     ],
@@ -90,7 +90,7 @@ export const navData: NavSectionProps['data'] = [
         children: [
           { title: 'Thông tin cá nhân', path: paths.dashboard.user.account },
           { title: 'Danh sách người dùng', path: paths.dashboard.user.list },
-          { title: 'Thêm giáo viên', path: paths.dashboard.user.new },
+          { title: 'Thêm người dùng', path: paths.dashboard.user.new },
         ],
       },
     ],
