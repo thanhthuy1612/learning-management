@@ -81,8 +81,8 @@ const renderDescription = () => (
         typography: { xs: 'h2', md: 'h1' },
       }}
     >
-      Tham gia hành trình học tập
-      <br /> của bạn
+      Tham gia hành trình
+      <br /> học tập
       <Box
         component="span"
         sx={(theme) => ({
