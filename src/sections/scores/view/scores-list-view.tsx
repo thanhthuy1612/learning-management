@@ -210,7 +210,7 @@ export function ScoresListView() {
         heading="Danh sách"
         links={[
           { name: 'Tổng quan', href: paths.dashboard.root },
-          { name: 'Điểm thi', href: paths.dashboard.scores.root },
+          { name: 'Điểm thi', href: paths.dashboard.scores.list((param?.id ?? '').toString()) },
           { name: 'Danh sách' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
