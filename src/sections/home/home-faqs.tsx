@@ -24,37 +24,47 @@ const FAQs = [
   {
     question: 'Khám Phá Công Nghệ',
     answer: (
-      <Typography>
-        Thế Giới Số: Nắm bắt các công nghệ mới nhất trong lĩnh vực thông tin. Học Tập Tương Tác: Sử
-        dụng nền tảng trực tuyến để học hỏi và tương tác.
-      </Typography>
+      <Box>
+        <Typography>
+          Thế Giới Số: Nắm bắt các công nghệ mới nhất trong lĩnh vực thông tin. Học Tập Tương Tác:
+        </Typography>
+        <Typography> Sử dụng nền tảng trực tuyến để học hỏi và tương tác.</Typography>
+      </Box>
     ),
   },
   {
     question: 'Trí Tuệ Nhân Tạo',
     answer: (
-      <Typography>
-        Hỗ Trợ Học Tập: Trí tuệ nhân tạo giúp cá nhân hóa trải nghiệm học tập. Phân Tích Dữ Liệu: Sử
-        dụng AI để đánh giá tiến trình học tập của học sinh.
-      </Typography>
+      <Box>
+        <Typography>
+          Hỗ Trợ Học Tập: Trí tuệ nhân tạo giúp cá nhân hóa trải nghiệm học tập. Phân Tích Dữ Liệu:
+        </Typography>
+        <Typography>Sử dụng AI để đánh giá tiến trình học tập của học sinh.</Typography>
+      </Box>
     ),
   },
   {
     question: 'Kiểm Tra & Đánh Giá',
     answer: (
-      <Typography>
-        Phương Pháp Kiểm Tra Hiện Đại: Các công cụ đánh giá trực tuyến giúp theo dõi hiệu suất. Phản
-        Hồi Nhanh Chóng: Nhận phản hồi tức thì để cải thiện kỹ năng.
-      </Typography>
+      <Box>
+        <Typography>
+          Phương Pháp Kiểm Tra Hiện Đại: Các công cụ đánh giá trực tuyến giúp theo dõi hiệu suất.
+        </Typography>
+        <Typography>Phản Hồi Nhanh Chóng: Nhận phản hồi tức thì để cải thiện kỹ năng.</Typography>
+      </Box>
     ),
   },
   {
     question: 'Học Sinh Là Trung Tâm',
     answer: (
-      <Typography>
-        Khuyến Khích Sáng Tạo: Tạo ra môi trường học tập khuyến khích sự sáng tạo và đổi mới. Hợp
-        Tác & Giao Tiếp: Phát triển kỹ năng làm việc nhóm và giao tiếp hiệu quả.
-      </Typography>
+      <Box>
+        <Typography>
+          Khuyến Khích Sáng Tạo: Tạo ra môi trường học tập khuyến khích sự sáng tạo và đổi mới. Hợp
+        </Typography>
+        <Typography>
+          Tác & Giao Tiếp: Phát triển kỹ năng làm việc nhóm và giao tiếp hiệu quả.
+        </Typography>
+      </Box>
     ),
   },
 ];

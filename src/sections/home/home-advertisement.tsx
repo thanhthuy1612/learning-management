@@ -81,8 +81,8 @@ const renderDescription = () => (
         typography: { xs: 'h2', md: 'h1' },
       }}
     >
-      Cùng bắt đầu với
-      <br /> chúng tôi
+      Tham gia hành trình học tập
+      <br /> của bạn
       <Box
         component="span"
         sx={(theme) => ({
@@ -92,7 +92,7 @@ const renderDescription = () => (
           ml: 1,
         })}
       >
-        hôm nay.
+        ngay hôm nay!
       </Box>
     </Box>
 

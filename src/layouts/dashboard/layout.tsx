@@ -96,7 +96,8 @@ export function DashboardLayout({
     if (
       pathname.includes('dashboard') &&
       pathname !== '/dashboard/' &&
-      !pathname.includes('/dashboard/scores/list/')
+      !pathname.includes('/dashboard/scores/list/') &&
+      !pathname.includes('/dashboard/user/account/change-password/')
     ) {
       const permission = navData.reduce((res: string[], item) => {
         item.items.map((i) => {
