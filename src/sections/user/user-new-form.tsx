@@ -70,7 +70,6 @@ export function UserNewForm() {
 
   const {
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -160,7 +159,12 @@ export function UserNewForm() {
               },
             }}
           />
-          <Field.Phone name="phone" label="Số điện thoại" country="VN" />
+          <Field.Phone
+            name="phone"
+            label="Số điện thoại"
+            placeholder="Số điện thoại"
+            country="VN"
+          />
           {/* <Field.Autocomplete
             multiple
             freeSolo

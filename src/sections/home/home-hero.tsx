@@ -19,6 +19,8 @@ import { ServerErrorIllustration } from 'src/assets/illustrations';
 
 import { varFade, MotionContainer } from 'src/components/animate';
 
+import { useAuthContext } from 'src/auth/hooks';
+
 import { HomeWelcome } from './home-welcome';
 import { HeroBackground } from './components/hero-background';
 
@@ -33,6 +35,7 @@ const motionProps: MotionProps = {
 };
 
 export function HomeHero({ sx, ...other }: BoxProps) {
+  const { user } = useAuthContext();
   const scrollProgress = useScrollPercent();
 
   const mdUp = useMediaQuery((theme) => theme.breakpoints.up(mdKey));
@@ -58,12 +61,12 @@ export function HomeHero({ sx, ...other }: BoxProps) {
         action={
           <Button
             component={RouterLink}
-            href={paths.pin}
+            href={!user ? paths.pin : paths.dashboard.exam.list}
             variant="contained"
             size="large"
             color="primary"
           >
-            Bắt đầu kiểm tra
+            {!user ? 'Bắt đầu kiểm tra' : 'Quản lý đề thi'}
           </Button>
         }
       />

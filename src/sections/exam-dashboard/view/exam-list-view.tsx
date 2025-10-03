@@ -315,14 +315,16 @@ export function ExamListView() {
           { name: 'Danh sách' },
         ]}
         action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.exam.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            Thêm mới
-          </Button>
+          !isAdmin && (
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.exam.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Thêm mới
+            </Button>
+          )
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />

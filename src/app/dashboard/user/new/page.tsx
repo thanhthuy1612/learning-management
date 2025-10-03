@@ -6,7 +6,7 @@ import { UserCreateView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export const metadata: Metadata = { title: `Thêm giáo viên | Dashboard - ${CONFIG.appName}` };
+export const metadata: Metadata = { title: `Thêm người dùng | Dashboard - ${CONFIG.appName}` };
 
 export default function Page() {
   return <UserCreateView />;

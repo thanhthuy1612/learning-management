@@ -266,6 +266,7 @@ export function ExamSessionListView() {
             toast.error(e);
             reject(e);
           });
+        confirmDialog.onFalse();
       });
 
       toast.promise(promise, {
@@ -298,6 +299,7 @@ export function ExamSessionListView() {
         loading: 'Đang tải',
         success: 'Cập nhật thành công',
       });
+      mark.onFalse();
     } catch (error) {
       console.error(error);
     }
@@ -352,14 +354,16 @@ export function ExamSessionListView() {
           { name: 'Danh sách' },
         ]}
         action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.examSession.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            Thêm mới
-          </Button>
+          !isAdmin && (
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.examSession.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Thêm mới
+            </Button>
+          )
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />

@@ -1,9 +1,12 @@
 'use client';
 
+import React from 'react';
+
 import Alert from '@mui/material/Alert';
 import { Typography } from '@mui/material';
 
-import { useAppSelector } from 'src/lib/hooks';
+import { resetStateExam } from 'src/lib/features';
+import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
 
 import { AnimateLogoRotate } from 'src/components/animate';
 
@@ -13,6 +16,11 @@ import { ExamNameForm } from '../exam-name-form';
 
 export function ExamPinView() {
   const { errorStepOne } = useAppSelector((state) => state.exam);
+  const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    dispatch(resetStateExam());
+  }, []);
   return (
     <>
       <AnimateLogoRotate sx={{ mb: 3, mx: 'auto' }} />
