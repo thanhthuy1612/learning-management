@@ -56,11 +56,7 @@ export function HomeWelcome({ title, description, action, img, sx, ...other }: P
           {title}
         </Typography>
 
-        <Typography
-          color="warning"
-          variant="body2"
-          sx={{ opacity: 0.64, maxWidth: 360, ...(action && { mb: 3 }) }}
-        >
+        <Typography variant="body2" sx={{ opacity: 0.64, maxWidth: 360, ...(action && { mb: 3 }) }}>
           {description}
         </Typography>
 
