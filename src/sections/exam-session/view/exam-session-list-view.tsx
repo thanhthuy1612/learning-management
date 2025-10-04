@@ -20,7 +20,6 @@ import IconButton from '@mui/material/IconButton';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -160,18 +159,7 @@ export function ExamSessionListView() {
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Xem" placement="top" arrow>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                viewForm.onTrue();
-                dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
-              }}
-            >
-              <Iconify icon="solar:eye-bold" />
-            </IconButton>
-          </Tooltip>
-          {!isAdmin && (
+          {!!(!isAdmin && !params.row.isOpen) && (
             <Tooltip title="Chấm điểm" placement="top" arrow>
               <IconButton
                 color="inherit"
@@ -184,6 +172,17 @@ export function ExamSessionListView() {
               </IconButton>
             </Tooltip>
           )}
+          <Tooltip title="Xem" placement="top" arrow>
+            <IconButton
+              color="inherit"
+              onClick={() => {
+                viewForm.onTrue();
+                dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
+              }}
+            >
+              <Iconify icon="solar:eye-bold" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Xem điểm" placement="top" arrow>
             <IconButton
               color="inherit"
@@ -321,7 +320,7 @@ export function ExamSessionListView() {
       title="Xác nhận"
       content={`Bạn chắc chắn muốn ${row?.isOpen ? 'dừng' : 'bắt đầu'} kỳ thi`}
       action={
-        <Button variant="contained" color="primary" onClick={onStartRow}>
+        <Button variant="contained" color="inherit" onClick={onStartRow}>
           Xác nhận
         </Button>
       }
@@ -335,7 +334,7 @@ export function ExamSessionListView() {
       title="Xác nhận"
       content="Bạn chắc chắn muốn chấm điểm?"
       action={
-        <Button variant="contained" color="primary" onClick={onMarkRow}>
+        <Button variant="contained" color="inherit" onClick={onMarkRow}>
           Xác nhận
         </Button>
       }
@@ -353,18 +352,18 @@ export function ExamSessionListView() {
           { name: 'Kỳ thi', href: paths.dashboard.examSession.root },
           { name: 'Danh sách' },
         ]}
-        action={
-          !isAdmin && (
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.examSession.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Thêm mới
-            </Button>
-          )
-        }
+        // action={
+        //   !isAdmin && (
+        //     <Button
+        //       component={RouterLink}
+        //       href={paths.dashboard.examSession.new}
+        //       variant="contained"
+        //       startIcon={<Iconify icon="mingcute:add-line" />}
+        //     >
+        //       Thêm mới
+        //     </Button>
+        //   )
+        // }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 

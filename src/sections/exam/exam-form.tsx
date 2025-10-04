@@ -114,7 +114,9 @@ export function ExamFormView({ handleSend, sx }: Props) {
       if (document.visibilityState === 'hidden') {
         const newTimer = setTimeout(() => {
           // setCount((pre) => pre + 1);
-          alert('Bạn đã không focus vào trang trong 3 giây!');
+          alert(
+            ' Vui lòng tập trung làm bài thi nghiêm túc. Kết quả làm bài sẽ bị xóa nếu tái phạm!'
+          );
         }, 3000);
         setTimer(newTimer);
       } else {

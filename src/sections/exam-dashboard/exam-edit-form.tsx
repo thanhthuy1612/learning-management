@@ -5,6 +5,7 @@ import type { IQuestionItem } from 'src/types/question';
 
 import React from 'react';
 import { z as zod } from 'zod';
+import { varAlpha } from 'minimal-shared/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
@@ -15,7 +16,7 @@ import {
   Grid,
   Radio,
   Alert,
-  Dialog,
+  Drawer,
   RadioGroup,
   FormControl,
   DialogTitle,
@@ -168,14 +169,22 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
   );
 
   return (
-    <Dialog
-      fullWidth
-      maxWidth={false}
+    <Drawer
+      anchor="bottom"
       open={open}
       onClose={onClose}
       slotProps={{
+        backdrop: { invisible: true },
         paper: {
-          sx: { maxWidth: 720 },
+          sx: [
+            (theme) => ({
+              ...theme.mixins.paperStyles(theme, {
+                color: varAlpha(theme.vars.palette.background.defaultChannel, 0.9),
+              }),
+              width: '100%',
+            }),
+            ...(Array.isArray(sx) ? sx : [sx]),
+          ],
         },
       }}
     >
@@ -285,6 +294,6 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
           )}
         </DialogActions>
       </Form>
-    </Dialog>
+    </Drawer>
   );
 }

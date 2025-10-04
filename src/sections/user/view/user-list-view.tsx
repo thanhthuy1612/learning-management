@@ -1,6 +1,6 @@
 'use client';
 
-import type { IUserItem, IUserRequestBody } from 'src/types/user';
+import type { IRole, IUserItem, IUserRequestBody } from 'src/types/user';
 import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 
 import React from 'react';
@@ -48,6 +48,7 @@ export function UserListView() {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(defaultPageIndex);
   const [pageSize, setPageSize] = React.useState<number>(defaultPageSize);
+  const [roles, setRoles] = React.useState<IRole[]>([]);
   const [columnVisibilityModel, setColumnVisibilityModel] =
     React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
 
@@ -87,6 +88,15 @@ export function UserListView() {
       flex: 1,
       align: 'center',
       headerAlign: 'center',
+    },
+    {
+      field: 'role',
+      headerName: 'Vai trò',
+      minWidth: 100,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => `${roles.find((item) => item.name === params.row.role)?.description}`,
     },
     {
       field: 'createdDate',
@@ -162,6 +172,14 @@ export function UserListView() {
         pageSize,
       };
       const res = await userService.list(newBody);
+      const resRole = await userService.roles();
+      setRoles(
+        resRole.map((item: IRole) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+        }))
+      );
       if (res.total) {
         dispatch(updateFiltersUser(newBody));
         setTotal(res.total);

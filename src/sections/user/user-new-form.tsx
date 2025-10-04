@@ -142,7 +142,7 @@ export function UserNewForm() {
           <Field.Text
             name="password"
             label="Mật khẩu"
-            placeholder="6+ ký tự"
+            placeholder="8+ ký tự"
             type={showPassword.value ? 'text' : 'password'}
             slotProps={{
               inputLabel: { shrink: true },

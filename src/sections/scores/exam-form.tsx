@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import {
   Grid,
   Radio,
-  Dialog,
+  Drawer,
   FormLabel,
   RadioGroup,
   FormControl,
@@ -22,6 +22,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
+import { varAlpha } from 'src/theme/styles';
 import { useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
@@ -39,7 +40,7 @@ export const ExamFormSchema = zod.object({
     zod.object({
       question: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
       answer: zod.union([
-        zod.enum(Choices, { message: 'Answer must be one of A, B, C, or D!' }),
+        zod.enum(Choices, { message: 'Câu trả lời phải là A, B, C hoặc D!' }),
         zod.enum(['']),
       ]),
     })
@@ -82,14 +83,22 @@ export function ExamForm({ sx, open, onClose }: Props) {
   const onSubmit = handleSubmit(async () => {});
 
   return (
-    <Dialog
-      fullWidth
-      maxWidth={false}
+    <Drawer
+      anchor="bottom"
       open={open}
       onClose={onClose}
       slotProps={{
+        backdrop: { invisible: true },
         paper: {
-          sx: { maxWidth: 720 },
+          sx: [
+            (theme) => ({
+              ...theme.mixins.paperStyles(theme, {
+                color: varAlpha(theme.vars.palette.background.defaultChannel, 0.9),
+              }),
+              width: '100%',
+            }),
+            ...(Array.isArray(sx) ? sx : [sx]),
+          ],
         },
       }}
     >
@@ -174,6 +183,6 @@ export function ExamForm({ sx, open, onClose }: Props) {
           </Button>
         </DialogActions>
       </Form>
-    </Dialog>
+    </Drawer>
   );
 }

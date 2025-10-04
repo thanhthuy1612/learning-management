@@ -14,7 +14,6 @@ import IconButton from '@mui/material/IconButton';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 
 import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -314,18 +313,18 @@ export function ExamListView() {
           { name: 'Đề thi', href: paths.dashboard.exam.root },
           { name: 'Danh sách' },
         ]}
-        action={
-          !isAdmin && (
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.exam.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Thêm mới
-            </Button>
-          )
-        }
+        // action={
+        //   !isAdmin && (
+        //     <Button
+        //       component={RouterLink}
+        //       href={paths.dashboard.exam.new}
+        //       variant="contained"
+        //       startIcon={<Iconify icon="mingcute:add-line" />}
+        //     >
+        //       Thêm mới
+        //     </Button>
+        //   )
+        // }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
