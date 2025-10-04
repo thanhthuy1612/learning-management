@@ -5,6 +5,7 @@ import { m } from 'framer-motion';
 import { varAlpha } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
+import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -186,6 +187,41 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
     </Stack>
   );
 
+  const renderContact = () => (
+    <Box
+      sx={[
+        (theme) => ({
+          px: 3,
+          py: 8,
+          textAlign: 'center',
+          background: `linear-gradient(to left, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}, transparent)`,
+        }),
+      ]}
+    >
+      <m.div variants={varFade('in')}>
+        <Typography variant="h4">Vẫn còn thắc mắc?</Typography>
+      </m.div>
+
+      <m.div variants={varFade('in')}>
+        <Typography sx={{ mt: 2, mb: 3, color: 'text.secondary' }}>
+          Vui lòng mô tả trường hợp của bạn để nhận được lời khuyên chính xác nhất
+        </Typography>
+      </m.div>
+
+      <m.div variants={varFade('in')}>
+        <Button
+          color="inherit"
+          variant="contained"
+          size="large"
+          href="mailto:a@gmail.com?subject=[Feedback] cho khách hàng"
+          startIcon={<Iconify icon="solar:letter-bold" />}
+        >
+          Liên hệ với chúng tôi
+        </Button>
+      </m.div>
+    </Box>
+  );
+
   return (
     <Box component="section" sx={sx} {...other}>
       <MotionViewport sx={{ py: 10, position: 'relative' }}>
@@ -194,6 +230,7 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
         <Container>
           {renderDescription()}
           {renderContent()}
+          {renderContact()}
         </Container>
 
         <Stack sx={{ position: 'relative' }}>{bottomLines()}</Stack>

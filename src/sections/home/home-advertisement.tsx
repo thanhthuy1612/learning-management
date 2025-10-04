@@ -82,7 +82,7 @@ const renderDescription = () => (
       }}
     >
       Tham gia học tập
-      <br /> nay
+      <br /> ngay
       <Box
         component="span"
         sx={(theme) => ({

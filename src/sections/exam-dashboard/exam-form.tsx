@@ -106,7 +106,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
           variant="contained"
           loading={isSubmitting}
           onClick={() => {
-            console.log(dataSubmit);
+            // console.log(dataSubmit);
           }}
           loadingIndicator="Chỉnh sửa..."
           sx={{ zIndex: 2 }}

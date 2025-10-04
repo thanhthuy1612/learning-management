@@ -60,7 +60,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
   const [timer, setTimer] = React.useState<NodeJS.Timeout | null>(null);
   const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
-  // const [count, setCount] = React.useState<number>(0);
+  const [count, setCount] = React.useState<number>(0);
 
   const ref = React.useRef<HTMLDivElement | null>(null);
 
@@ -78,7 +78,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
     control,
     watch,
     setValue,
-    // reset,
+    reset,
     getValues,
     formState: { isSubmitting },
   } = methods;
@@ -94,7 +94,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
         setIsVisible(!entry.isIntersecting);
       },
       {
-        threshold: 0.1, // Điều chỉnh ngưỡng nếu cần
+        threshold: 0.1,
       }
     );
 
@@ -113,7 +113,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         const newTimer = setTimeout(() => {
-          // setCount((pre) => pre + 1);
+          setCount((pre) => pre + 1);
           alert(
             ' Vui lòng tập trung làm bài thi nghiêm túc. Kết quả làm bài sẽ bị xóa nếu tái phạm!'
           );
@@ -138,16 +138,14 @@ export function ExamFormView({ handleSend, sx }: Props) {
     };
   }, [timer]);
 
-  // React.useEffect(() => {
-  //   if (count > 2) {
-  //     reset();
-  //   }
-  //   setValue(
-  //     'answers',
-  //     questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
-  //   );
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [count]);
+  React.useEffect(() => {
+    if (count > 2) {
+      setValue(
+        'answers',
+        questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
+      );
+    }
+  }, [count]);
 
   React.useEffect(() => {
     setValue(
