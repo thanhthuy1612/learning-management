@@ -23,7 +23,7 @@ export function HomeWelcome({ title, description, action, img, sx, ...other }: P
     <Box
       sx={{
         ...bgGradient({
-          color: `to right, ${theme.vars.palette.grey[900]} 25%, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.88)}`,
+          color: `to right, ${theme.vars.palette.grey[900]} 25%, ${varAlpha(theme.vars.palette.primary.mainChannel, 0.88)}`,
           imgUrl: `${CONFIG.assetsDir}/assets/background/background-6.webp`,
         }),
         pt: 5,
@@ -52,7 +52,7 @@ export function HomeWelcome({ title, description, action, img, sx, ...other }: P
           alignItems: { xs: 'center', md: 'flex-start' },
         }}
       >
-        <Typography variant="h4" sx={{ whiteSpace: 'pre-line', mb: 1 }}>
+        <Typography color="warning" variant="h4" sx={{ whiteSpace: 'pre-line', mb: 1 }}>
           {title}
         </Typography>
 

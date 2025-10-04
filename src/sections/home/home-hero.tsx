@@ -59,15 +59,32 @@ export function HomeHero({ sx, ...other }: BoxProps) {
         description="KIỂM TRA, ĐÁNH GIÁ - TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO CAI"
         img={<ServerErrorIllustration hideBackground />}
         action={
-          <Button
-            component={RouterLink}
-            href={!user ? paths.pin : paths.dashboard.exam.list}
-            variant="contained"
-            size="large"
-            color="primary"
-          >
-            {!user ? 'Kiểm tra, đánh giá trực tuyến' : 'Quản lý đề thi'}
-          </Button>
+          user ? (
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.exam.list}
+              variant="contained"
+              size="large"
+              color="primary"
+            >
+              Quản lý đề thi
+            </Button>
+          ) : (
+            <Typography
+              variant="h3"
+              sx={[
+                (theme) => ({
+                  ...theme.mixins.textGradient(
+                    `300deg, ${theme.vars.palette.grey[100]} 0%, ${theme.vars.palette.grey[400]} 25%, ${theme.vars.palette.grey[100]} 50%, ${theme.vars.palette.grey[400]} 75%, ${theme.vars.palette.grey[100]} 100%`
+                  ),
+                  opacity: 0.8,
+                  // ml: { xs: 0.75, md: 1, xl: 1.5 },
+                }),
+              ]}
+            >
+              Kiểm tra, đánh giá trực tuyến
+            </Typography>
+          )
         }
       />
     </m.div>
