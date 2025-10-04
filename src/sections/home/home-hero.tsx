@@ -66,7 +66,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
             size="large"
             color="primary"
           >
-            {!user ? 'Bắt đầu kiểm tra' : 'Quản lý đề thi'}
+            {!user ? 'Kiểm tra, đánh giá trực tuyến' : 'Quản lý đề thi'}
           </Button>
         }
       />
