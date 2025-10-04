@@ -28,7 +28,7 @@ export function ExamPinView() {
         Trường THCS Cổ Phúc
       </Typography>
       <Typography variant="body2" sx={{ mb: 3, textAlign: 'center', color: 'text.secondary' }}>
-        KIỂM TRA, ĐÁNH GIÁ TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO CAI
+        KIỂM TRA, ĐÁNH GIÁ TRỰC TUYẾN - TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO CAI
       </Typography>
       {!!errorStepOne && (
         <Alert severity="error" sx={{ mb: 3 }}>
