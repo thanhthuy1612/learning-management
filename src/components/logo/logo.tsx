@@ -48,7 +48,7 @@ export function Logo({
       <Box sx={{ borderRadius: '100%', ...sx }}>
         <Image
           alt="logo"
-          src="/assets/images/logo.jpeg"
+          src="/assets/images/logo.png"
           width={size ?? '40'}
           height={size ?? '40'}
           style={{ borderRadius: '100%' }}
