@@ -30,13 +30,11 @@ export const schemaHelper = {
     isValid?: (text: string) => boolean;
   }) =>
     zod
-      .string({
-        invalid_type_error: props?.message?.invalid_type ?? 'Số điện thoại không hợp lệ!',
-      })
-      .refine((data) => props?.isValid?.(data), {
-        message: props?.message?.invalid_type ?? 'Số điện thoại không hợp lệ!',
-      })
-      .optional(),
+      .string()
+      .optional()
+      .refine((data) => data !== undefined && props?.isValid?.(data), {
+        message: 'Số điện thoại không hợp lệ!',
+      }),
   /**
    * Date
    * Apply for date pickers.

@@ -6,7 +6,6 @@ import React from 'react';
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -28,16 +27,34 @@ import { Form, Field } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
+const isValidEmail = (email?: string) => {
+  if (!email || email === '') return true;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex kiểm tra định dạng email
+  return emailRegex.test(email);
+};
+
+const isValidPhoneNumber = (phone?: string) => {
+  if (!phone || phone === '') return true;
+  const phoneRegex = /^\+84\d{9,10}$/; // Định dạng: +84 theo sau là 9 hoặc 10 chữ số
+  return phoneRegex.test(phone);
+};
 
 export const NewUserSchema = zod.object({
   username: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
-  email: zod.string().email({ message: 'Địa chỉ email phải là địa chỉ email hợp lệ!' }).optional(),
+  email: zod
+    .string()
+    .optional() // Không bắt buộc nhập
+    .refine((value) => isValidEmail(value), {
+      message: 'Địa chỉ email phải là địa chỉ email hợp lệ!',
+    }),
   phone: zod
     .string()
-    .refine(isValidPhoneNumber, { message: 'Số điện thoại không hợp lệ!' })
-    .optional(),
+    .optional() // Không bắt buộc nhập
+    .refine((value) => isValidPhoneNumber(value), {
+      message: 'Số điện thoại không hợp lệ!',
+    }),
   // roles: zod.string().array().min(1, { message: 'Bắt buộc chọn!' }),
-  roleId: zod.string(),
+  roleId: zod.string().min(1, { message: 'Bắt buộc chọn!' }),
   password: zod
     .string()
     .min(1, { message: 'Bắt buộc nhập!' })

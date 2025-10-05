@@ -36,12 +36,12 @@ import {
 
 import { ExamForm } from '../exam-form';
 
-const HIDE_COLUMNS = {
-  enrollDate: false,
-  lastSubmittedDate: false,
-  finishedDate: false,
-  endTime: false,
-};
+// const HIDE_COLUMNS = {
+//   enrollDate: false,
+//   lastSubmittedDate: false,
+//   finishedDate: false,
+//   endTime: false,
+// };
 
 // ----------------------------------------------------------------------
 
