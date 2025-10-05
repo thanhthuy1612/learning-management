@@ -17,6 +17,7 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fDateTime } from 'src/utils/format-time';
+import { defaultPageIndex } from 'src/utils/default';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useAppDispatch, useAppSelector } from 'src/lib/hooks';
@@ -24,11 +25,14 @@ import { examSessionService } from 'src/services/exam-session.services';
 import { updateSubmission, updateFiltersScores, updateSearchTextScores } from 'src/lib/features';
 
 import { Iconify } from 'src/components/iconify';
-import { CopyTitle } from 'src/components/copy/copy-title';
 import { EmptyContent } from 'src/components/empty-content';
 import { SplashScreen } from 'src/components/loading-screen';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { PaginationCustom } from 'src/components/table/pagination-custom';
+import {
+  localeText,
+  CustomDataGridToolbar,
+} from 'src/components/custom-data-grid/custom-data-grid-toolbar';
 
 import { ExamForm } from '../exam-form';
 
@@ -46,10 +50,10 @@ export function ScoresListView() {
   const [total, setTotal] = React.useState<number>(0);
   const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [pageIndex, setPageIndex] = React.useState<number>(1);
-  const [pageSize, setPageSize] = React.useState<number>(10);
+  const [pageIndex, setPageIndex] = React.useState<number>(defaultPageIndex);
+  const [pageSize, setPageSize] = React.useState<number>(100);
   const [columnVisibilityModel, setColumnVisibilityModel] =
-    React.useState<GridColumnVisibilityModel>(HIDE_COLUMNS);
+    React.useState<GridColumnVisibilityModel>({});
 
   const apiRef = useGridApiRef();
 
@@ -79,15 +83,6 @@ export function ScoresListView() {
       headerAlign: 'center',
     },
     {
-      field: 'examSessionId',
-      headerName: 'Mã kỳ thi',
-      minWidth: 150,
-      flex: 1,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => <CopyTitle value={params.row.examSessionId} />,
-    },
-    {
       field: 'examSessionName',
       headerName: 'Tên kỳ thi',
       minWidth: 150,
@@ -102,6 +97,7 @@ export function ScoresListView() {
       minWidth: 150,
       align: 'center',
       headerAlign: 'center',
+      valueFormatter: (value) => `${fDateTime(value)}`,
       renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY HH:MM')}`,
     },
     {
@@ -111,25 +107,8 @@ export function ScoresListView() {
       minWidth: 150,
       align: 'center',
       headerAlign: 'center',
+      valueFormatter: (value) => `${fDateTime(value)}`,
       renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY HH:MM')}`,
-    },
-    {
-      field: 'finishedDate',
-      headerName: 'Ngày kết thúc',
-      flex: 1,
-      minWidth: 100,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.finishedDate, 'DD/MM/YYYY')}`,
-    },
-    {
-      field: 'endTime',
-      headerName: 'Giờ kết thúc',
-      flex: 1,
-      minWidth: 100,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.endTime, 'HH:MM')}`,
     },
     {
       type: 'actions',
@@ -163,8 +142,8 @@ export function ScoresListView() {
   const fetchData = async (body?: IExamSessionIdRequestBody) => {
     try {
       setLoading(true);
-      setPageIndex(1);
-      setPageSize(10);
+      setPageIndex(defaultPageIndex);
+      setPageSize(100);
       const newBody: IExamSessionIdRequestBody = body ?? {
         examSessionId: searchText,
       };
@@ -243,8 +222,11 @@ export function ScoresListView() {
               columnVisibilityModel={columnVisibilityModel}
               onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
               disableRowSelectionOnClick
+              localeText={{
+                ...localeText,
+              }}
               slots={{
-                // toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
+                toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
                 pagination: () => (
                   <PaginationCustom
                     total={total}

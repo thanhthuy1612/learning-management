@@ -25,6 +25,18 @@ export const schemaHelper = {
       .refine((data) => props?.isValid?.(data), {
         message: props?.message?.invalid_type ?? 'Số điện thoại không hợp lệ!',
       }),
+  phoneNumberNotRequire: (props?: {
+    message?: MessageMapProps;
+    isValid?: (text: string) => boolean;
+  }) =>
+    zod
+      .string({
+        invalid_type_error: props?.message?.invalid_type ?? 'Số điện thoại không hợp lệ!',
+      })
+      .refine((data) => props?.isValid?.(data), {
+        message: props?.message?.invalid_type ?? 'Số điện thoại không hợp lệ!',
+      })
+      .optional(),
   /**
    * Date
    * Apply for date pickers.

@@ -213,7 +213,7 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
           color="inherit"
           variant="contained"
           size="large"
-          href="mailto:a@gmail.com?subject=[Feedback] cho khách hàng"
+          href="mailto:c2.thitran.tranyen@yenbai.edu.vn?subject=[Feedback]"
           startIcon={<Iconify icon="solar:letter-bold" />}
         >
           Liên hệ với chúng tôi

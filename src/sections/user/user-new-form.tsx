@@ -23,7 +23,7 @@ import { userService } from 'src/services/user.services';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
-import { Form, Field, schemaHelper } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -31,11 +31,11 @@ export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
 
 export const NewUserSchema = zod.object({
   username: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
-  email: zod
+  email: zod.string().email({ message: 'Địa chỉ email phải là địa chỉ email hợp lệ!' }).optional(),
+  phone: zod
     .string()
-    .min(1, { message: 'Bắt buộc nhập!' })
-    .email({ message: 'Địa chỉ email phải là địa chỉ email hợp lệ!' }),
-  phone: schemaHelper.phoneNumber({ isValid: isValidPhoneNumber }),
+    .refine(isValidPhoneNumber, { message: 'Số điện thoại không hợp lệ!' })
+    .optional(),
   // roles: zod.string().array().min(1, { message: 'Bắt buộc chọn!' }),
   roleId: zod.string(),
   password: zod

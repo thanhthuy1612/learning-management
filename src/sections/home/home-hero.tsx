@@ -56,7 +56,7 @@ export function HomeHero({ sx, ...other }: BoxProps) {
     <m.div {...motionProps}>
       <HomeWelcome
         title="TRƯỜNG THCS CỔ PHÚC"
-        description="KIỂM TRA, ĐÁNH GIÁ TRỰC TUYẾN - TRƯỜNG THCS CỔ PHÚC, XÃ TRẤN YÊN, TỈNH LÀO CAI"
+        description="KIỂM TRA, ĐÁNH GIÁ TRỰC TUYẾN"
         img={<ServerErrorIllustration hideBackground />}
         action={
           <Button

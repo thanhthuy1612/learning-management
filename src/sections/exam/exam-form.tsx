@@ -25,7 +25,7 @@ import { ComponentBox } from 'src/components/layout';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { SplashScreen } from 'src/components/loading-screen';
 
-import { Choices } from 'src/types/question';
+import { Choice1, Choices } from 'src/types/question';
 
 import { ExamHeader } from './exam-header';
 import { ExamFooter } from './exam-footer';
@@ -78,7 +78,6 @@ export function ExamFormView({ handleSend, sx }: Props) {
     control,
     watch,
     setValue,
-    reset,
     getValues,
     formState: { isSubmitting },
   } = methods;
@@ -104,10 +103,11 @@ export function ExamFormView({ handleSend, sx }: Props) {
 
     return () => {
       if (ref.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(ref.current);
       }
     };
-  }, [ref]);
+  }, [ref, timer, count, questions]);
 
   React.useEffect(() => {
     const handleVisibilityChange = () => {
@@ -115,7 +115,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
         const newTimer = setTimeout(() => {
           setCount((pre) => pre + 1);
           alert(
-            ' Vui lòng tập trung làm bài thi nghiêm túc. Kết quả làm bài sẽ bị xóa nếu tái phạm!'
+            'Vui lòng tập trung làm bài thi nghiêm túc. Kết quả làm bài sẽ bị xóa nếu tái phạm!'
           );
         }, 3000);
         setTimer(newTimer);
@@ -145,6 +145,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
         questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count]);
 
   React.useEffect(() => {
@@ -152,7 +153,8 @@ export function ExamFormView({ handleSend, sx }: Props) {
       'answers',
       questions.map((item) => ({ question: item.question, answer: '', id: item.id ?? '' }))
     );
-  }, [questions, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions]);
 
   React.useEffect(() => {
     const checkTime = () => {
@@ -254,7 +256,6 @@ export function ExamFormView({ handleSend, sx }: Props) {
   );
 
   if (!isVisibleTime) return <SplashScreen />;
-
   return (
     <Form methods={methods} onSubmit={onSubmit}>
       <ExamHeader ref={ref} sx={sx} renderButtonSubmit={renderButtonSubmit()} fields={answers} />
@@ -277,7 +278,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
                   </FormLabel>
                   <RadioGroup {...typeField} aria-labelledby={`answers.${index}.answer-radios`}>
                     <Grid container spacing={2}>
-                      {Choices.map((option) => (
+                      {Choice1[index % Choice1.length].map((option) => (
                         <Grid key={option} size={{ xs: 12, md: 6 }}>
                           <Button
                             variant="outlined"

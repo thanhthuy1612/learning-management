@@ -14,11 +14,11 @@ export function UserCreateView() {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        heading="Thêm người dung"
+        heading="Thêm người dùng"
         links={[
           { name: 'Danh sách', href: paths.dashboard.root },
           { name: 'Người dùng', href: paths.dashboard.user.root },
-          { name: 'Thêm người dung' },
+          { name: 'Thêm người dùng' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />

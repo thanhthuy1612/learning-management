@@ -53,8 +53,8 @@ export type IChangePasswordRequestBody = {
 export type ICreateUserRequestBody = {
   username: string;
   password: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   roleId: string;
 };
 
