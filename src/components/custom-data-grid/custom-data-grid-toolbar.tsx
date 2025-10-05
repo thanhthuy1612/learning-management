@@ -1,16 +1,19 @@
+'use client';
+
 import type { GridSlotProps } from '@mui/x-data-grid';
 
 import React from 'react';
 
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import {
-  GridToolbarExport,
   GridToolbarContainer,
   GridToolbarQuickFilter,
   GridToolbarFilterButton,
   GridToolbarColumnsButton,
   GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
+
+import { Iconify } from '../iconify';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +25,7 @@ declare module '@mui/x-data-grid' {
 
 export type Props = GridSlotProps['toolbar'] & {
   showSearch?: boolean;
+  exportCurrentPage?: () => void;
 };
 
 export const localeText = {
@@ -31,7 +35,12 @@ export const localeText = {
   toolbarExport: 'Xuất',
 };
 
-export function CustomDataGridToolbar({ setFilterButtonEl, showSearch, sx }: Props) {
+export function CustomDataGridToolbar({
+  setFilterButtonEl,
+  showSearch,
+  sx,
+  exportCurrentPage,
+}: Props) {
   return (
     <GridToolbarContainer sx={{ mt: 2, ...sx }}>
       {showSearch && <GridToolbarQuickFilter />}
@@ -39,7 +48,14 @@ export function CustomDataGridToolbar({ setFilterButtonEl, showSearch, sx }: Pro
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton ref={setFilterButtonEl} />
       <GridToolbarDensitySelector />
-      <GridToolbarExport />
+      {/* <GridToolbarExport /> */}
+      <Button
+        startIcon={<Iconify icon="solar:export-bold" />}
+        sx={{ p: 0.5, borderRadius: 1 }}
+        onClick={exportCurrentPage}
+      >
+        Xuất Excel
+      </Button>
     </GridToolbarContainer>
   );
 }

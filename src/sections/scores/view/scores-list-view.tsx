@@ -4,6 +4,7 @@ import type { GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import type { IScores, ISubmission, IExamSessionIdRequestBody } from 'src/types/exam-session';
 
 import React from 'react';
+import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 
@@ -151,10 +152,12 @@ export function ScoresListView() {
       dispatch(updateFiltersScores(newBody.examSessionId));
       setTotal(res.length);
       setTableData(res);
+      // apiRef.current.setRows(res as GridRowModel[]);
     } catch (error: any) {
       toast.error(error);
       setTotal(0);
       setTableData([]);
+      // apiRef.current.setRows([] as GridRowModel[]);
     } finally {
       setLoading(false);
       setLoadingFirst(false);
@@ -180,6 +183,37 @@ export function ScoresListView() {
       }}
     />
   );
+
+  const exportToExcel = () => {
+    // Tạo một mảng chứa tiêu đề cột từ headerName, bỏ qua cột actions
+    const headers = columns
+      .filter((col) => col.field !== 'actions') // Lọc bỏ cột actions
+      .map((col) => col.headerName);
+
+    // Tạo một mảng dữ liệu với tiêu đề cột
+    const dataWithHeaders = tableData.map((row: any) => {
+      const newRow: any = {};
+      columns.forEach((col: any) => {
+        if (col.field !== 'actions') {
+          // Bỏ qua cột actions
+          // Nếu là cột thời gian, định dạng lại
+          newRow[col.headerName] =
+            col.field === 'enrollDate' || col.field === 'lastSubmittedDate'
+              ? fDateTime(row[col.field], 'DD/MM/YYYY HH:MM') // Định dạng thời gian
+              : row[col.field];
+        }
+      });
+      return newRow;
+    });
+
+    // Tạo worksheet và workbook
+    const worksheet = XLSX.utils.json_to_sheet(dataWithHeaders, { header: headers as string[] });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Scores');
+
+    // Xuất tệp
+    XLSX.writeFile(workbook, 'scores.xlsx');
+  };
 
   if (loadingFirst) return <SplashScreen />;
 
@@ -226,7 +260,14 @@ export function ScoresListView() {
                 ...localeText,
               }}
               slots={{
-                toolbar: (props) => <CustomDataGridToolbar {...props} showSearch sx={{ pt: 0 }} />,
+                toolbar: (props) => (
+                  <CustomDataGridToolbar
+                    exportCurrentPage={exportToExcel}
+                    {...props}
+                    showSearch
+                    sx={{ pt: 0 }}
+                  />
+                ),
                 pagination: () => (
                   <PaginationCustom
                     total={total}
