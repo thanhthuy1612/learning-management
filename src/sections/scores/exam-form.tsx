@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import {
   Grid,
   Radio,
-  Drawer,
+  Dialog,
   FormLabel,
   RadioGroup,
   FormControl,
@@ -22,7 +22,6 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-import { varAlpha } from 'src/theme/styles';
 import { useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
@@ -83,22 +82,14 @@ export function ExamForm({ sx, open, onClose }: Props) {
   const onSubmit = handleSubmit(async () => {});
 
   return (
-    <Drawer
-      anchor="bottom"
+    <Dialog
+      fullWidth
+      maxWidth={false}
       open={open}
       onClose={onClose}
       slotProps={{
-        backdrop: { invisible: true },
         paper: {
-          sx: [
-            (theme) => ({
-              ...theme.mixins.paperStyles(theme, {
-                color: varAlpha(theme.vars.palette.background.defaultChannel, 0.9),
-              }),
-              width: '100%',
-            }),
-            ...(Array.isArray(sx) ? sx : [sx]),
-          ],
+          sx: { maxWidth: 720 },
         },
       }}
     >
@@ -183,6 +174,6 @@ export function ExamForm({ sx, open, onClose }: Props) {
           </Button>
         </DialogActions>
       </Form>
-    </Drawer>
+    </Dialog>
   );
 }
