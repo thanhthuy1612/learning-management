@@ -36,7 +36,6 @@ import { PaginationCustom } from 'src/components/table/pagination-custom';
 
 import { UserTableToolbar } from '../user-table-toolbar';
 import { UserQuickEditForm } from '../user-quick-edit-form';
-import { UserTableFiltersResult } from '../user-table-filters-result';
 
 const HIDE_COLUMNS = { createdDate: false, modifiedDate: false };
 // ----------------------------------------------------------------------
@@ -105,7 +104,7 @@ export function UserListView() {
       minWidth: 180,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:mm')}`,
     },
     {
       field: 'modifiedDate',
@@ -114,7 +113,7 @@ export function UserListView() {
       minWidth: 180,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:mm')}`,
     },
     {
       field: 'status',
@@ -270,13 +269,13 @@ export function UserListView() {
           }
         />
 
-        {!loadingFirst && filters?.searchText && (
+        {/* {!loadingFirst && filters?.searchText && (
           <UserTableFiltersResult
             totalResults={tableData.length}
             onResetPage={resetPageResult}
             sx={{ p: 2.5, pt: 0 }}
           />
-        )}
+        )} */}
 
         <Box
           sx={

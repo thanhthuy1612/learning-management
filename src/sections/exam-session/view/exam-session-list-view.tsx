@@ -117,7 +117,7 @@ export function ExamSessionListView() {
       minWidth: 150,
       align: 'center',
       headerAlign: 'center',
-      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:MM')}`,
+      renderCell: (params) => `${fDateTime(params.row.createdDate, 'DD/MM/YYYY HH:mm')}`,
     },
     {
       field: 'isOpen',

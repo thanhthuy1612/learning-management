@@ -99,7 +99,7 @@ export function ScoresListView() {
       align: 'center',
       headerAlign: 'center',
       valueFormatter: (value) => `${fDateTime(value)}`,
-      renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY HH:MM')}`,
+      renderCell: (params) => `${fDateTime(params.row.enrollDate, 'DD/MM/YYYY HH:mm')}`,
     },
     {
       field: 'lastSubmittedDate',
@@ -109,7 +109,7 @@ export function ScoresListView() {
       align: 'center',
       headerAlign: 'center',
       valueFormatter: (value) => `${fDateTime(value)}`,
-      renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY HH:MM')}`,
+      renderCell: (params) => `${fDateTime(params.row.lastSubmittedDate, 'DD/MM/YYYY HH:mm')}`,
     },
     {
       type: 'actions',
@@ -199,7 +199,7 @@ export function ScoresListView() {
           // Nếu là cột thời gian, định dạng lại
           newRow[col.headerName] =
             col.field === 'enrollDate' || col.field === 'lastSubmittedDate'
-              ? fDateTime(row[col.field], 'DD/MM/YYYY HH:MM') // Định dạng thời gian
+              ? fDateTime(row[col.field], 'DD/MM/YYYY HH:mm') // Định dạng thời gian
               : row[col.field];
         }
       });

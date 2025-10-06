@@ -27,7 +27,7 @@ export function FiltersResult({
     <ResultRoot sx={sx} {...other}>
       <ResultLabel>
         <strong>{totalResults}</strong>
-        <span> results found</span>
+        <span> kết quả được tìm thấy</span>
       </ResultLabel>
 
       <ResultContent>
@@ -39,7 +39,7 @@ export function FiltersResult({
             onClick={onReset}
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
           >
-            Clear
+            Xoá
           </Button>
         )}
       </ResultContent>
