@@ -69,6 +69,8 @@ export function ExamForm({ sx, open, onClose }: Props) {
     name: 'answers',
   });
 
+  // console.log(submission, open);
+
   React.useEffect(() => {
     setValue(
       'answers',
@@ -77,7 +79,8 @@ export function ExamForm({ sx, open, onClose }: Props) {
         answer: item.submittedAnswer ?? '',
       }))
     );
-  }, [submission, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submission, open]);
 
   const onSubmit = handleSubmit(async () => {});
 

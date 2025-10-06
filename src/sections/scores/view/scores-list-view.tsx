@@ -175,14 +175,15 @@ export function ScoresListView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderViewForm = () => (
-    <ExamForm
-      open={viewForm.value}
-      onClose={() => {
-        viewForm.onFalse();
-      }}
-    />
-  );
+  const renderViewForm = () =>
+    viewForm.value && (
+      <ExamForm
+        open={viewForm.value}
+        onClose={() => {
+          viewForm.onFalse();
+        }}
+      />
+    );
 
   const exportToExcel = () => {
     // Tạo một mảng chứa tiêu đề cột từ headerName, bỏ qua cột actions
