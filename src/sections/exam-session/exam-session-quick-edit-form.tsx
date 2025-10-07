@@ -15,6 +15,7 @@ import { examSessionService } from 'src/services/exam-session.services';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
+import { FieldContainer } from 'src/components/form-validation-view/components';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ export type NewExamSessionSchemaType = zod.infer<typeof NewExamSessionSchema>;
 export const NewExamSessionSchema = zod.object({
   examTemplateId: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
   name: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
-  duration: zod.number().min(1, { message: 'Bắt buộc nhập!' }),
+  duration: zod.number().int().min(1, { message: 'Bắt buộc nhập!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -117,8 +118,10 @@ export function ExamSessionQuickEditForm({ examTemplateId, open, onClose }: Prop
             }}
           >
             <Field.Text disabled={Boolean(examTemplateId)} name="examTemplateId" label="Mã đề" />
-            <Field.Text name="name" label="Tên kỳ thi" />
-            <Field.Text type="number" name="duration" label="Thời gian làm bài" />
+            <Field.Text disabled={isSubmitting} name="name" label="Tên kỳ thi" />
+            <FieldContainer label="Thời gian làm bài" sx={{ alignItems: 'flex-start' }}>
+              <Field.NumberInput name="stepOne.time" disabled={isSubmitting} />
+            </FieldContainer>
           </Box>
         </DialogContent>
         <DialogActions>

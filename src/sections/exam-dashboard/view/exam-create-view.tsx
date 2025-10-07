@@ -39,9 +39,9 @@ export function ExamCreateView() {
   const defaultValues: WizardSchemaType = {
     stepOne: {
       subject: '',
-      classId: '',
-      time: '',
-      quantity: '',
+      classId: 6,
+      time: 45,
+      quantity: 16,
       matrix: matrixExam,
       document: '',
     },
