@@ -118,7 +118,7 @@ export function ExamSessionQuickEditForm({ examTemplateId, open, onClose }: Prop
           >
             <Field.Text disabled={Boolean(examTemplateId)} name="examTemplateId" label="Mã đề" />
             <Field.Text name="name" label="Tên kỳ thi" />
-            <Field.Text name="duration" label="Thời gian làm bài" />
+            <Field.Text type="number" name="duration" label="Thời gian làm bài" />
           </Box>
         </DialogContent>
         <DialogActions>

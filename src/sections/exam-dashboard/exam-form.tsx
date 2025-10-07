@@ -1,8 +1,12 @@
 'use client';
 
+import type { IExamItem } from 'src/types/exam';
 import type { Theme, SxProps } from '@mui/material';
+import type { IExamSession } from 'src/types/exam-session';
+import type { Choice, IQuestionItem } from 'src/types/question';
 
 import React from 'react';
+import axios from 'axios';
 import { z as zod } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
@@ -22,14 +26,11 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-import { useBoolean } from 'src/hooks/use-boolean';
-
 import { useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
 import { ComponentBox } from 'src/components/layout';
 import { Scrollbar } from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import { Choices } from 'src/types/question';
 
@@ -54,27 +55,51 @@ type Props = {
   open: boolean;
   onClose: () => void;
   sx?: SxProps<Theme>;
+  row: IExamItem | IExamSession;
 };
 
 // ----------------------------------------------------------------------
 
-export function ExamForm({ sx, open, onClose }: Props) {
-  const [dataSubmit, setDataSubmit] = React.useState<ExamFormSchemaType>();
-
-  const confirmDialog = useBoolean();
-
+export function ExamForm({ sx, open, onClose, row }: Props) {
   const { questions } = useAppSelector((state) => state.examDashboard);
 
   const methods = useForm<ExamFormSchemaType>({
     resolver: zodResolver(ExamFormSchema),
   });
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { isSubmitting },
-  } = methods;
+  const handleDownload = async () => {
+    try {
+      const response = await axios.post(
+        '/api/export',
+        {
+          title: `\n${row.name}`,
+          content: `${questions.reduce((result: string, question: IQuestionItem, index) => {
+            result += `\nCâu hỏi ${index + 1}: ${question.question}\n`;
+            Choices.map((choice: Choice) => {
+              result += `${choice}: ${question.choices?.[choice]}\n`;
+            }, '');
+            result += `Đáp án: ${question.answer}\n`;
+            return result;
+          }, '')}`,
+        },
+        {
+          responseType: 'blob',
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${row.name}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
+
+  const { handleSubmit, control, setValue } = methods;
 
   const { fields } = useFieldArray({
     control,
@@ -88,33 +113,7 @@ export function ExamForm({ sx, open, onClose }: Props) {
     );
   }, [questions, setValue]);
 
-  const onSubmit = handleSubmit(async (data) => {
-    setDataSubmit(data);
-    confirmDialog.onTrue();
-  });
-
-  const renderConfirmDialog = () => (
-    <ConfirmDialog
-      open={confirmDialog.value}
-      onClose={confirmDialog.onFalse}
-      title="Chỉnh sửa"
-      content="Bạn có chắc chắc muốn chỉnh sửa?"
-      action={
-        <Button
-          color="primary"
-          variant="contained"
-          loading={isSubmitting}
-          onClick={() => {
-            // console.log(dataSubmit);
-          }}
-          loadingIndicator="Chỉnh sửa..."
-          sx={{ zIndex: 2 }}
-        >
-          Chỉnh sửa
-        </Button>
-      }
-    />
-  );
+  const onSubmit = handleSubmit(async () => {});
 
   return (
     <Dialog
@@ -188,13 +187,14 @@ export function ExamForm({ sx, open, onClose }: Props) {
                 </ComponentBox>
               ))}
             </Box>
-            {renderConfirmDialog()}
           </DialogContent>
         </Scrollbar>
-
         <DialogActions>
           <Button variant="outlined" onClick={onClose}>
             Huỷ
+          </Button>
+          <Button variant="contained" onClick={handleDownload}>
+            Xuất file
           </Button>
         </DialogActions>
       </Form>

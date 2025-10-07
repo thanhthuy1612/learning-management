@@ -138,6 +138,7 @@ export function ExamListView() {
               color="inherit"
               onClick={() => {
                 viewForm.onTrue();
+                setRow(params.row);
                 dispatch(updateExamChoice(params.row.question as IQuestionItem[]));
               }}
             >
@@ -280,14 +281,16 @@ export function ExamListView() {
     />
   );
 
-  const renderViewForm = () => (
-    <ExamForm
-      open={viewForm.value}
-      onClose={() => {
-        viewForm.onFalse();
-      }}
-    />
-  );
+  const renderViewForm = () =>
+    row && (
+      <ExamForm
+        open={viewForm.value}
+        onClose={() => {
+          viewForm.onFalse();
+        }}
+        row={row}
+      />
+    );
 
   const renderSessionForm = () => (
     <ExamSessionQuickEditForm

@@ -94,7 +94,7 @@ export function ExamSessionNewForm() {
         >
           <Field.Text name="examTemplateId" label="Mã đề" />
           <Field.Text name="name" label="Tên kì thi" />
-          <Field.Text name="duration" label="Thời gian làm bài" />
+          <Field.Text type="number" name="duration" label="Thời gian làm bài" />
           {/* <Field.Autocomplete
             multiple
             freeSolo
