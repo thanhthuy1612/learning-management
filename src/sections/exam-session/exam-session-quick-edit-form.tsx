@@ -120,7 +120,7 @@ export function ExamSessionQuickEditForm({ examTemplateId, open, onClose }: Prop
             <Field.Text disabled={Boolean(examTemplateId)} name="examTemplateId" label="Mã đề" />
             <Field.Text disabled={isSubmitting} name="name" label="Tên kỳ thi" />
             <FieldContainer label="Thời gian làm bài" sx={{ alignItems: 'flex-start' }}>
-              <Field.NumberInput name="stepOne.time" disabled={isSubmitting} />
+              <Field.NumberInput name="duration" disabled={isSubmitting} />
             </FieldContainer>
           </Box>
         </DialogContent>
