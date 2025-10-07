@@ -32,14 +32,14 @@ export function StepOne({ control, loading }: Props) {
         name="stepOne.time"
         control={control}
         render={({ field }) => (
-          <Field.Text disabled={loading} type="number" {...field} label="Thời gian làm bài" />
+          <Field.Text {...field} disabled={loading} type="number" label="Thời gian làm bài" />
         )}
       />
       <Controller
         name="stepOne.quantity"
         control={control}
         render={({ field }) => (
-          <Field.Text disabled={loading} type="number" {...field} label="Số lượng câu hỏi" />
+          <Field.Text {...field} disabled={loading} type="number" label="Số lượng câu hỏi" />
         )}
       />
       <Controller

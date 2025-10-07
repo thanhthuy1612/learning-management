@@ -9,11 +9,11 @@ export const steps = ['Sử dụng AI', 'Kiểm tra'];
 export const StepOneSchema = zod.object({
   subject: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
   classId: zod
-    .number()
+    .string()
     .min(1, { message: 'Giá trị tối thiểu là 1!' })
     .max(12, { message: 'Giá trị tối đa là 12!' }),
-  time: zod.number().min(1, { message: 'Giá trị tối thiểu là 1!' }),
-  quantity: zod.number().min(1, { message: 'Giá trị tối thiểu là 1!' }),
+  time: zod.string().min(1, { message: 'Giá trị tối thiểu là 1!' }),
+  quantity: zod.string().min(1, { message: 'Giá trị tối thiểu là 1!' }),
   matrix: zod.string().min(1, { message: 'Bắt buộc nhập!' }),
   document: zod.string().optional(),
 });

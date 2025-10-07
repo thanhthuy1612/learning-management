@@ -39,9 +39,9 @@ export function ExamCreateView() {
   const defaultValues: WizardSchemaType = {
     stepOne: {
       subject: '',
-      classId: 6,
-      time: 45,
-      quantity: 16,
+      classId: '',
+      time: '',
+      quantity: '',
       matrix: matrixExam,
       document: '',
     },
@@ -82,7 +82,14 @@ export function ExamCreateView() {
             setLoadingStepOne(true);
             const { subject, classId, time, matrix, document, quantity } = getValues('stepOne');
             const res = await examService.prompt(
-              prompt(subject, classId, document ?? '', matrix, time, quantity)
+              prompt(
+                subject,
+                Number(classId),
+                document ?? '',
+                matrix,
+                Number(time),
+                Number(quantity)
+              )
             );
             setValue(
               'stepTwo.answers',

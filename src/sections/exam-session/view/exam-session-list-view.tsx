@@ -80,6 +80,7 @@ export function ExamSessionListView() {
 
   React.useEffect(() => {
     dispatch(resetStateExamSession());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns: GridColDef[] = [
@@ -230,17 +231,17 @@ export function ExamSessionListView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex]);
 
-  const resetPage = async (newPageIndex = pageIndex) => {
-    if (pageIndex === 1) {
-      await fetchData({
-        name: searchText,
-        pageIndex: newPageIndex,
-        pageSize,
-      });
-    } else {
-      setPageIndex(1);
-    }
-  };
+  // const resetPage = async (newPageIndex = pageIndex) => {
+  //   if (pageIndex === 1) {
+  //     await fetchData({
+  //       name: searchText,
+  //       pageIndex: newPageIndex,
+  //       pageSize,
+  //     });
+  //   } else {
+  //     setPageIndex(1);
+  //   }
+  // };
 
   const resetPageSize = async (newPageSize = pageSize) => {
     if (pageIndex === 1) {
