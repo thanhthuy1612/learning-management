@@ -2,12 +2,7 @@ import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
 
-import {
-  setSession,
-  JWT_STORAGE_KEY,
-  USER_LOCAL_STORAGE,
-  JWT_REFRESH_STORAGE_KEY,
-} from 'src/auth/context/jwt';
+import { USER_LOCAL_STORAGE } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -35,17 +30,15 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
     if (error.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
+      // const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
       try {
-        const { data } = await axiosInstance.post(endpoints.auth.refresh, {
-          refreshToken,
-        });
-        setSession(data.data.accessToken, data.data.refreshToken);
-        axios.defaults.headers.common.Authorization = `Bearer ${data.data.accessToken}`;
-        return axiosInstance(originalRequest);
+        const { data } = await axios.post(endpoints.auth.refreshToken);
+        // setSession(data.data.accessToken, data.data.refreshToken);
+        axios.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
+        // return axiosInstance(originalRequest);
       } catch (refreshError) {
-        sessionStorage.removeItem(JWT_REFRESH_STORAGE_KEY);
-        sessionStorage.removeItem(JWT_STORAGE_KEY);
+        // sessionStorage.removeItem(JWT_REFRESH_STORAGE_KEY);
+        // sessionStorage.removeItem(JWT_STORAGE_KEY);
         localStorage.removeItem(USER_LOCAL_STORAGE);
         delete axiosInstance.defaults.headers.common.Authorization;
         window.location.href = '/';
@@ -77,7 +70,10 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
 
 export const endpoints = {
   auth: {
-    // me: '/api/auth/me',
+    me: '/api/auth/me',
+    login: '/api/auth/login',
+    logout: '/api/auth/logout',
+    refreshToken: '/api/auth/refresh-token',
     signIn: '/api/v1/guest/login',
     signUp: '/api/auth/sign-up',
     refresh: '/api/v1/user/refresh-token',

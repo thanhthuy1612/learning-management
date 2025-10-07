@@ -74,7 +74,7 @@ export function ExamListView() {
 
   const { user } = useAuthContext();
 
-  const isAdmin = user?.roles[0] === 'admin';
+  const isAdmin = user?.role === 'admin';
 
   React.useEffect(() => {
     dispatch(resetStateExamDashboard());

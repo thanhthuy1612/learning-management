@@ -1,11 +1,13 @@
 'use client';
 
+import axios from 'axios';
 import { useSetState } from 'minimal-shared/hooks';
 import { useMemo, useEffect, useCallback } from 'react';
 
+import { endpoints } from 'src/lib/axios';
+
 import { setSession } from './utils';
 import { AuthContext } from '../auth-context';
-import { JWT_STORAGE_KEY, USER_LOCAL_STORAGE, JWT_REFRESH_STORAGE_KEY } from './constant';
 
 import type { AuthState } from '../../types';
 
@@ -26,28 +28,28 @@ export function AuthProvider({ children }: Props) {
 
   const checkUserSession = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
-      const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
-      const userString = localStorage.getItem(USER_LOCAL_STORAGE) ?? '';
+      // const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
+      // const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
+      // const userString = localStorage.getItem(USER_LOCAL_STORAGE) ?? '';
 
-      if (accessToken && refreshToken && userString && userString != 'undefined') {
-        setSession(accessToken, refreshToken);
+      // if (userString && userString != 'undefined') {
+      // setSession(accessToken, refreshToken);
 
-        // const res = await axios.get(endpoints.auth.me);
+      const res = await axios.get(endpoints.auth.me);
+      const data = res.data;
+      setSession(data?.accessToken);
 
-        // const { user } = res.data;
-
-        const user = JSON.parse(userString);
-
-        setState({ user: { ...user, accessToken }, loading: false });
+      // const user = JSON.parse(userString);
+      if (data) {
+        setState({ user: data, loading: false });
       } else {
         setState({ user: null, loading: false });
-        sessionStorage.removeItem(USER_LOCAL_STORAGE);
+        // sessionStorage.removeItem(USER_LOCAL_STORAGE);
       }
     } catch (error) {
       console.error(error);
       setState({ user: null, loading: false });
-      sessionStorage.removeItem(USER_LOCAL_STORAGE);
+      // sessionStorage.removeItem(USER_LOCAL_STORAGE);
     }
   }, [setState]);
 
@@ -57,7 +59,7 @@ export function AuthProvider({ children }: Props) {
   }, []);
 
   // ----------------------------------------------------------------------
-
+  console.log(state.user);
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
   const status = state.loading ? 'loading' : checkAuthenticated;

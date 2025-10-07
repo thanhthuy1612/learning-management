@@ -4,10 +4,12 @@
 
 import type { UserType } from 'src/auth/types';
 
-import axios, { endpoints } from 'src/lib/axios';
+import axios from 'axios';
+
+import { endpoints } from 'src/lib/axios';
 
 import { setSession } from './utils';
-import { JWT_STORAGE_KEY, USER_LOCAL_STORAGE } from './constant';
+import { JWT_STORAGE_KEY } from './constant';
 
 // ----------------------------------------------------------------------
 
@@ -33,15 +35,15 @@ export const signInWithPassword = async ({
   try {
     const params = { userName, password };
 
-    const res = await axios.post(endpoints.auth.signIn, params);
+    const res = await axios.post(endpoints.auth.login, params);
 
-    const { accessToken, refreshToken } = res.data;
+    const { accessToken } = res.data;
 
     if (!accessToken) {
       throw new Error(res.data);
     }
-    localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data));
-    setSession(accessToken, refreshToken);
+    // localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data));
+    setSession(accessToken);
 
     return res.data;
   } catch (error) {
@@ -85,7 +87,8 @@ export const signUp = async ({
  *************************************** */
 export const signOut = async (): Promise<void> => {
   try {
-    await setSession(null, null);
+    await axios.post(endpoints.auth.logout);
+    await setSession(null);
   } catch (error) {
     throw error;
   }

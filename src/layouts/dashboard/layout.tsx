@@ -76,11 +76,7 @@ export function DashboardLayout({
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
   const navRole =
-    user?.roles?.[0] === 'admin'
-      ? dashboardNavData
-      : user?.roles?.[0] === 'teacher'
-        ? navDataTeacher
-        : [];
+    user?.role === 'admin' ? dashboardNavData : user?.role === 'teacher' ? navDataTeacher : [];
 
   const navData = slotProps?.nav?.data ?? navRole;
 

@@ -70,7 +70,7 @@ export function ExamSessionListView() {
 
   const { user } = useAuthContext();
 
-  const isAdmin = user?.roles[0] === 'admin';
+  const isAdmin = user?.role === 'admin';
 
   const { searchText, filters } = useAppSelector((state) => state.examSession);
 
