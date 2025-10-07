@@ -54,7 +54,7 @@ export function UserListView() {
   const quickEditForm = useBoolean();
 
   const dispatch = useAppDispatch();
-  const { searchText, filters } = useAppSelector((state) => state.user);
+  const { searchText } = useAppSelector((state) => state.user);
 
   const apiRef = useGridApiRef();
 
@@ -171,14 +171,16 @@ export function UserListView() {
         pageSize,
       };
       const res = await userService.list(newBody);
-      const resRole = await userService.roles();
-      setRoles(
-        resRole.map((item: IRole) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-        }))
-      );
+      if (loadingFirst || !roles.length) {
+        const resRole = await userService.roles();
+        setRoles(
+          resRole.map((item: IRole) => ({
+            id: item.id,
+            name: item.name,
+            description: item.description,
+          }))
+        );
+      }
       if (res.total) {
         dispatch(updateFiltersUser(newBody));
         setTotal(res.total);
@@ -208,6 +210,18 @@ export function UserListView() {
         searchText,
         pageIndex: newPageIndex,
         pageSize,
+      });
+    } else {
+      setPageIndex(1);
+    }
+  };
+
+  const resetPageSize = async (newPageSize = pageSize) => {
+    if (pageIndex === 1) {
+      await fetchData({
+        searchText,
+        pageIndex,
+        pageSize: newPageSize,
       });
     } else {
       setPageIndex(1);
@@ -314,7 +328,7 @@ export function UserListView() {
                   }}
                   onRowsPerPageChange={(pagesize: number) => {
                     setPageSize(pagesize);
-                    resetPage(pagesize);
+                    resetPageSize(pagesize);
                   }}
                   total={total}
                   optionAll

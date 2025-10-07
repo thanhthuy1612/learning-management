@@ -13,6 +13,7 @@ import {
   Grid,
   Radio,
   Dialog,
+  useTheme,
   FormLabel,
   RadioGroup,
   FormControl,
@@ -22,6 +23,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
+import { varAlpha } from 'src/theme/styles';
 import { useAppSelector } from 'src/lib/hooks';
 
 import { Form } from 'src/components/hook-form';
@@ -57,6 +59,8 @@ type Props = {
 
 export function ExamForm({ sx, open, onClose }: Props) {
   const { submission } = useAppSelector((state) => state.scores);
+
+  const theme = useTheme();
 
   const methods = useForm<ExamFormSchemaType>({
     resolver: zodResolver(ExamFormSchema),
@@ -106,7 +110,12 @@ export function ExamForm({ sx, open, onClose }: Props) {
                   id={`question_${index}`}
                   title={`Câu ${index + 1}:`}
                   key={`question_${index}`}
-                  sx={{ ...sx }}
+                  sx={{
+                    ...sx,
+                    backgroundColor: submission[index].isCorrect
+                      ? varAlpha(theme.vars.palette.success.mainChannel, 0.08)
+                      : varAlpha(theme.vars.palette.error.mainChannel, 0.08),
+                  }}
                 >
                   <Controller
                     name={`answers.${index}.answer`}
@@ -114,7 +123,11 @@ export function ExamForm({ sx, open, onClose }: Props) {
                     disabled
                     render={({ field: typeField }) => (
                       <FormControl component="fieldset" sx={{ width: 1 }}>
-                        <FormLabel component="legend" sx={{ mb: 1, typography: 'subtitle1' }}>
+                        <FormLabel
+                          color={submission[index].isCorrect ? 'success' : 'error'}
+                          component="legend"
+                          sx={{ mb: 1, typography: 'subtitle1' }}
+                        >
                           {field.question}
                         </FormLabel>
                         <RadioGroup

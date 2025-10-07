@@ -241,6 +241,18 @@ export function ExamSessionListView() {
     }
   };
 
+  const resetPageSize = async (newPageSize = pageSize) => {
+    if (pageIndex === 1) {
+      await fetchData({
+        name: searchText,
+        pageIndex,
+        pageSize: newPageSize,
+      });
+    } else {
+      setPageIndex(1);
+    }
+  };
+
   const resetPageResult = async (body?: IExamSessionRequestBody) => {
     if (pageIndex === 1) {
       await fetchData(body);
@@ -423,7 +435,7 @@ export function ExamSessionListView() {
                   }}
                   onRowsPerPageChange={(pagesize: number) => {
                     setPageSize(pagesize);
-                    resetPage(pagesize);
+                    resetPageSize(pagesize);
                   }}
                   total={total}
                   optionAll

@@ -222,6 +222,18 @@ export function ExamListView() {
     }
   };
 
+  const resetPageSize = async (newPageSize = pageSize) => {
+    if (pageIndex === 1) {
+      await fetchData({
+        name: searchText,
+        pageIndex,
+        pageSize: newPageSize,
+      });
+    } else {
+      setPageIndex(1);
+    }
+  };
+
   const resetPageResult = async (body?: IExamRequestBody) => {
     if (pageIndex === 1) {
       await fetchData(body);
@@ -384,7 +396,7 @@ export function ExamListView() {
                   }}
                   onRowsPerPageChange={(pagesize: number) => {
                     setPageSize(pagesize);
-                    resetPage(pagesize);
+                    resetPageSize(pagesize);
                   }}
                   total={total}
                   optionAll

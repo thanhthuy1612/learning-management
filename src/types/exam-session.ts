@@ -39,7 +39,7 @@ export type ISubmission = {
   choices: Record<Choice, string>;
   answer?: Choice;
   submittedAnswer: Choice;
-  isCorrect: true;
+  isCorrect: boolean;
 };
 
 export type IScores = {

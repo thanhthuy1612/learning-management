@@ -151,6 +151,7 @@ export function ScoresListView() {
       const res = await examSessionService.scores(newBody);
       dispatch(updateFiltersScores(newBody.examSessionId));
       setTotal(res.length);
+      setPageSize(res.length);
       setTableData(res);
       // apiRef.current.setRows(res as GridRowModel[]);
     } catch (error: any) {
@@ -186,33 +187,25 @@ export function ScoresListView() {
     );
 
   const exportToExcel = () => {
-    // Tạo một mảng chứa tiêu đề cột từ headerName, bỏ qua cột actions
-    const headers = columns
-      .filter((col) => col.field !== 'actions') // Lọc bỏ cột actions
-      .map((col) => col.headerName);
+    const headers = columns.filter((col) => col.field !== 'actions').map((col) => col.headerName);
 
-    // Tạo một mảng dữ liệu với tiêu đề cột
     const dataWithHeaders = tableData.map((row: any) => {
       const newRow: any = {};
       columns.forEach((col: any) => {
         if (col.field !== 'actions') {
-          // Bỏ qua cột actions
-          // Nếu là cột thời gian, định dạng lại
           newRow[col.headerName] =
             col.field === 'enrollDate' || col.field === 'lastSubmittedDate'
-              ? fDateTime(row[col.field], 'DD/MM/YYYY HH:mm') // Định dạng thời gian
+              ? fDateTime(row[col.field], 'DD/MM/YYYY HH:mm')
               : row[col.field];
         }
       });
       return newRow;
     });
 
-    // Tạo worksheet và workbook
     const worksheet = XLSX.utils.json_to_sheet(dataWithHeaders, { header: headers as string[] });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Scores');
 
-    // Xuất tệp
     XLSX.writeFile(workbook, 'scores.xlsx');
   };
 
@@ -278,6 +271,7 @@ export function ScoresListView() {
                     onChange={(_event, page) => {
                       setPageIndex(page);
                     }}
+                    optionAll
                     onRowsPerPageChange={(pagesize: number) => {
                       setPageSize(pagesize);
                       setPageIndex(1);
