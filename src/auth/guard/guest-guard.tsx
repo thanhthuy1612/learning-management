@@ -27,7 +27,6 @@ export function GuestGuard({ children }: GuestGuardProps) {
   const [isChecking, setIsChecking] = useState(true);
 
   const checkPermissions = React.useCallback(async (): Promise<void> => {
-    setIsChecking(true);
     console.log(loading, authenticated);
     if (loading) {
       return;
