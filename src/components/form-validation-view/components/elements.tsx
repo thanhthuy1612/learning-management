@@ -82,7 +82,7 @@ export function FieldContainer({ sx, children, label = 'RHFTextField' }: FieldCo
     <Box
       sx={[
         () => ({
-          gap: 1,
+          gap: 0.5,
           width: 1,
           display: 'flex',
           flexDirection: 'column',

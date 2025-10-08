@@ -98,10 +98,11 @@ export function NumberInput({
   );
 
   return (
-    <Box {...slotProps?.wrapper}>
+    <Box sx={{ width: '100%' }} {...slotProps?.wrapper}>
       <NumberInputRoot
         sx={[
           (theme) => ({
+            width: '100%',
             '--border-color': varAlpha(theme.vars.palette.grey['500Channel'], 0.2),
             '--vertical-divider-color': hideDivider
               ? 'transparent'
@@ -125,7 +126,7 @@ export function NumberInput({
           </CounterButton>
         )}
 
-        <InputContainer {...slotProps?.inputWrapper}>
+        <InputContainer sx={{ width: '100%', height: '50px' }} {...slotProps?.inputWrapper}>
           <CenteredInput
             name={id}
             disabled={disabled || disableInput}

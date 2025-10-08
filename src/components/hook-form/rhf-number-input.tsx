@@ -19,6 +19,7 @@ export function RHFNumberInput({ name, helperText, ...other }: RHFNumberInputPro
       control={control}
       render={({ field, fieldState: { error } }) => (
         <NumberInput
+          sx={{ width: '100%' }}
           {...field}
           onChange={(event, value) => field.onChange(value)}
           {...other}
