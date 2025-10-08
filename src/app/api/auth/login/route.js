@@ -11,23 +11,26 @@ export async function POST(req) {
     });
 
     if (response.ok) {
-      const user = (await response.json()).data;
+      const user = await response.json();
 
-      // Tạo phản hồi và thiết lập cookie
-      const res = NextResponse.json(user);
-      res.cookies.set('accessToken', user.accessToken, {
-        httpOnly: true,
-        path: '/',
-        sameSite: 'Strict',
-      });
+      if (user.data) {
+        // Tạo phản hồi và thiết lập cookie
+        const res = NextResponse.json(user);
+        res.cookies.set('accessToken', user.data.accessToken, {
+          httpOnly: true,
+          path: '/',
+          sameSite: 'Strict',
+        });
 
-      res.cookies.set('refreshToken', user.refreshToken, {
-        httpOnly: true,
-        path: '/',
-        sameSite: 'Strict',
-      });
+        res.cookies.set('refreshToken', user.data.refreshToken, {
+          httpOnly: true,
+          path: '/',
+          sameSite: 'Strict',
+        });
 
-      return res;
+        return res;
+      }
+      return NextResponse.json(user);
     } else {
       return NextResponse.json({ error: 'Lỗi đăng nhập' }, { status: 401 });
     }

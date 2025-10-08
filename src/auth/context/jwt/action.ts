@@ -39,8 +39,8 @@ export const signInWithPassword = async ({
 
     const { accessToken } = res.data;
 
-    if (!accessToken) {
-      throw new Error(res.data);
+    if (!res.data.data) {
+      throw new Error(res.data.message);
     }
     // localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify(res.data));
     setSession(accessToken);
