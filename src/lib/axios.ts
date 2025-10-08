@@ -2,8 +2,6 @@ import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
 
-import { USER_LOCAL_STORAGE } from 'src/auth/context/jwt';
-
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({ baseURL: 'https://api.dethiai.org/' });
@@ -39,7 +37,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         // sessionStorage.removeItem(JWT_REFRESH_STORAGE_KEY);
         // sessionStorage.removeItem(JWT_STORAGE_KEY);
-        localStorage.removeItem(USER_LOCAL_STORAGE);
+        // localStorage.removeItem(USER_LOCAL_STORAGE);
         delete axiosInstance.defaults.headers.common.Authorization;
         window.location.href = '/';
         console.error('Error during token expiration:', refreshError);

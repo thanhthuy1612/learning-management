@@ -35,6 +35,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   };
 
   const checkPermissions = async (): Promise<void> => {
+    setIsChecking(true);
     if (loading) {
       return;
     }

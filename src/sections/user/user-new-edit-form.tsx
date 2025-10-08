@@ -19,7 +19,6 @@ import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { USER_LOCAL_STORAGE } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +45,10 @@ export function UserNewEditForm({ currentUser }: Props) {
   const [errorMsg, setErrorMsg] = React.useState('');
 
   const { checkUserSession } = useAuthContext();
+
+  React.useEffect(() => {
+    checkUserSession?.();
+  }, [checkUserSession]);
 
   const methods = useForm<NewUserSchemaType>({
     mode: 'onSubmit',
@@ -75,7 +78,7 @@ export function UserNewEditForm({ currentUser }: Props) {
           .changeInfomation(body)
           .then((res) => {
             if (res) {
-              localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify({ ...currentUser, ...body }));
+              // localStorage.setItem(USER_LOCAL_STORAGE, JSON.stringify({ ...currentUser, ...body }));
               resolve('Cập nhật thành công');
               checkUserSession?.();
             } else {
