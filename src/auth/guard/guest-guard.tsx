@@ -32,8 +32,7 @@ export function GuestGuard({ children }: GuestGuardProps) {
     }
 
     if (authenticated) {
-      console.log(returnTo);
-      router.replace(returnTo);
+      router.push(returnTo);
       return;
     }
 
