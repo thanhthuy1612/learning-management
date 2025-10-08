@@ -73,8 +73,6 @@ export function ExamForm({ sx, open, onClose }: Props) {
     name: 'answers',
   });
 
-  // console.log(submission, open);
-
   React.useEffect(() => {
     setValue(
       'answers',

@@ -62,13 +62,11 @@ export function DashboardLayout({
   slotProps,
   layoutQuery = 'lg',
 }: DashboardLayoutProps) {
-  const [loading, setLoading] = React.useState();
-
   const pathname = usePathname();
 
   const theme = useTheme();
 
-  const { user } = useAuthContext();
+  const { user, loading } = useAuthContext();
 
   const settings = useSettingsContext();
 

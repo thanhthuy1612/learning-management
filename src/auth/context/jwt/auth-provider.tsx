@@ -28,6 +28,7 @@ export function AuthProvider({ children }: Props) {
 
   const checkUserSession = useCallback(async () => {
     try {
+      setState({ user: null, loading: false });
       // const accessToken = sessionStorage.getItem(JWT_STORAGE_KEY);
       // const refreshToken = sessionStorage.getItem(JWT_REFRESH_STORAGE_KEY);
       // const userString = localStorage.getItem(USER_LOCAL_STORAGE) ?? '';
@@ -55,10 +56,10 @@ export function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     checkUserSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [checkUserSession]);
 
   // ----------------------------------------------------------------------
+  // console.log(state.user, state.loading);
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
   const status = state.loading ? 'loading' : checkAuthenticated;

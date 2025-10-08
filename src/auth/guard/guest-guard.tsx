@@ -19,7 +19,7 @@ type GuestGuardProps = {
 export function GuestGuard({ children }: GuestGuardProps) {
   const router = useRouter();
 
-  const { loading, authenticated } = useAuthContext();
+  const { loading, authenticated, user } = useAuthContext();
 
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo') || CONFIG.auth.redirectPath;
@@ -42,7 +42,7 @@ export function GuestGuard({ children }: GuestGuardProps) {
   useEffect(() => {
     checkPermissions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, loading]);
+  }, [authenticated, loading, user]);
 
   if (isChecking) {
     return <SplashScreen />;
