@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/routes/hooks';
+import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -41,6 +41,7 @@ export function JwtSignInView() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const showPassword = useBoolean();
 
@@ -64,7 +65,9 @@ export function JwtSignInView() {
       await signInWithPassword(data);
       await checkUserSession?.();
 
-      window.location.reload();
+      if (pathname.includes('/auth/jwt/sign-in/')) {
+        window.location.reload();
+      }
       // router.refresh();
       // router.push(paths.dashboard.root);
     } catch (error) {
