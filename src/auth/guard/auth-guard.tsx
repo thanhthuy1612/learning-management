@@ -25,7 +25,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { authenticated, loading } = useAuthContext();
+  const { authenticated, loading, user } = useAuthContext();
 
   const [isChecking, setIsChecking] = useState(true);
 
@@ -56,7 +56,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   useEffect(() => {
     checkPermissions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, loading]);
+  }, [authenticated, loading, user]);
 
   if (isChecking) {
     return <SplashScreen />;

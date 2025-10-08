@@ -3,7 +3,6 @@
 import { z as zod } from 'zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -13,7 +12,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -65,8 +64,8 @@ export function JwtSignInView() {
       await signInWithPassword(data);
       await checkUserSession?.();
 
-      // router.refresh();
-      router.push(paths.dashboard.root);
+      router.refresh();
+      // router.push(paths.dashboard.root);
     } catch (error) {
       const feedbackMessage = getErrorMessage(error);
       setErrorMessage(feedbackMessage);
