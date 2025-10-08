@@ -28,6 +28,7 @@ export function GuestGuard({ children }: GuestGuardProps) {
 
   const checkPermissions = async (): Promise<void> => {
     setIsChecking(true);
+    console.log(loading, authenticated);
     if (loading) {
       return;
     }
