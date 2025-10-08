@@ -6,6 +6,7 @@ export function localStorageAvailable() {
     window.localStorage.setItem(key, key);
     window.localStorage.removeItem(key);
     return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return false;
   }

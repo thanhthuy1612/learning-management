@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
   const refreshToken = request.cookies.get('refreshToken')?.value;
-  const { pathname } = request.nextUrl;
+  // const { pathname } = request.nextUrl;
 
   if (!accessToken && refreshToken) {
     const response = await fetch('https://api.dethiai.org/api/v1/user/refresh-token', {

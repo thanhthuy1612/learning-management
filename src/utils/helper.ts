@@ -130,6 +130,7 @@ export function isValidLink(value?: string): boolean {
       return url.protocol === 'http:' || url.protocol === 'https:';
     }
     return false;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return false;
   }

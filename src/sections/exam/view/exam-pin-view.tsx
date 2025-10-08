@@ -20,6 +20,7 @@ export function ExamPinView() {
 
   React.useEffect(() => {
     dispatch(resetStateExam());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>

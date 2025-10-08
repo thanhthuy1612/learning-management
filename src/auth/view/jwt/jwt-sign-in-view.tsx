@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter, usePathname } from 'src/routes/hooks';
+import { usePathname } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -40,7 +40,7 @@ export const SignInSchema = zod.object({
 export function JwtSignInView() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const router = useRouter();
+  // const router = useRouter();
   const pathname = usePathname();
 
   const showPassword = useBoolean();

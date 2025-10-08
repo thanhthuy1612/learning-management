@@ -2,11 +2,7 @@
 
 import type { Breakpoint } from '@mui/material/styles';
 
-import { useBoolean } from 'minimal-shared/hooks';
-
 import Box from '@mui/material/Box';
-
-import { usePathname } from 'src/routes/hooks';
 
 import { Logo } from 'src/components/logo';
 
@@ -16,7 +12,6 @@ import { _account } from '../nav-config-account';
 import { MainSection } from '../core/main-section';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { navData as mainNavData } from '../nav-config-main';
 import { SignInButton } from '../components/sign-in-button';
 import { AccountDrawer } from '../components/account-drawer';
 
@@ -49,18 +44,19 @@ export function MainLayout({
   slotProps,
   layoutQuery = 'md',
 }: MainLayoutProps) {
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
-  const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
+  // const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
 
-  const isHomePage = pathname === '/';
+  // const isHomePage = pathname === '/';
   const { user } = useAuthContext();
 
-  const navData = slotProps?.nav?.data ?? mainNavData;
+  // const navData = slotProps?.nav?.data ?? mainNavData;
 
   const renderHeader = () => {
     const headerSlots: HeaderSectionProps['slots'] = {
       topArea: (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <></>
         // <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
         //   This is an info Alert.
@@ -121,6 +117,7 @@ export function MainLayout({
   //   ) : (
   //     <Footer sx={slotProps?.footer?.sx} layoutQuery={layoutQuery} />
   //   );
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   const renderFooter = () => <></>;
 
   const renderMain = () => <MainSection {...slotProps?.main}>{children}</MainSection>;

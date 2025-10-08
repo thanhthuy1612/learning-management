@@ -176,6 +176,7 @@ export function ExamFormView({ handleSend, sx }: Props) {
     checkTime(); // Kiểm tra ngay lần đầu tiên
 
     return () => clearInterval(intervalId); // Dọn dẹp khi component unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const answers = watch('answers');

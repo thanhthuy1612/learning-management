@@ -50,6 +50,7 @@ export function View403({ isHeader = true, isButton = false }: Props) {
             Về trang chủ
           </Button>
         ) : (
+          // eslint-disable-next-line react/jsx-no-useless-fragment
           <></>
         )}
       </Container>
