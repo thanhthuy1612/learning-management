@@ -1,9 +1,13 @@
 import type { Dayjs, OpUnitType } from 'dayjs';
 
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 // ----------------------------------------------------------------------
 
 /**
@@ -68,7 +72,11 @@ export function fDateTime(date: DatePickerFormat, template?: string): string {
     return 'Invalid date';
   }
 
-  return dayjs(date).format(template ?? formatPatterns.dateTime);
+  // Chuyển đổi ngày giờ từ UTC và cộng thêm 7 giờ
+  return dayjs
+    .utc(date)
+    .tz('Asia/Ho_Chi_Minh')
+    .format(template ?? formatPatterns.dateTime);
 }
 
 // ----------------------------------------------------------------------
