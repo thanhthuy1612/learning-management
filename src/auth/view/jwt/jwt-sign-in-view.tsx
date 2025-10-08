@@ -12,7 +12,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
@@ -65,9 +64,9 @@ export function JwtSignInView() {
       await signInWithPassword(data);
       await checkUserSession?.();
 
-      // window.location.reload();
+      window.location.reload();
       // router.refresh();
-      router.push(paths.dashboard.root);
+      // router.push(paths.dashboard.root);
     } catch (error) {
       const feedbackMessage = getErrorMessage(error);
       setErrorMessage(feedbackMessage);
