@@ -72,13 +72,13 @@ export function ExamForm({ sx, open, onClose, row }: Props) {
       const response = await axios.post(
         '/api/export',
         {
-          title: `\n${row.name}`,
+          title: `\r\n${row.name}`,
           content: `${questions.reduce((result: string, question: IQuestionItem, index) => {
-            result += `\nCâu hỏi ${index + 1}: ${question.question}\n`;
+            result += `\r\nCâu hỏi ${index + 1}: ${question.question}\r\n`;
             Choices.map((choice: Choice) => {
-              result += `${choice}: ${question.choices?.[choice]}\n`;
+              result += `${choice}: ${question.choices?.[choice]}\r\n`;
             }, '');
-            result += `Đáp án: ${question.answer}\n`;
+            result += `Đáp án: ${question.answer}\r\n`;
             return result;
           }, '')}`,
         },
