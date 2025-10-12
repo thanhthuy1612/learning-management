@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
         const { data } = await axios.post(endpoints.auth.refreshToken);
         // setSession(data.data.accessToken, data.data.refreshToken);
         axios.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
-        // return axiosInstance(originalRequest);
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
         // sessionStorage.removeItem(JWT_REFRESH_STORAGE_KEY);
         // sessionStorage.removeItem(JWT_STORAGE_KEY);
