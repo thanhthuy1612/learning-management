@@ -13,6 +13,7 @@ import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { detectSettings } from 'src/components/settings/server';
+import { ChunkErrorBoundary } from 'src/components/layout/ChunkErrorBoundary';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
 import { AuthProvider } from 'src/auth/context/jwt';
@@ -60,7 +61,6 @@ async function getAppConfig() {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const appConfig = await getAppConfig();
-
   return (
     <html lang="vn" dir={appConfig.dir} suppressHydrationWarning>
       <body suppressHydrationWarning>
@@ -70,7 +70,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             attribute={themeConfig.cssVariables.colorSchemeSelector}
             defaultMode={themeConfig.enableSystemMode ? 'system' : themeConfig.defaultMode}
           />
-
+          <ChunkErrorBoundary />
           <AuthProvider>
             <SettingsProvider
               cookieSettings={appConfig.cookieSettings}

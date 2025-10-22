@@ -48,7 +48,7 @@ export function AuthProvider({ children }: Props) {
         // sessionStorage.removeItem(USER_LOCAL_STORAGE);
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       setState({ user: null, loading: false });
       // sessionStorage.removeItem(USER_LOCAL_STORAGE);
     }
