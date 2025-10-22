@@ -122,7 +122,7 @@ export function ScoresListView() {
       disableColumnMenu: true,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {typeof params.row.score === 'number' && (
+          {!!params.row.submission.length && (
             <Tooltip title="Xem" placement="top" arrow>
               <IconButton
                 color="info"
