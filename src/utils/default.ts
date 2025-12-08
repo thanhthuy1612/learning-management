@@ -21,7 +21,8 @@ export const prompt = (
 - MA TRẬN:
     ${matrix}
     
-- Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức.
+- Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức. Đề thi cần bao gồm cả các câu hỏi với 2 đáp án đúng và sai hoặc dạng 4 đáp án A, B,C D.
+
 5. Thời gian làm bài: ${time} phút.
 
 6. Thang điểm: Tổng điểm 10 điểm, phân bổ theo tỷ lệ câu hỏi.
@@ -38,7 +39,17 @@ export const prompt = (
 "C": "Lựa chọn C",
 "D": "Lựa chọn D"
 },
-"answer": "B"
+"answer": "B" // Nếu câu hỏi này có 4 đáp án
+}
+
+// Hoặc nếu câu hỏi có 2 đáp án:
+{
+"question": "Câu hỏi đúng/sai ở đây?",
+"choices": {
+"True": "Đúng",
+"False": "Sai"
+},
+"answer": "True" // Nếu câu hỏi này có 2 đáp án
 }
 
 - Những điểm chính mà học sinh cần đề cập, dựa trên nội dung sách giáo khoa.
@@ -54,5 +65,5 @@ export const prompt = (
 
 - Một đề thi trắc nghiệm hoàn chỉnh đáp ứng tất cả các yêu cầu trên, có cấu trúc rõ ràng và đầy đủ thông tin.
 
-- Chỉ TRẢ RA ARRAY DATA mục 7, không muốn có thêm BẤT CỨ CÂU DẪN DẮT nào đi kèm từ AI
+- Chỉ TRẢ RA ARRAY DATA mục 7, không muốn có thêm BẤT CỨC CÂU DẪN DẮT nào đi kèm từ AI
 `;
