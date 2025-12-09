@@ -42,14 +42,14 @@ export const prompt = (
 "answer": "B" // Nếu câu hỏi này có 4 đáp án
 }
 
-// Hoặc nếu câu hỏi có 2 đáp án:
+// Hoặc nếu câu hỏi có 2 đáp án với dạng TRẮC NGHIỆM ĐÚNG SAI :
 {
 "question": "Câu hỏi đúng/sai ở đây?",
 "choices": {
-"True": "Đúng",
-"False": "Sai"
+"A": "Đúng",
+"B": "Sai"
 },
-"answer": "True" // Nếu câu hỏi này có 2 đáp án
+"answer": "A" // Nếu câu hỏi này có 2 đáp án
 }
 
 - Những điểm chính mà học sinh cần đề cập, dựa trên nội dung sách giáo khoa.

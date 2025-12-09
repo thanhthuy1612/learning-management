@@ -79,6 +79,7 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { isSubmitting },
   } = methods;
 
@@ -219,7 +220,7 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
                             aria-labelledby={`answers.${index}.answer-radios`}
                           >
                             <Grid container spacing={2}>
-                              {Choices.map((option) => (
+                              {(getValues(`answers.${index}.choices`).length ===2? : ).map((option) => (
                                 <Grid
                                   key={option}
                                   size={{ xs: 12, md: 6 }}

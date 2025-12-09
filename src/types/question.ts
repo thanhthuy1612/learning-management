@@ -1,4 +1,10 @@
 export const Choices = ['A', 'B', 'C', 'D'] as const;
+export const ChoicesIsYesNo = ['A', 'B'] as const;
+
+export const ChoicesIsYesNo1: Choice[][] = [
+  ['A', 'B'],
+  ['B', 'A'],
+];
 
 export const Choice1: Choice[][] = [
   ['A', 'B', 'C', 'D'],
