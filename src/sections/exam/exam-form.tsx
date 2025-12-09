@@ -25,7 +25,7 @@ import { ComponentBox } from 'src/components/layout';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { SplashScreen } from 'src/components/loading-screen';
 
-import { Choice1, Choices } from 'src/types/question';
+import { Choice1, Choices, ChoicesIsYesNo, ChoicesIsYesNo1 } from 'src/types/question';
 
 import { ExamHeader } from './exam-header';
 import { ExamFooter } from './exam-footer';
@@ -279,7 +279,10 @@ export function ExamFormView({ handleSend, sx }: Props) {
                   </FormLabel>
                   <RadioGroup {...typeField} aria-labelledby={`answers.${index}.answer-radios`}>
                     <Grid container spacing={2}>
-                      {Choice1[index % Choice1.length].map((option) => (
+                      {(Object.entries(questions[index].choices).length === 2
+                        ? ChoicesIsYesNo1[index % ChoicesIsYesNo.length]
+                        : Choice1[index % Choice1.length]
+                      ).map((option) => (
                         <Grid key={option} size={{ xs: 12, md: 6 }}>
                           <Button
                             variant="outlined"

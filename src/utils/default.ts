@@ -42,7 +42,7 @@ export const prompt = (
 "answer": "B" // Nếu câu hỏi này có 4 đáp án
 }
 
-// Hoặc nếu câu hỏi có 2 đáp án với dạng TRẮC NGHIỆM ĐÚNG SAI :
+// Hoặc nếu câu hỏi có 2 đáp án với dạng TRẮC NGHIỆM ĐÚNG SAI
 {
 "question": "Câu hỏi đúng/sai ở đây?",
 "choices": {
@@ -51,6 +51,8 @@ export const prompt = (
 },
 "answer": "A" // Nếu câu hỏi này có 2 đáp án
 }
+
+- Dạng đúng sai sẽ có 2 đáp án A,B; dạng câu hỏi bình thường sẽ có 4 đáp án A,B,C,D
 
 - Những điểm chính mà học sinh cần đề cập, dựa trên nội dung sách giáo khoa.
 - Mục tiêu cần kiểm tra theo từng bài học.

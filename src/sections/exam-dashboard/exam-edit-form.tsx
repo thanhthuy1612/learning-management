@@ -35,7 +35,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { Form, Field } from 'src/components/hook-form';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
-import { Choices } from 'src/types/question';
+import { Choices, ChoicesIsYesNo } from 'src/types/question';
 
 // ----------------------------------------------------------------------
 
@@ -220,7 +220,10 @@ export function ExamEditForm({ sx, isView = false, onClose, open }: Props) {
                             aria-labelledby={`answers.${index}.answer-radios`}
                           >
                             <Grid container spacing={2}>
-                              {(getValues(`answers.${index}.choices`).length ===2? : ).map((option) => (
+                              {(Object.entries(questions[index].choices).length === 2
+                                ? ChoicesIsYesNo
+                                : Choices
+                              ).map((option) => (
                                 <Grid
                                   key={option}
                                   size={{ xs: 12, md: 6 }}

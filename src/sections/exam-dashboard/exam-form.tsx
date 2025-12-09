@@ -32,7 +32,7 @@ import { Form } from 'src/components/hook-form';
 import { ComponentBox } from 'src/components/layout';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { Choices } from 'src/types/question';
+import { Choices, ChoicesIsYesNo } from 'src/types/question';
 
 // ----------------------------------------------------------------------
 
@@ -154,7 +154,10 @@ export function ExamForm({ sx, open, onClose, row }: Props) {
                           onChange={() => {}}
                         >
                           <Grid container spacing={2}>
-                            {Choices.map((option) => (
+                            {(Object.entries(questions[index].choices).length === 2
+                              ? ChoicesIsYesNo
+                              : Choices
+                            ).map((option) => (
                               <Grid key={option} size={{ xs: 12, md: 6 }} sx={{ display: 'flex' }}>
                                 <Button
                                   variant="outlined"
