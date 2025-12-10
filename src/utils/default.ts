@@ -21,7 +21,7 @@ export const prompt = (
 - MA TRẬN:
     ${matrix}
     
-- Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức. Đề thi cần bao gồm cả các câu hỏi với 2 đáp án đúng và sai hoặc dạng 4 đáp án A, B,C D.
+- Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức. Đề thi cần bao gồm cả các câu hỏi với 4 đáp án và các câu hỏi đúng/sai với 2 đáp án "Đúng" và "Sai".
 
 5. Thời gian làm bài: ${time} phút.
 
@@ -39,10 +39,10 @@ export const prompt = (
 "C": "Lựa chọn C",
 "D": "Lựa chọn D"
 },
-"answer": "B" // Nếu câu hỏi này có 4 đáp án
+"answer": "B" // Nếu câu hỏi TRẮC NGHIỆM NHIỀU ĐÁP ÁN
 }
 
-// Hoặc nếu câu hỏi có 2 đáp án với dạng TRẮC NGHIỆM ĐÚNG SAI
+// Hoặc nếu câu hỏi TRẮC NGHIỆM ĐÚNG SAI:
 {
 "question": "Câu hỏi đúng/sai ở đây?",
 "choices": {
@@ -52,7 +52,9 @@ export const prompt = (
 "answer": "A" // Nếu câu hỏi này có 2 đáp án
 }
 
-- Dạng đúng sai sẽ có 2 đáp án A,B; dạng câu hỏi bình thường sẽ có 4 đáp án A,B,C,D
+- Dạng TRẮC NGHIỆM NHIỀU ĐÁP ÁN sẽ có 4 đáp án A, B, C, D
+- Dạng TRẮC NGHIỆM ĐÚNG SAI sẽ có 2 đáp án A (Đúng) và B (Sai). 
+- Đảm bảo nội dung TRẮC NGHIỆM ĐÚNG SAI phù hợp để học sinh chỉ có thể trả lời là "Đúng" hoặc "Sai".
 
 - Những điểm chính mà học sinh cần đề cập, dựa trên nội dung sách giáo khoa.
 - Mục tiêu cần kiểm tra theo từng bài học.
