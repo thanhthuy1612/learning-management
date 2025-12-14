@@ -16,9 +16,9 @@ export const prompt = (
 
 3. Mức độ nhận thức: Phân chia theo thang Bloom – gồm các mức độ: Nhận biết, Thông hiểu, Vận dụng, Vận dụng cao.
 
-4. Tạo ma trận đề thi gồm ${quantity} câu với mô tả nội dung câu hỏi như sau: 
+4. Tạo ma trận đề thi GỒM TẤT CẢ ${quantity} CÂU với mô tả nội dung câu hỏi như sau: 
 
-- MA TRẬN:
+- MÔ TẢ ĐỀ THI:
     ${matrix}
     
 - Sử dụng ma trận đề thi được cung cấp, ghi rõ số câu hỏi và điểm số cho từng ô trong ma trận, phân chia theo các chủ đề/chương học và các mức độ nhận thức. Đề thi cần bao gồm cả các câu hỏi với 4 đáp án và các câu hỏi đúng/sai với 2 đáp án "Đúng" và "Sai".
