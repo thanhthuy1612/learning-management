@@ -52,7 +52,7 @@ export function ScoresListView() {
   const [loadingFirst, setLoadingFirst] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [pageIndex, setPageIndex] = React.useState<number>(defaultPageIndex);
-  const [pageSize, setPageSize] = React.useState<number>(100);
+  const [pageSize, setPageSize] = React.useState<number>(50);
   const [columnVisibilityModel, setColumnVisibilityModel] =
     React.useState<GridColumnVisibilityModel>({});
 
@@ -144,7 +144,7 @@ export function ScoresListView() {
     try {
       setLoading(true);
       setPageIndex(defaultPageIndex);
-      setPageSize(100);
+      setPageSize(50);
       const newBody: IExamSessionIdRequestBody = body ?? {
         examSessionId: searchText,
       };
@@ -239,10 +239,6 @@ export function ScoresListView() {
             }
           >
             <DataGrid
-              paginationModel={{
-                page: pageIndex - 1,
-                pageSize,
-              }}
               apiRef={apiRef}
               loading={loading}
               columns={columns}
